@@ -1,15 +1,63 @@
-version: '3.1'
+version: '3.8'
+
 services:
+  postgres-main:
+    container_name: db-main
+    image: postgres:13
+    environment:
+      POSTGRES_DB: main_db
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    volumes:
+      - postgres-main-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  postgres-stat:
+    container_name: db-stats
+    image: postgres:13
+    environment:
+      POSTGRES_DB: stat_db
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    volumes:
+      - postgres-stat-data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+
   stats-server:
+    container_name: stats-server
+    build:
+      context: ./stats-service/stats-server
+      dockerfile: Dockerfile
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-stat:5432/stat_db
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: password
+      EWM_SERVICE_URL: http://ewm-service:9090  # URL для взаимодействия с ewm-service
+      SERVER_URL: http://stats-server:8081  # Добавить эту переменную
+    depends_on:
+      - postgres-stat
+    ports:
+      - "8081:8080"
+
+  ewm-service:
+    container_name: ewm-service
+    build:
+      context: ./ewm-service
+      dockerfile: Dockerfile
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-main:5432/main_db
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: password
+      EWM_SERVICE_URL: http://ewm-service:9090  # URL для взаимодействия с ewm-service
+      STATS_SERVER_URL: http://stats-server:8081  # URL для использования в RestTemplate
+    depends_on:
+      - postgres-main
+      - stats-server
     ports:
       - "9090:9090"
 
-  stats-db:
-    image: postgres:14-alpine
-
-  ewm-service:
-    ports:
-      - "8080:8080"
-
-  ewm-db:
-    image: postgres:14-alpine
+volumes:
+  postgres-main-data:
+  postgres-stat-data:
