@@ -11,14 +11,22 @@ import ru.practicum.explorewithme.category.model.mapper.CategoryMapper;
 import ru.practicum.explorewithme.category.repository.CategoryRepository;
 import ru.practicum.explorewithme.exists.ExistChecker;
 
-
+/**
+ * Implementation of AdminCategoryService that handles category operations.
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class AdminCategoryServiceImpl implements AdminCategoryService {
+
     private final CategoryRepository repository;
     private final ExistChecker checker;
 
+    /**
+     * Deletes a category by its ID.
+     *
+     * @param catId the ID of the category to delete
+     */
     @Override
     @Transactional
     public void deleteCategory(Integer catId) {
@@ -28,6 +36,12 @@ public class AdminCategoryServiceImpl implements AdminCategoryService {
         log.info("Deleted category with id: {}", catId);
     }
 
+    /**
+     * Creates a new category based on the provided category request.
+     *
+     * @param category the category request object containing category details
+     * @return the created category response
+     */
     @Override
     @Transactional
     public CategoryResponse createCategory(CategoryRequest category) {
@@ -38,6 +52,13 @@ public class AdminCategoryServiceImpl implements AdminCategoryService {
         return response;
     }
 
+    /**
+     * Updates an existing category identified by its ID.
+     *
+     * @param category the category request object containing updated category details
+     * @param catId    the ID of the category to update
+     * @return the updated category response
+     */
     @Override
     @Transactional
     public CategoryResponse updateCategory(CategoryRequest category, Integer catId) {

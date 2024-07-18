@@ -8,14 +8,32 @@ import ru.practicum.explorewithme.event.model.EventResponse;
 
 import java.util.List;
 
+/**
+ * DTO for compilation responses.
+ */
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class CompilationResponse {
-    private Integer id;
-    private String title;
-    private Boolean pinned;
-    private List<EventResponse> events;
 
+    /**
+     * The unique identifier of the compilation.
+     */
+    private Integer id;
+
+    /**
+     * The title of the compilation.
+     */
+    private String title;
+
+    /**
+     * Indicates if the compilation is pinned.
+     */
+    private Boolean pinned;
+
+    /**
+     * The list of events in the compilation.
+     */
+    private List<EventResponse> events;
 }

@@ -9,13 +9,22 @@ import ru.practicum.explorewithme.user.service.admin.AdminCategoryService;
 
 import javax.validation.Valid;
 
+/**
+ * REST controller for managing categories by admin.
+ */
 @RestController
 @RequestMapping("/admin")
 @RequiredArgsConstructor
 public class AdminCategoryController {
+
     private final AdminCategoryService service;
 
-
+    /**
+     * Creates a new category.
+     *
+     * @param category the category request to create
+     * @return the created category response
+     */
     @PostMapping("/categories")
     public ResponseEntity<CategoryResponse> createCategory(
             @Valid @RequestBody CategoryRequest category
@@ -23,15 +32,28 @@ public class AdminCategoryController {
         return ResponseEntity.ok(service.createCategory(category));
     }
 
+    /**
+     * Deletes a category by its ID.
+     *
+     * @param catId the ID of the category to delete
+     */
     @DeleteMapping("/categories/{catId}")
     public void deleteCategory(@PathVariable Integer catId) {
         service.deleteCategory(catId);
     }
 
+    /**
+     * Updates a category by its ID.
+     *
+     * @param catId    the ID of the category to update
+     * @param category the category request with updated information
+     * @return the updated category response
+     */
     @PatchMapping("/categories/{catId}")
     public ResponseEntity<CategoryResponse> updateCategory(
             @PathVariable Integer catId,
-            @Valid @RequestBody CategoryRequest category) {
+            @Valid @RequestBody CategoryRequest category
+    ) {
         return ResponseEntity.ok(service.updateCategory(category, catId));
     }
 }

@@ -15,6 +15,9 @@ import ru.practicum.explorewithme.user.repository.AdminCompilationRepository;
 
 import java.util.List;
 
+/**
+ * Service implementation for managing compilations by administrators.
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -23,6 +26,12 @@ public class AdminCompilationServiceImpl implements AdminCompilationService {
     private final CompilationMapper mapper;
     private final EventService eventService;
 
+    /**
+     * Creates a new compilation.
+     *
+     * @param request the compilation request containing details of the compilation to create
+     * @return the created compilation response
+     */
     @Override
     @Transactional
     public CompilationResponse createCompilation(CompilationRequest request) {
@@ -33,6 +42,11 @@ public class AdminCompilationServiceImpl implements AdminCompilationService {
         return response;
     }
 
+    /**
+     * Deletes a compilation by its ID.
+     *
+     * @param compId the ID of the compilation to delete
+     */
     @Override
     @Transactional
     public void deleteCompilationById(Integer compId) {
@@ -40,19 +54,25 @@ public class AdminCompilationServiceImpl implements AdminCompilationService {
         boolean existsById = repository.existsById(compId);
         if (!existsById) {
             log.warn("Compilation with id {} does not exist", compId);
-            throw new NotExistException("This compilation not exist");
+            throw new NotExistException("This compilation does not exist");
         }
         repository.deleteById(compId);
         log.info("Deleted compilation with id: {}", compId);
     }
 
+    /**
+     * Updates an existing compilation identified by its ID.
+     *
+     * @param request the updated compilation request
+     * @param compId  the ID of the compilation to update
+     * @return the updated compilation response
+     */
     @Override
     @Transactional
     public CompilationResponse updateCompilation(CompilationRequest request, Integer compId) {
         log.info("Updating compilation with id: {}", compId);
         CompilationEntity entity = repository.findById(compId)
-                .orElseThrow(() -> new NotExistException(
-                        "This compilation does not exist"));
+                .orElseThrow(() -> new NotExistException("This compilation does not exist"));
         if (request.getPinned() != null) {
             entity.setPinned(request.getPinned());
         }
@@ -60,8 +80,7 @@ public class AdminCompilationServiceImpl implements AdminCompilationService {
             entity.setTitle(request.getTitle());
         }
         if (request.getEvents() != null && !request.getEvents().isEmpty()) {
-            List<EventEntity> eventsByIds =
-                    eventService.getEventEntities(request.getEvents());
+            List<EventEntity> eventsByIds = eventService.getEventEntities(request.getEvents());
             entity.setEvents(eventsByIds);
         }
         repository.save(entity);

@@ -16,12 +16,19 @@ import ru.practicum.explorewithme.exception.NotExistException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Implementation of the {@link CategoryService} interface.
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class CategoryServiceImpl implements CategoryService {
+
     private final CategoryRepository repository;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Transactional(readOnly = true)
     public List<CategoryResponse> getCategories(Integer from, Integer size) {
@@ -35,23 +42,31 @@ public class CategoryServiceImpl implements CategoryService {
         return responses;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Transactional(readOnly = true)
     public CategoryResponse getCategory(Integer catId) {
         log.info("Getting category with ID {}", catId);
         CategoryEntity categoryEntity = repository.findById(catId)
-                .orElseThrow(() -> new NotExistException("This category does not exist"));
+                .orElseThrow(() -> new NotExistException(
+                        "This category does not exist"));
         CategoryResponse response = CategoryMapper.toResponse(categoryEntity);
         log.info("Category retrieved: {}", response);
         return response;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Transactional(readOnly = true)
     public CategoryEntity getCategoryEntity(Integer catId) {
         log.info("Getting category entity with ID {}", catId);
         CategoryEntity categoryEntity = repository.findById(catId)
-                .orElseThrow(() -> new NotExistException("This category does not exist"));
+                .orElseThrow(() -> new NotExistException(
+                        "This category does not exist"));
         log.info("Category entity retrieved: {}", categoryEntity);
         return categoryEntity;
     }

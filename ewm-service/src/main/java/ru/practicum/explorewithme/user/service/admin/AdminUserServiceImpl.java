@@ -18,25 +18,37 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Implementation of the {@link AdminUserService} interface.
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class AdminUserServiceImpl implements AdminUserService {
     private final AdminUserRepository repository;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Transactional
     public UserResponse addNewUser(UserRequest userRequest) {
         log.info("Adding new user with request: {}", userRequest);
-        UserEntity savedEntity = repository.save(UserMapper.toEntity(userRequest));
+        UserEntity savedEntity = repository.save(UserMapper.toEntity(
+                userRequest));
         log.info("User added with ID: {}", savedEntity.getId());
         return UserMapper.toResponse(savedEntity);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Transactional(readOnly = true)
-    public Collection<UserResponse> findByIds(List<Long> ids, int from, int size) {
-        log.info("Finding users by IDs: {}, from: {}, size: {}", ids, from, size);
+    public Collection<UserResponse> findByIds(List<Long> ids, int from,
+                                              int size) {
+        log.info("Finding users by IDs: {}, from: {}, size: {}", ids, from,
+                size);
         Pageable pageable = PageRequest.of(from / size, size);
         Page<UserEntity> userEntities = repository.findByIdIn(ids, pageable);
         Collection<UserResponse> response = userEntities.stream()
@@ -46,6 +58,9 @@ public class AdminUserServiceImpl implements AdminUserService {
         return response;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Transactional(readOnly = true)
     public Collection<UserResponse> findAll(int from, int size) {
@@ -59,6 +74,9 @@ public class AdminUserServiceImpl implements AdminUserService {
         return response;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Transactional
     public void deleteUserById(Long userId) {
@@ -72,6 +90,9 @@ public class AdminUserServiceImpl implements AdminUserService {
         log.info("User with ID {} deleted", userId);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Transactional(readOnly = true)
     public UserResponse findById(Long userId) {
@@ -85,6 +106,9 @@ public class AdminUserServiceImpl implements AdminUserService {
         return UserMapper.toResponse(userEntity);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Transactional(readOnly = true)
     public UserEntity findUserEntity(Long userId) {

@@ -15,19 +15,30 @@ import ru.practicum.explorewithme.exception.NotExistException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Implementation of the {@link CompilationService} interface.
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class CompilationServiceImpl implements CompilationService {
+
     private final CompilationRepository repository;
     private final CompilationMapper mapper;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Transactional(readOnly = true)
-    public List<CompilationResponse> getCompilations(Boolean pinned, Integer from, Integer size) {
-        log.info("Fetching compilations with pinned={}, from={}, size={}", pinned, from, size);
+    public List<CompilationResponse> getCompilations(Boolean pinned,
+                                                     Integer from,
+                                                     Integer size) {
+        log.info("Fetching compilations with pinned={}, from={}, size={}",
+                pinned, from, size);
         Pageable pageable = PageRequest.of(from / size, size);
-        List<CompilationEntity> entities = repository.findAllByPinned(pinned, pageable);
+        List<CompilationEntity> entities = repository.findAllByPinned(pinned,
+                pageable);
         List<CompilationResponse> responses = entities.stream()
                 .map(mapper::toResponse)
                 .collect(Collectors.toList());
@@ -35,12 +46,16 @@ public class CompilationServiceImpl implements CompilationService {
         return responses;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Transactional(readOnly = true)
     public CompilationResponse getCompilation(Integer compId) {
         log.info("Fetching compilation with ID {}", compId);
         CompilationEntity entity = repository.findById(compId)
-                .orElseThrow(() -> new NotExistException("Compilation doesn't exist"));
+                .orElseThrow(() -> new NotExistException(
+                        "Compilation doesn't exist"));
         CompilationResponse response = mapper.toResponse(entity);
         log.info("Compilation retrieved: {}", response);
         return response;

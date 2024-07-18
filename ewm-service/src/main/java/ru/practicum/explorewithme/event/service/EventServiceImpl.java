@@ -24,21 +24,32 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
+/**
+ * Implementation of the {@link EventService} interface.
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class EventServiceImpl implements EventService {
+
     private final EventRepository repository;
     private final EventClient eventClient;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Transactional(readOnly = true)
-    public List<EventResponseShort> getEvents(EventSearchCriteria criteria, Integer from, Integer size) {
-        log.info("Fetching events with criteria: {}, from: {}, size: {}", criteria, from, size);
+    public List<EventResponseShort> getEvents(EventSearchCriteria criteria,
+                                              Integer from, Integer size) {
+        log.info("Fetching events with criteria: {}, from: {}, size: {}",
+                criteria, from, size);
         Specification<EventEntity> spec = Specification.where(null);
 
-        if (criteria.getCategories() != null && !criteria.getCategories().isEmpty()) {
-            spec = spec.and(EventSpecification.hasCategories(criteria.getCategories()));
+        if (criteria.getCategories() != null &&
+                !criteria.getCategories().isEmpty()) {
+            spec = spec.and(EventSpecification.hasCategories(
+                    criteria.getCategories()));
         }
         spec = spec.and(EventSpecification.dateAfter(criteria.getRangeStart()));
         spec = spec.and(EventSpecification.dateBefore(criteria.getRangeEnd()));
@@ -51,7 +62,8 @@ public class EventServiceImpl implements EventService {
         if (criteria.getPaid() != null) {
             spec = spec.and(EventSpecification.isPaid(criteria.getPaid()));
         }
-        spec = spec.and(EventSpecification.excludeStatuses(EventStatus.WAITING, EventStatus.REJECTED));
+        spec = spec.and(EventSpecification.excludeStatuses(EventStatus.WAITING,
+                EventStatus.REJECTED));
 
         Sort sort = Sort.unsorted();
         if ("EVENT_DATE".equalsIgnoreCase(criteria.getSort())) {
@@ -65,23 +77,28 @@ public class EventServiceImpl implements EventService {
 
         Page<EventEntity> eventEntities = repository.findAll(spec, pageable);
 
-        List<CompletableFuture<EventEntity>> futures = setEvensViews(eventEntities);
+        List<CompletableFuture<EventEntity>> futures = setEventsViews(
+                eventEntities);
 
         List<EventResponseShort> responses = futures.stream()
                 .map(CompletableFuture::join)
                 .map(EventMapper::toResponseShort)
                 .collect(Collectors.toList());
-        log.info("Found {} events with criteria: {}, from: {}, size: {}", responses.size(), criteria, from, size);
+        log.info("Found {} events with criteria: {}, from: {}, size: {}",
+                responses.size(), criteria, from, size);
         return responses;
     }
 
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Transactional(readOnly = true)
     public EventResponse getEvent(Long id) {
         log.info("Fetching event with ID: {}", id);
         EventEntity eventEntity = repository.findById(id)
-                .orElseThrow(() -> new NotExistException("This event does not exist"));
+                .orElseThrow(() -> new NotExistException(
+                        "This event does not exist"));
         log.info("Found event with ID: {}", id);
         CompletableFuture<Integer> eventViews = eventClient.getEventViews(id);
         try {
@@ -94,6 +111,9 @@ public class EventServiceImpl implements EventService {
         return EventMapper.toResponse(eventEntity);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Transactional(readOnly = true)
     public List<EventResponse> getEventsByIds(List<Long> ids) {
@@ -110,33 +130,48 @@ public class EventServiceImpl implements EventService {
         return responses;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Transactional(readOnly = true)
     public EventEntity getEventEntity(Long id) {
         log.info("Fetching event entity with ID: {}", id);
         EventEntity eventEntity = repository.findById(id)
-                .orElseThrow(() -> new NotExistException("Event does not exist"));
+                .orElseThrow(() -> new NotExistException(
+                        "Event does not exist"));
         log.info("Found event entity with ID: {}", id);
         return eventEntity;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Transactional(readOnly = true)
     public List<EventEntity> getEventEntities(List<Long> ids) {
         log.info("Fetching event entities with IDs: {}", ids);
         List<EventEntity> eventEntities = repository.findAllById(ids);
-        log.info("Found {} event entities with IDs: {}", eventEntities.size(), ids);
+        log.info("Found {} event entities with IDs: {}", eventEntities.size(),
+                ids);
         return eventEntities;
     }
 
-    private List<CompletableFuture<EventEntity>> setEvensViews(Page<EventEntity> eventEntities) {
+    /**
+     * Sets the views for a list of event entities asynchronously.
+     *
+     * @param eventEntities the list of event entities
+     * @return a list of CompletableFutures for the event entities
+     */
+    private List<CompletableFuture<EventEntity>> setEventsViews(
+            Page<EventEntity> eventEntities) {
         int numCores = Runtime.getRuntime().availableProcessors();
         int numThreads = numCores * 2;
         ExecutorService executor = Executors.newFixedThreadPool(numThreads);
         return eventEntities.stream()
-                .map(event -> CompletableFuture.supplyAsync(() ->
-                {
+                .map(event -> CompletableFuture.supplyAsync(() -> {
                     try {
-                        Integer views = eventClient.getEventViews(event.getId()).get();
+                        Integer views = eventClient.getEventViews(
+                                event.getId()).get();
                         event.setViews(views);
                     } catch (InterruptedException | ExecutionException e) {
                         throw new RuntimeException(e);

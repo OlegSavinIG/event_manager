@@ -25,6 +25,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Implementation of the {@link AdminEventService} interface.
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -33,6 +36,9 @@ public class AdminEventServiceImpl implements AdminEventService {
     private final EventRepository eventRepository;
     private final CategoryRepository categoryRepository;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Transactional(readOnly = true)
     public List<EventResponse> getEvents(
@@ -60,6 +66,7 @@ public class AdminEventServiceImpl implements AdminEventService {
         if (criteria.getRangeEnd() != null) {
             spec = spec.and(EventSpecification.dateBefore(criteria.getRangeEnd()));
         }
+
         Page<EventEntity> eventEntities = repository.findAll(spec, pageable);
         List<EventResponse> response = eventEntities.stream()
                 .map(EventMapper::toResponse)
@@ -68,6 +75,9 @@ public class AdminEventServiceImpl implements AdminEventService {
         return response;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Transactional
     public EventResponse approveEvent(EventRequest request, Long eventId) {
@@ -75,13 +85,15 @@ public class AdminEventServiceImpl implements AdminEventService {
         EventEntity event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotExistException(
                         "Event with id=" + eventId + " was not found"));
+
         if (request.getAnnotation() != null) {
             event.setAnnotation(request.getAnnotation());
         }
         if (request.getCategory() != null) {
             CategoryEntity category = categoryRepository.findById(
                             request.getCategory())
-                    .orElseThrow(() -> new IllegalArgumentException("Category not found"));
+                    .orElseThrow(() -> new IllegalArgumentException(
+                            "Category not found"));
             event.setCategory(category);
         }
         if (request.getDescription() != null) {
@@ -113,12 +125,19 @@ public class AdminEventServiceImpl implements AdminEventService {
         return EventMapper.toResponse(event);
     }
 
+    /**
+     * Handles state actions for events.
+     *
+     * @param stateAction the state action to perform
+     * @param event       the event entity to update
+     */
     private void handleStateAction(String stateAction, EventEntity event) {
         switch (stateAction) {
             case "PUBLISH_EVENT":
                 if (!event.getState().name().equals("PENDING")) {
                     log.info("Invalid state action: {}", stateAction);
-                    throw new IllegalArgumentException("Invalid state action: " + stateAction);
+                    throw new IllegalArgumentException(
+                            "Invalid state action: " + stateAction);
                 }
                 event.setState(EventStatus.PUBLISHED);
                 event.setPublishedOn(LocalDateTime.now());
@@ -126,7 +145,8 @@ public class AdminEventServiceImpl implements AdminEventService {
             case "REJECT_EVENT":
                 if (event.getState().name().equals("PUBLISHED")) {
                     log.info("Invalid state action: {}", stateAction);
-                    throw new IllegalArgumentException("Invalid state action: " + stateAction);
+                    throw new IllegalArgumentException(
+                            "Invalid state action: " + stateAction);
                 }
                 event.setState(EventStatus.REJECTED);
                 break;

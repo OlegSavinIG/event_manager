@@ -13,9 +13,18 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Global exception handler for handling various exceptions in the application.
+ */
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
+    /**
+     * Handles validation exceptions.
+     *
+     * @param ex the MethodArgumentNotValidException
+     * @return a response entity with error details
+     */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>>
     handleValidationExceptions(MethodArgumentNotValidException ex) {
@@ -28,6 +37,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(errors);
     }
 
+    /**
+     * Handles general exceptions.
+     *
+     * @param ex the Exception
+     * @return a response entity with error details
+     */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, String>> handleExceptions(Exception ex) {
         Map<String, String> errorResponse = new HashMap<>();
@@ -38,8 +53,16 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(errorResponse);
     }
 
+    /**
+     * Handles constraint violation exceptions.
+     *
+     * @param ex      the ConstraintViolationException
+     * @param request the WebRequest
+     * @return a response entity with error details
+     */
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<Object> handleConstraintViolationException(ConstraintViolationException ex, WebRequest request) {
+    public ResponseEntity<Object> handleConstraintViolationException(
+            ConstraintViolationException ex, WebRequest request) {
         Map<String, Object> body = new HashMap<>();
         body.put("status", HttpStatus.CONFLICT);
         body.put("reason", "Integrity constraint has been violated.");
@@ -48,8 +71,16 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(body, HttpStatus.CONFLICT);
     }
 
+    /**
+     * Handles not exist exceptions.
+     *
+     * @param ex      the NotExistException
+     * @param request the WebRequest
+     * @return a response entity with error details
+     */
     @ExceptionHandler(NotExistException.class)
-    public ResponseEntity<Object> handleNotExistException(NotExistException ex, WebRequest request) {
+    public ResponseEntity<Object> handleNotExistException(
+            NotExistException ex, WebRequest request) {
         Map<String, Object> body = new HashMap<>();
         body.put("status", HttpStatus.NOT_FOUND);
         body.put("reason", "Resource not found.");
@@ -58,8 +89,16 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
     }
 
+    /**
+     * Handles already exist exceptions.
+     *
+     * @param ex      the AlreadyExistException
+     * @param request the WebRequest
+     * @return a response entity with error details
+     */
     @ExceptionHandler(AlreadyExistException.class)
-    public ResponseEntity<Object> handleAlreadyExistException(AlreadyExistException ex, WebRequest request) {
+    public ResponseEntity<Object> handleAlreadyExistException(
+            AlreadyExistException ex, WebRequest request) {
         Map<String, Object> body = new HashMap<>();
         body.put("status", HttpStatus.CONFLICT);
         body.put("reason", "The resource already exists.");

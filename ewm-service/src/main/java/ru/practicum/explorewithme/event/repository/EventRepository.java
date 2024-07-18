@@ -8,9 +8,28 @@ import ru.practicum.explorewithme.event.model.EventEntity;
 
 import java.util.Optional;
 
-public interface EventRepository extends JpaRepository<EventEntity, Long>, JpaSpecificationExecutor<EventEntity> {
+/**
+ * Repository interface for managing {@link EventEntity} entities.
+ */
+public interface EventRepository extends JpaRepository<EventEntity, Long>,
+        JpaSpecificationExecutor<EventEntity> {
 
-    Optional<Page<EventEntity>> findAllByInitiatorId(Long userId, Pageable pageable);
+    /**
+     * Finds all events by the initiator's ID with pagination.
+     *
+     * @param userId   the ID of the initiator
+     * @param pageable the pagination information
+     * @return a page of event entities
+     */
+    Optional<Page<EventEntity>> findAllByInitiatorId(Long userId,
+                                                     Pageable pageable);
 
+    /**
+     * Finds an event by its ID and the initiator's ID.
+     *
+     * @param eventId the ID of the event
+     * @param userId  the ID of the initiator
+     * @return the event entity
+     */
     Optional<EventEntity> findByIdAndInitiatorId(Long eventId, Long userId);
 }

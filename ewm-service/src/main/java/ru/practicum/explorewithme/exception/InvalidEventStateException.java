@@ -1,6 +1,17 @@
 package ru.practicum.explorewithme.exception;
 
+/**
+ * Exception thrown when an invalid event state is encountered.
+ */
 public class InvalidEventStateException extends RuntimeException {
-    public InvalidEventStateException(String s) {
+
+    /**
+     * Constructs a new InvalidEventStateException with the specified detail
+     * message.
+     *
+     * @param message the detail message
+     */
+    public InvalidEventStateException(String message) {
+        super(message);
     }
 }

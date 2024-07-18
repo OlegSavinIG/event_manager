@@ -13,12 +13,23 @@ import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
+/**
+ * Controller for handling private user operations related to events.
+ */
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
 public class PrivateUserEventsController {
     private final PrivateUserEventsService service;
 
+    /**
+     * Retrieves events for a specific user, paginated.
+     *
+     * @param userId the ID of the user
+     * @param from   index of the first result (default 0)
+     * @param size   maximum number of events (default 10)
+     * @return ResponseEntity with a list of EventResponse objects
+     */
     @GetMapping("/{userId}/events")
     public ResponseEntity<List<EventResponse>> getEventsByUserId(
             @PathVariable Long userId,
@@ -27,6 +38,13 @@ public class PrivateUserEventsController {
         return ResponseEntity.ok(service.getEventsByUserId(userId, from, size));
     }
 
+    /**
+     * Retrieves a specific event by user ID and event ID.
+     *
+     * @param userId  the ID of the user
+     * @param eventId the ID of the event
+     * @return ResponseEntity with the EventResponse object
+     */
     @GetMapping("/{userId}/events/{eventId}")
     public ResponseEntity<EventResponse> getByUserIdAndEventId(
             @PathVariable Long userId,
@@ -34,15 +52,28 @@ public class PrivateUserEventsController {
         return ResponseEntity.ok(service.getByUserIdAndEventId(userId, eventId));
     }
 
-
+    /**
+     * Creates a new event for a specific user.
+     *
+     * @param userId  the ID of the user
+     * @param request the EventRequest object containing event data
+     * @return ResponseEntity with the created EventResponse object
+     */
     @PostMapping("/{userId}/events")
     public ResponseEntity<EventResponse> createEvent(
             @PathVariable Long userId,
-            @Validated(DefaultValidation.class) @RequestBody EventRequest request
-    ) {
+            @Validated(DefaultValidation.class) @RequestBody EventRequest request) {
         return ResponseEntity.ok(service.createEvent(request, userId));
     }
 
+    /**
+     * Updates an existing event for a specific user.
+     *
+     * @param userId  the ID of the user
+     * @param eventId the ID of the event to update
+     * @param request the EventRequest object containing updated event data
+     * @return ResponseEntity with the updated EventResponse object
+     */
     @PatchMapping("/{userId}/events/{eventId}")
     public ResponseEntity<EventResponse> updateEvent(
             @PathVariable Long userId,
@@ -50,6 +81,4 @@ public class PrivateUserEventsController {
             @RequestBody EventRequest request) {
         return ResponseEntity.ok(service.updateEvent(userId, eventId, request));
     }
-
-
 }

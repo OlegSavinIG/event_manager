@@ -14,13 +14,26 @@ import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
+/**
+ * REST controller for managing events.
+ */
 @RestController
 @RequestMapping("/events")
 @RequiredArgsConstructor
 public class EventController {
+
     private final EventService service;
     private final EventClient client;
 
+    /**
+     * Retrieves a list of events based on search criteria.
+     *
+     * @param criteria       the search criteria for events
+     * @param from           the starting index of the result
+     * @param size           the number of results to retrieve
+     * @param servletRequest the HTTP servlet request
+     * @return a response entity containing the list of event responses
+     */
     @GetMapping
     public ResponseEntity<List<EventResponseShort>> getEvents(
             @ModelAttribute EventSearchCriteria criteria,
@@ -34,6 +47,13 @@ public class EventController {
         return ResponseEntity.ok(service.getEvents(criteria, from, size));
     }
 
+    /**
+     * Retrieves a specific event by its ID.
+     *
+     * @param id             the ID of the event
+     * @param servletRequest the HTTP servlet request
+     * @return a response entity containing the event response
+     */
     @GetMapping("/{id}")
     public ResponseEntity<EventResponse> getEvent(
             @PathVariable Long id,
