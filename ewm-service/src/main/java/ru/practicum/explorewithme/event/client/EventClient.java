@@ -52,9 +52,11 @@ public class EventClient {
                 "%s/stats?start=%s&end=%s&uris=/events/%d",
                 statsServerUrl,
                 LocalDateTime.now().minusYears(1)
-                        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
+                        .format(DateTimeFormatter
+                                .ofPattern("yyyy-MM-dd HH:mm:ss")),
                 LocalDateTime.now()
-                        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
+                        .format(DateTimeFormatter
+                                .ofPattern("yyyy-MM-dd HH:mm:ss")),
                 eventId);
         List<StatisticResponse> response = List.of(
                 restTemplate.getForObject(url, StatisticResponse[].class));

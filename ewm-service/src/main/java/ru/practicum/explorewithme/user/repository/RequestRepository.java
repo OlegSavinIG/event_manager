@@ -10,7 +10,8 @@ import java.util.Optional;
  * Repository interface for accessing UserEventRequestEntity data.
  * Provides methods to query and manipulate user event request data.
  */
-public interface RequestRepository extends JpaRepository<UserEventRequestEntity, Long> {
+public interface RequestRepository
+        extends JpaRepository<UserEventRequestEntity, Long> {
 
     /**
      * Finds all user event requests associated with a specific event ID.
@@ -35,7 +36,8 @@ public interface RequestRepository extends JpaRepository<UserEventRequestEntity,
      * @param userId    the ID of the requester user
      * @return an optional containing the user event request entity, if found
      */
-    Optional<UserEventRequestEntity> findByIdAndRequesterId(Long requestId, Long userId);
+    Optional<UserEventRequestEntity> findByIdAndRequesterId(
+            Long requestId, Long userId);
 
     /**
      * Checks if a user event request exists for a specific user and event.

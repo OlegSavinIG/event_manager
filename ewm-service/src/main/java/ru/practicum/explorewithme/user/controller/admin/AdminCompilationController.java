@@ -55,6 +55,7 @@ public class AdminCompilationController {
     public ResponseEntity<CompilationResponse> updateCompilation(
             @Valid @RequestBody final CompilationRequest compilation,
             @PathVariable final Integer compId) {
-        return ResponseEntity.ok(service.updateCompilation(compilation, compId));
+        return ResponseEntity.ok(service.updateCompilation(
+                compilation, compId));
     }
 }

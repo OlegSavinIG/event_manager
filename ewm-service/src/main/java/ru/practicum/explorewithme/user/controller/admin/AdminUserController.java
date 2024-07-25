@@ -64,7 +64,8 @@ public class AdminUserController {
      * @param userId the ID of the user to delete
      */
     @DeleteMapping("/users/{userId}")
-    public void deleteUserById(@PathVariable final Long userId) {
+    public void deleteUserById(
+            @PathVariable final Long userId) {
         service.deleteUserById(userId);
     }
 }

@@ -37,8 +37,10 @@ public class PrivateUserEventsController {
     @GetMapping("/{userId}/events")
     public ResponseEntity<List<EventResponse>> getEventsByUserId(
             @PathVariable final Long userId,
-            @PositiveOrZero @RequestParam(defaultValue = "0") final Integer from,
-            @Positive @RequestParam(defaultValue = "10") final Integer size) {
+            @PositiveOrZero @RequestParam(defaultValue = "0")
+            final Integer from,
+            @Positive @RequestParam(defaultValue = "10")
+            final Integer size) {
         return ResponseEntity.ok(service.getEventsByUserId(userId, from, size));
     }
 
@@ -53,7 +55,8 @@ public class PrivateUserEventsController {
     public ResponseEntity<EventResponse> getByUserIdAndEventId(
             @PathVariable final Long userId,
             @PathVariable final Long eventId) {
-        return ResponseEntity.ok(service.getByUserIdAndEventId(userId, eventId));
+        return ResponseEntity.ok(service
+                .getByUserIdAndEventId(userId, eventId));
     }
 
     /**
@@ -66,7 +69,8 @@ public class PrivateUserEventsController {
     @PostMapping("/{userId}/events")
     public ResponseEntity<EventResponse> createEvent(
             @PathVariable final Long userId,
-            @Validated(DefaultValidation.class) @RequestBody final EventRequest request) {
+            @Validated(DefaultValidation.class)
+            @RequestBody final EventRequest request) {
         return ResponseEntity.ok(service.createEvent(request, userId));
     }
 

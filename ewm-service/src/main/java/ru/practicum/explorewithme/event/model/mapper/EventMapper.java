@@ -33,7 +33,8 @@ public class EventMapper {
                 .title(entity.getTitle())
                 .views(entity.getViews())
                 .paid(entity.isPaid())
-                .initiator(UserMapper.toResponseWithEvent(entity.getInitiator()))
+                .initiator(UserMapper
+                        .toResponseWithEvent(entity.getInitiator()))
                 .participantLimit(entity.getParticipantLimit())
                 .publishedOn(entity.getPublishedOn())
                 .requestModeration(entity.getRequestModeration())
@@ -56,7 +57,8 @@ public class EventMapper {
                 .title(entity.getTitle())
                 .views(entity.getViews())
                 .paid(entity.isPaid())
-                .initiator(UserMapper.toResponseWithEvent(entity.getInitiator()))
+                .initiator(UserMapper
+                        .toResponseWithEvent(entity.getInitiator()))
                 .build();
     }
 

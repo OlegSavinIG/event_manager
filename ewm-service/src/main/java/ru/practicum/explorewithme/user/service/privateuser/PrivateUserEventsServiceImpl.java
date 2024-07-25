@@ -98,7 +98,8 @@ public class PrivateUserEventsServiceImpl implements PrivateUserEventsService {
         EventEntity eventEntity = repository.save(EventMapper.toEntity(request,
                 CategoryMapper.toEntity(category), userEntity));
         eventEntity.setCreatedOn(LocalDateTime.now());
-        log.info("Event created with ID: {} for user ID: {}", eventEntity.getId(),
+        log.info("Event created with ID: {} for user ID: {}",
+                eventEntity.getId(),
                 userId);
         return EventMapper.toResponse(eventEntity);
     }

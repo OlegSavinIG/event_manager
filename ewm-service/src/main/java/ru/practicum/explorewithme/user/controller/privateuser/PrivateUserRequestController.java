@@ -50,7 +50,8 @@ public class PrivateUserRequestController {
             @PathVariable final Long userId,
             @PathVariable final Long eventId,
             @RequestBody final ApproveRequestCriteria criteria) {
-        return ResponseEntity.ok(service.approveRequests(userId, eventId, criteria));
+        return ResponseEntity.ok(service
+                .approveRequests(userId, eventId, criteria));
     }
 
     /**

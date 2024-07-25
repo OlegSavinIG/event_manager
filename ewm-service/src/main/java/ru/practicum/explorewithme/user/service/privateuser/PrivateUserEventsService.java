@@ -18,7 +18,8 @@ public interface PrivateUserEventsService {
      * @param size   the number of results to retrieve
      * @return the list of event responses
      */
-    List<EventResponse> getEventsByUserId(Long userId, Integer from, Integer size);
+    List<EventResponse> getEventsByUserId(
+            Long userId, Integer from, Integer size);
 
     /**
      * Retrieves an event by user ID and event ID.

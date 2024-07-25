@@ -42,7 +42,8 @@ public class AdminCompilationServiceImpl implements AdminCompilationService {
      */
     @Override
     @Transactional
-    public CompilationResponse createCompilation(final CompilationRequest request) {
+    public CompilationResponse createCompilation(
+            final CompilationRequest request) {
         log.info("Creating compilation with title: {}", request.getTitle());
         CompilationEntity entity = repository.save(
                 mapper.toEntity(request, eventService));
@@ -78,8 +79,9 @@ public class AdminCompilationServiceImpl implements AdminCompilationService {
      */
     @Override
     @Transactional
-    public CompilationResponse updateCompilation(final CompilationRequest request,
-                                                 final Integer compId) {
+    public CompilationResponse updateCompilation(
+            final CompilationRequest request,
+            final Integer compId) {
         log.info("Updating compilation with id: {}", compId);
         CompilationEntity entity = repository.findById(compId)
                 .orElseThrow(() -> new NotExistException(
@@ -91,7 +93,8 @@ public class AdminCompilationServiceImpl implements AdminCompilationService {
             entity.setTitle(request.getTitle());
         }
         if (request.getEvents() != null && !request.getEvents().isEmpty()) {
-            List<EventEntity> eventsByIds = eventService.getEventEntities(request.getEvents());
+            List<EventEntity> eventsByIds =
+                    eventService.getEventEntities(request.getEvents());
             entity.setEvents(eventsByIds);
         }
         repository.save(entity);

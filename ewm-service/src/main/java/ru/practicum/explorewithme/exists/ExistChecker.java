@@ -15,11 +15,25 @@ import ru.practicum.explorewithme.user.repository.RequestRepository;
 @RequiredArgsConstructor
 @Component
 public class ExistChecker {
-
+    /**
+     * Component for checking the existence of various entities.
+     */
     private final AdminUserRepository adminUserRepository;
+    /**
+     * Component for checking the existence of various entities.
+     */
     private final EventRepository eventRepository;
+    /**
+     * Component for checking the existence of various entities.
+     */
     private final CompilationRepository compilationRepository;
+    /**
+     * Component for checking the existence of various entities.
+     */
     private final CategoryRepository categoryRepository;
+    /**
+     * Component for checking the existence of various entities.
+     */
     private final RequestRepository requestRepository;
 
     /**

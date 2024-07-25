@@ -63,16 +63,20 @@ public class AdminEventServiceImpl implements AdminEventService {
             spec = spec.and(EventSpecification.hasStates(criteria.getStates()));
         }
 
-        if (criteria.getCategories() != null && !criteria.getCategories().isEmpty()) {
-            spec = spec.and(EventSpecification.hasCategories(criteria.getCategories()));
+        if (criteria.getCategories() != null && !criteria
+                .getCategories().isEmpty()) {
+            spec = spec.and(EventSpecification
+                    .hasCategories(criteria.getCategories()));
         }
 
         if (criteria.getRangeStart() != null) {
-            spec = spec.and(EventSpecification.dateAfter(criteria.getRangeStart()));
+            spec = spec.and(EventSpecification
+                    .dateAfter(criteria.getRangeStart()));
         }
 
         if (criteria.getRangeEnd() != null) {
-            spec = spec.and(EventSpecification.dateBefore(criteria.getRangeEnd()));
+            spec = spec.and(EventSpecification
+                    .dateBefore(criteria.getRangeEnd()));
         }
 
         Page<EventEntity> eventEntities = repository.findAll(spec, pageable);
@@ -88,7 +92,8 @@ public class AdminEventServiceImpl implements AdminEventService {
      */
     @Override
     @Transactional
-    public EventResponse approveEvent(final EventRequest request, final Long eventId) {
+    public EventResponse approveEvent(
+            final EventRequest request, final Long eventId) {
         log.info("Approving event with id: {}", eventId);
         EventEntity event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotExistException(
@@ -139,7 +144,8 @@ public class AdminEventServiceImpl implements AdminEventService {
      * @param stateAction the state action to perform
      * @param event       the event entity to update
      */
-    private void handleStateAction(final String stateAction, final EventEntity event) {
+    private void handleStateAction(
+            final String stateAction, final EventEntity event) {
         switch (stateAction) {
             case "PUBLISH_EVENT":
                 if (!event.getState().name().equals("PENDING")) {

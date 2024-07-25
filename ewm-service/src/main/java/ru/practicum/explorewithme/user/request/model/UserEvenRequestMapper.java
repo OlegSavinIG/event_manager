@@ -1,12 +1,15 @@
 package ru.practicum.explorewithme.user.request.model;
 
 /**
- * Utility class for mapping UserEventRequestEntity objects to UserEventRequestDto objects.
+ * Utility class for mapping
+ * UserEventRequestEntity objects
+ * to UserEventRequestDto objects.
  */
 public class UserEvenRequestMapper {
 
     /**
-     * Converts a UserEventRequestEntity object to a UserEventRequestDto object.
+     * Converts a UserEventRequestEntity
+     * object to a UserEventRequestDto object.
      *
      * @param entity the UserEventRequestEntity object to convert
      * @return the corresponding UserEventRequestDto object

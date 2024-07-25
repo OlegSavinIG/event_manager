@@ -67,7 +67,8 @@ public class AdminCategoryServiceImpl implements AdminCategoryService {
         log.info("Updating category with id: {}", catId);
         checker.isCategoryExists(catId);
         CategoryEntity categoryEntity = repository.findById(catId)
-                .orElseThrow(() -> new IllegalArgumentException("Category not found"));
+                .orElseThrow(() ->
+                        new IllegalArgumentException("Category not found"));
         if (category.getName() != null) {
             categoryEntity.setName(category.getName());
         }

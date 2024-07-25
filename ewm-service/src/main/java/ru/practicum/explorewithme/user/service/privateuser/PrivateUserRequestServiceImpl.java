@@ -31,7 +31,8 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class PrivateUserRequestServiceImpl implements PrivateUserRequestService {
+public class PrivateUserRequestServiceImpl
+        implements PrivateUserRequestService {
 
     /** Repository for user requests */
     private final RequestRepository repository;
@@ -177,7 +178,8 @@ public class PrivateUserRequestServiceImpl implements PrivateUserRequestService 
         checker.isRequestExists(requestId);
         UserEventRequestEntity entity =
                 repository.findByIdAndRequesterId(requestId, userId)
-                        .orElseThrow(() -> new NotExistException("Request not found"));
+                        .orElseThrow(() ->
+                                new NotExistException("Request not found"));
         entity.setStatus("CANCELED");
         repository.delete(entity);
         log.info("Request ID: {} cancelled by user ID: {}", requestId, userId);

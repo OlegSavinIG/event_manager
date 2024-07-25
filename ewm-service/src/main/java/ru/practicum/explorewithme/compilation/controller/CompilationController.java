@@ -33,7 +33,8 @@ public class CompilationController {
     @GetMapping
     public ResponseEntity<List<CompilationResponse>> getCompilations(
             @RequestParam(defaultValue = "false") final Boolean pinned,
-            @PositiveOrZero @RequestParam(defaultValue = "0") final Integer from,
+            @PositiveOrZero @RequestParam(defaultValue = "0")
+            final Integer from,
             @Positive @RequestParam(defaultValue = "10") final Integer size) {
         log.info("Received request to get compilations with pinned={}, from={}, size={}",
                 pinned, from, size);

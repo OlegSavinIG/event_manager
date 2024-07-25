@@ -21,7 +21,9 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class CategoryController {
-
+    /**
+     * REST service for managing categories.
+     */
     private final CategoryService service;
 
     /**
@@ -33,8 +35,10 @@ public class CategoryController {
      */
     @GetMapping("/categories")
     public ResponseEntity<List<CategoryResponse>> getCategories(
-            @PositiveOrZero @RequestParam(defaultValue = "0") final Integer from,
-            @Positive @RequestParam(defaultValue = "10") final Integer size) {
+            @PositiveOrZero @RequestParam(defaultValue = "0")
+            final Integer from,
+            @Positive @RequestParam(defaultValue = "10")
+            final Integer size) {
         log.info("Received request to get categories from {} with size {}",
                 from, size);
         List<CategoryResponse> categories = service.getCategories(from, size);

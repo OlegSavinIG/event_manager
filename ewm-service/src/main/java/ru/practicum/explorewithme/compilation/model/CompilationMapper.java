@@ -25,7 +25,8 @@ public interface CompilationMapper {
      * @return the compilation entity
      */
     @Mapping(target = "events",
-            expression = "java(mapIdsToEvents(request.getEvents(), eventService))")
+            expression =
+                    "java(mapIdsToEvents(request.getEvents(), eventService))")
     CompilationEntity toEntity(CompilationRequest request,
                                @Context EventService eventService);
 
@@ -46,8 +47,9 @@ public interface CompilationMapper {
      * @param eventService the event service for fetching event entities
      * @return the list of event entities
      */
-    default List<EventEntity> mapIdsToEvents(List<Long> ids,
-                                             @Context EventService eventService) {
+    default List<EventEntity> mapIdsToEvents(
+            List<Long> ids,
+            @Context EventService eventService) {
         return eventService.getEventEntities(ids);
     }
 

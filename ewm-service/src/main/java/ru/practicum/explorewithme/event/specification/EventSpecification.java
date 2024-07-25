@@ -20,7 +20,8 @@ public class EventSpecification {
      * @param users the list of user IDs
      * @return the specification
      */
-    public static Specification<EventEntity> hasUsers(List<Long> users) {
+    public static Specification<EventEntity> hasUsers(
+            final List<Long> users) {
         return (root, query, criteriaBuilder) ->
                 root.get("initiator").get("id").in(users);
     }
@@ -31,7 +32,8 @@ public class EventSpecification {
      * @param states the list of states
      * @return the specification
      */
-    public static Specification<EventEntity> hasStates(List<String> states) {
+    public static Specification<EventEntity> hasStates(
+            final List<String> states) {
         return (root, query, criteriaBuilder) ->
                 root.get("state").in(states);
     }
@@ -43,69 +45,67 @@ public class EventSpecification {
      * @return the specification
      */
     public static Specification<EventEntity> hasCategories(
-            List<Integer> categories) {
+            final List<Integer> categories) {
         return (root, query, criteriaBuilder) ->
                 root.get("category").get("id").in(categories);
     }
 
     /**
-     * Creates a specification for filtering events that occur after a certain
-     * date.
+     * Creates a specification for filtering events after a date.
      *
      * @param rangeStart the start date
      * @return the specification
      */
     public static Specification<EventEntity> dateAfter(
-            LocalDateTime rangeStart) {
+            final LocalDateTime rangeStart) {
         return (root, query, criteriaBuilder) -> {
             if (rangeStart == null) {
                 return criteriaBuilder.greaterThanOrEqualTo(
                         root.get("eventDate"), LocalDateTime.now());
             }
-            return criteriaBuilder.greaterThanOrEqualTo(root.get("eventDate"),
-                    rangeStart);
+            return criteriaBuilder.greaterThanOrEqualTo(root
+                    .get("eventDate"), rangeStart);
         };
     }
 
     /**
-     * Creates a specification for filtering events that occur before a certain
-     * date.
+     * Creates a specification for filtering events before a date.
      *
      * @param rangeEnd the end date
      * @return the specification
      */
-    public static Specification<EventEntity> dateBefore(LocalDateTime rangeEnd) {
+    public static Specification<EventEntity> dateBefore(
+            final LocalDateTime rangeEnd) {
         return (root, query, criteriaBuilder) -> {
             if (rangeEnd == null) {
                 return criteriaBuilder.lessThanOrEqualTo(
                         root.get("eventDate"), LocalDateTime.now());
             }
-            return criteriaBuilder.lessThanOrEqualTo(root.get("eventDate"),
-                    rangeEnd);
+            return criteriaBuilder.lessThanOrEqualTo(
+                    root.get("eventDate"), rangeEnd);
         };
     }
 
     /**
-     * Creates a specification for filtering events that contain certain text in
-     * the annotation or description.
+     * Creates a specification for filtering events containing text.
      *
      * @param text the text to search for
      * @return the specification
      */
-    public static Specification<EventEntity> containsText(String text) {
+    public static Specification<EventEntity> containsText(final String text) {
         return (root, query, criteriaBuilder) -> {
             String pattern = "%" + text.toLowerCase() + "%";
             Predicate annotationPredicate = criteriaBuilder.like(
                     criteriaBuilder.lower(root.get("annotation")), pattern);
             Predicate descriptionPredicate = criteriaBuilder.like(
                     criteriaBuilder.lower(root.get("description")), pattern);
-            return criteriaBuilder.or(annotationPredicate, descriptionPredicate);
+            return criteriaBuilder.or(annotationPredicate,
+                    descriptionPredicate);
         };
     }
 
     /**
-     * Creates a specification for filtering events that are available (i.e.,
-     * have not reached the participant limit).
+     * Creates a specification for filtering events by availability.
      *
      * @return the specification
      */
@@ -116,27 +116,28 @@ public class EventSpecification {
     }
 
     /**
-     * Creates a specification for filtering events by whether they are paid.
+     * Creates a specification for filtering events by payment status.
      *
      * @param paid the paid status
      * @return the specification
      */
-    public static Specification<EventEntity> isPaid(Boolean paid) {
+    public static Specification<EventEntity> isPaid(
+            final Boolean paid) {
         return (root, query, criteriaBuilder) ->
                 criteriaBuilder.equal(root.get("paid"), paid);
     }
 
     /**
-     * Creates a specification for excluding events with certain statuses.
+     * Creates a specification for excluding events with statuses.
      *
      * @param statuses the statuses to exclude
      * @return the specification
      */
     public static Specification<EventEntity> excludeStatuses(
-            EventStatus... statuses) {
+            final EventStatus... statuses) {
         return (root, query, criteriaBuilder) -> {
-            CriteriaBuilder.In<EventStatus> inClause = criteriaBuilder.in(
-                    root.get("state"));
+            CriteriaBuilder.In<EventStatus> inClause =
+                    criteriaBuilder.in(root.get("state"));
             for (EventStatus status : statuses) {
                 inClause.value(status);
             }

@@ -23,6 +23,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class CategoryServiceImpl implements CategoryService {
+    /**
+     * Implementation of repository.
+     */
 
     private final CategoryRepository repository;
 
@@ -31,7 +34,8 @@ public class CategoryServiceImpl implements CategoryService {
      */
     @Override
     @Transactional(readOnly = true)
-    public List<CategoryResponse> getCategories(final Integer from, final Integer size) {
+    public List<CategoryResponse> getCategories(
+            final Integer from, final Integer size) {
         log.info("Getting categories from index {} with size {}", from, size);
         Pageable pageable = PageRequest.of(from / size, size);
         Page<CategoryEntity> categoryEntities = repository.findAll(pageable);
