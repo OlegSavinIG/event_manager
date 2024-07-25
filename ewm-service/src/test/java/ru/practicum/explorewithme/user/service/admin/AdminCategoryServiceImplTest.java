@@ -17,6 +17,9 @@ import java.util.Optional;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+/**
+ * Test class for {@link AdminCategoryServiceImpl}.
+ */
 @ExtendWith(MockitoExtension.class)
 public class AdminCategoryServiceImplTest {
 
@@ -32,6 +35,9 @@ public class AdminCategoryServiceImplTest {
     private CategoryRequest categoryRequest;
     private CategoryEntity categoryEntity;
 
+    /**
+     * Sets up test data before each test.
+     */
     @BeforeEach
     void setUp() {
         categoryRequest = CategoryRequest.builder()
@@ -44,6 +50,9 @@ public class AdminCategoryServiceImplTest {
                 .build();
     }
 
+    /**
+     * Tests the createCategory method.
+     */
     @Test
     void testCreateCategory() {
         when(repository.save(any(CategoryEntity.class))).thenReturn(categoryEntity);
@@ -55,6 +64,9 @@ public class AdminCategoryServiceImplTest {
         assert response.getId().equals(categoryEntity.getId());
     }
 
+    /**
+     * Tests the deleteCategory method.
+     */
     @Test
     void testDeleteCategory() {
         doNothing().when(checker).isCategoryExists(anyInt());
@@ -66,6 +78,9 @@ public class AdminCategoryServiceImplTest {
         verify(repository, times(1)).deleteById(anyInt());
     }
 
+    /**
+     * Tests the updateCategory method.
+     */
     @Test
     void testUpdateCategory() {
         when(repository.findById(anyInt())).thenReturn(Optional.of(categoryEntity));

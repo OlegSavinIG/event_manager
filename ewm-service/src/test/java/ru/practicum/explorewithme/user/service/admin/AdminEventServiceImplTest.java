@@ -32,6 +32,9 @@ import java.util.Optional;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+/**
+ * Test class for {@link AdminEventServiceImpl}.
+ */
 @ExtendWith(MockitoExtension.class)
 public class AdminEventServiceImplTest {
 
@@ -54,6 +57,9 @@ public class AdminEventServiceImplTest {
     private CategoryEntity categoryEntity;
     private UserEntity userEntity;
 
+    /**
+     * Sets up test data before each test.
+     */
     @BeforeEach
     void setUp() {
         categoryEntity = CategoryEntity.builder().id(1).name("Test Category").build();
@@ -107,6 +113,9 @@ public class AdminEventServiceImplTest {
         criteria.setRangeEnd(LocalDateTime.now().plusDays(1));
     }
 
+    /**
+     * Tests the getEvents method.
+     */
     @Test
     void testGetEvents() {
         Page<EventEntity> page = new PageImpl<>(Collections.singletonList(eventEntity));
@@ -120,6 +129,9 @@ public class AdminEventServiceImplTest {
         assert responses.get(0).getId().equals(eventEntity.getId());
     }
 
+    /**
+     * Tests the approveEvent method.
+     */
     @Test
     void testApproveEvent() {
         when(eventRepository.findById(anyLong())).thenReturn(Optional.of(eventEntity));
@@ -134,6 +146,9 @@ public class AdminEventServiceImplTest {
         assert response.getId().equals(eventEntity.getId());
     }
 
+    /**
+     * Tests the approveEvent method for a non-existing event.
+     */
     @Test
     void testApproveEvent_NotExist() {
         when(eventRepository.findById(anyLong())).thenReturn(Optional.empty());
@@ -148,6 +163,9 @@ public class AdminEventServiceImplTest {
         verify(eventRepository, times(0)).save(any(EventEntity.class));
     }
 
+    /**
+     * Tests the approveEvent method with an invalid category.
+     */
     @Test
     void testApproveEvent_InvalidCategory() {
         when(eventRepository.findById(anyLong())).thenReturn(Optional.of(eventEntity));

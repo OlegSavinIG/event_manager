@@ -29,6 +29,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
+/**
+ * Test class for {@link PrivateUserRequestServiceImpl}.
+ */
 @ExtendWith(MockitoExtension.class)
 public class PrivateUserRequestServiceImplTest {
 
@@ -57,6 +60,9 @@ public class PrivateUserRequestServiceImplTest {
     private EventResponse eventResponse;
     private ApproveRequestCriteria criteria;
 
+    /**
+     * Sets up test data before each test.
+     */
     @BeforeEach
     void setUp() {
         userEntity = UserEntity.builder()
@@ -80,16 +86,20 @@ public class PrivateUserRequestServiceImplTest {
                 .build();
         eventResponse = EventResponse.builder()
                 .title("Test Event")
-                .initiator(new UserResponseWithEvent(1l, "name"))
+                .initiator(new UserResponseWithEvent(1L, "name"))
                 .build();
         criteria = new ApproveRequestCriteria();
         criteria.setIds(Collections.singletonList(1L));
         criteria.setStatus("CONFIRMED");
     }
 
+    /**
+     * Tests the getEventRequests method.
+     */
     @Test
     void testGetEventRequests() {
-        when(repository.findAllByEventId(anyLong())).thenReturn(Optional.of(Collections.singletonList(requestEntity)));
+        when(repository.findAllByEventId(anyLong()))
+                .thenReturn(Optional.of(Collections.singletonList(requestEntity)));
         when(eventService.getEvent(anyLong())).thenReturn(eventResponse);
 
         List<UserEventRequestDto> responses = service.getEventRequests(1L, 1L);
@@ -99,10 +109,14 @@ public class PrivateUserRequestServiceImplTest {
         assert responses.get(0).getId().equals(requestEntity.getId());
     }
 
+    /**
+     * Tests the approveRequests method.
+     */
     @Test
     void testApproveRequests() throws Exception {
         when(eventService.getEventEntity(anyLong())).thenReturn(eventEntity);
-        when(repository.findAllById(any())).thenReturn(Collections.singletonList(requestEntity));
+        when(repository.findAllById(any()))
+                .thenReturn(Collections.singletonList(requestEntity));
 
         service.approveRequests(1L, 1L, criteria);
 
@@ -111,10 +125,14 @@ public class PrivateUserRequestServiceImplTest {
         verify(eventRepository, times(1)).save(any(EventEntity.class));
     }
 
+    /**
+     * Tests the getUserRequests method.
+     */
     @Test
     void testGetUserRequests() {
         when(repository.existsById(anyLong())).thenReturn(true);
-        when(repository.findAllByRequesterId(anyLong())).thenReturn(Collections.singletonList(requestEntity));
+        when(repository.findAllByRequesterId(anyLong()))
+                .thenReturn(Collections.singletonList(requestEntity));
 
         List<UserEventRequestDto> responses = service.getUserRequests(1L);
 
@@ -124,27 +142,37 @@ public class PrivateUserRequestServiceImplTest {
         assert responses.get(0).getId().equals(requestEntity.getId());
     }
 
+    /**
+     * Tests the createRequest method.
+     */
     @Test
     void testCreateRequest() {
-        when(repository.existsByRequesterIdAndEventId(anyLong(), anyLong())).thenReturn(false);
+        when(repository.existsByRequesterIdAndEventId(anyLong(), anyLong()))
+                .thenReturn(false);
         when(eventService.getEventEntity(anyLong())).thenReturn(eventEntity);
         when(adminUserService.findUserEntity(anyLong())).thenReturn(userEntity);
         when(repository.save(any(UserEventRequestEntity.class))).thenReturn(requestEntity);
 
         UserEventRequestDto response = service.createRequest(1L, 1L);
 
-        verify(repository, times(1)).existsByRequesterIdAndEventId(anyLong(), anyLong());
+        verify(repository, times(1))
+                .existsByRequesterIdAndEventId(anyLong(), anyLong());
         verify(repository, times(1)).save(any(UserEventRequestEntity.class));
         assert response.getId().equals(requestEntity.getId());
     }
 
+    /**
+     * Tests the cancelRequest method.
+     */
     @Test
     void testCancelRequest() {
-        when(repository.findByIdAndRequesterId(anyLong(), anyLong())).thenReturn(Optional.of(requestEntity));
+        when(repository.findByIdAndRequesterId(anyLong(), anyLong()))
+                .thenReturn(Optional.of(requestEntity));
 
         UserEventRequestDto response = service.cancelRequest(1L, 1L);
 
-        verify(repository, times(1)).findByIdAndRequesterId(anyLong(), anyLong());
+        verify(repository, times(1))
+                .findByIdAndRequesterId(anyLong(), anyLong());
         verify(repository, times(1)).delete(any(UserEventRequestEntity.class));
         assert response.getId().equals(requestEntity.getId());
     }

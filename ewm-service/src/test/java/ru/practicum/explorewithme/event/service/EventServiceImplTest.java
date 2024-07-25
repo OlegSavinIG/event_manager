@@ -29,6 +29,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
+/**
+ * Test class for {@link EventServiceImpl}.
+ */
 @ExtendWith(MockitoExtension.class)
 class EventServiceImplTest {
 
@@ -48,6 +51,9 @@ class EventServiceImplTest {
     private CategoryEntity category;
     private UserEntity userEntity;
 
+    /**
+     * Sets up test data before each test.
+     */
     @BeforeEach
     void setUp() {
         userEntity = UserEntity.builder()
@@ -80,6 +86,9 @@ class EventServiceImplTest {
         criteria.setRangeEnd(LocalDateTime.now().plusDays(1));
     }
 
+    /**
+     * Tests the getEvents method.
+     */
     @Test
     void getEvents() {
         Page<EventEntity> page = new PageImpl<>(Collections.singletonList(eventEntity));
@@ -97,6 +106,9 @@ class EventServiceImplTest {
         verify(eventClient, times(1)).getEventViews(anyLong());
     }
 
+    /**
+     * Tests the getEvent method for an existing event.
+     */
     @Test
     void getEvent() {
         when(repository.findById(anyLong())).thenReturn(Optional.of(eventEntity));
@@ -111,16 +123,23 @@ class EventServiceImplTest {
         verify(eventClient, times(1)).getEventViews(anyLong());
     }
 
+    /**
+     * Tests the getEvent method for a non-existing event.
+     */
     @Test
     void getEvent_NotExist() {
         when(repository.findById(anyLong())).thenReturn(Optional.empty());
 
-        NotExistException exception = assertThrows(NotExistException.class, () -> service.getEvent(1L));
+        NotExistException exception = assertThrows(NotExistException.class,
+                () -> service.getEvent(1L));
         assertEquals("This event does not exist", exception.getMessage());
 
         verify(repository, times(1)).findById(anyLong());
     }
 
+    /**
+     * Tests the getEventsByIds method.
+     */
     @Test
     void getEventsByIds() {
         when(repository.findAllById(anyList())).thenReturn(Collections.singletonList(eventEntity));
@@ -134,6 +153,9 @@ class EventServiceImplTest {
         verify(repository, times(1)).findAllById(anyList());
     }
 
+    /**
+     * Tests the getEventsByIds method with an empty result.
+     */
     @Test
     void getEventsByIds_Empty() {
         when(repository.findAllById(anyList())).thenReturn(Collections.emptyList());
@@ -146,6 +168,9 @@ class EventServiceImplTest {
         verify(repository, times(1)).findAllById(anyList());
     }
 
+    /**
+     * Tests the getEventEntity method for an existing event.
+     */
     @Test
     void getEventEntity() {
         when(repository.findById(anyLong())).thenReturn(Optional.of(eventEntity));
@@ -158,16 +183,23 @@ class EventServiceImplTest {
         verify(repository, times(1)).findById(anyLong());
     }
 
+    /**
+     * Tests the getEventEntity method for a non-existing event.
+     */
     @Test
     void getEventEntity_NotExist() {
         when(repository.findById(anyLong())).thenReturn(Optional.empty());
 
-        NotExistException exception = assertThrows(NotExistException.class, () -> service.getEventEntity(1L));
+        NotExistException exception = assertThrows(NotExistException.class,
+                () -> service.getEventEntity(1L));
         assertEquals("Event does not exist", exception.getMessage());
 
         verify(repository, times(1)).findById(anyLong());
     }
 
+    /**
+     * Tests the getEventEntities method.
+     */
     @Test
     void getEventEntities() {
         when(repository.findAllById(anyList())).thenReturn(Collections.singletonList(eventEntity));

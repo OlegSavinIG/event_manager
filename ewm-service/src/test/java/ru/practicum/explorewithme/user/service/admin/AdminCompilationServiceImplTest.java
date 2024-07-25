@@ -21,6 +21,9 @@ import java.util.Optional;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+/**
+ * Test class for {@link AdminCompilationServiceImpl}.
+ */
 @ExtendWith(MockitoExtension.class)
 public class AdminCompilationServiceImplTest {
 
@@ -40,6 +43,9 @@ public class AdminCompilationServiceImplTest {
     private CompilationEntity compilationEntity;
     private CompilationResponse compilationResponse;
 
+    /**
+     * Sets up test data before each test.
+     */
     @BeforeEach
     void setUp() {
         compilationRequest = CompilationRequest.builder()
@@ -63,6 +69,9 @@ public class AdminCompilationServiceImplTest {
                 .build();
     }
 
+    /**
+     * Tests the createCompilation method.
+     */
     @Test
     void testCreateCompilation() {
         when(mapper.toEntity(any(CompilationRequest.class), any(EventService.class)))
@@ -79,6 +88,9 @@ public class AdminCompilationServiceImplTest {
         assert response.getId().equals(compilationEntity.getId());
     }
 
+    /**
+     * Tests the deleteCompilationById method.
+     */
     @Test
     void testDeleteCompilationById() {
         when(repository.existsById(anyInt())).thenReturn(true);
@@ -90,6 +102,9 @@ public class AdminCompilationServiceImplTest {
         verify(repository, times(1)).deleteById(anyInt());
     }
 
+    /**
+     * Tests the deleteCompilationById method for a non-existing compilation.
+     */
     @Test
     void testDeleteCompilationByIdNotExist() {
         when(repository.existsById(anyInt())).thenReturn(false);
@@ -104,6 +119,9 @@ public class AdminCompilationServiceImplTest {
         verify(repository, times(0)).deleteById(anyInt());
     }
 
+    /**
+     * Tests the updateCompilation method.
+     */
     @Test
     void testUpdateCompilation() {
         when(repository.findById(anyInt())).thenReturn(Optional.of(compilationEntity));
@@ -119,6 +137,9 @@ public class AdminCompilationServiceImplTest {
         assert response.getId().equals(compilationEntity.getId());
     }
 
+    /**
+     * Tests the updateCompilation method for a non-existing compilation.
+     */
     @Test
     void testUpdateCompilationNotExist() {
         when(repository.findById(anyInt())).thenReturn(Optional.empty());

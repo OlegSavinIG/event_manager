@@ -53,8 +53,8 @@ public class AdminCompilationServiceImpl implements AdminCompilationService {
         log.info("Deleting compilation with id: {}", compId);
         boolean existsById = repository.existsById(compId);
         if (!existsById) {
-            log.warn("Compilation with id {} does not exist", compId);
-            throw new NotExistException("This compilation does not exist");
+            log.info("Compilation with id {} does not exist", compId);
+            throw new NotExistException("This compilation not exist");
         }
         repository.deleteById(compId);
         log.info("Deleted compilation with id: {}", compId);

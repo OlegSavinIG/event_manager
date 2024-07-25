@@ -24,6 +24,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.*;
 
+/**
+ * Test class for {@link CompilationServiceImpl}.
+ */
 @ExtendWith(MockitoExtension.class)
 class CompilationServiceImplTest {
 
@@ -41,6 +44,9 @@ class CompilationServiceImplTest {
     private EventEntity eventEntity;
     private EventResponse eventResponse;
 
+    /**
+     * Sets up test data before each test.
+     */
     @BeforeEach
     void setUp() {
         eventEntity = EventEntity.builder()
@@ -68,6 +74,9 @@ class CompilationServiceImplTest {
                 .build();
     }
 
+    /**
+     * Tests the getCompilations method.
+     */
     @Test
     void getCompilations() {
         when(repository.findAllByPinned(anyBoolean(), any(Pageable.class)))
@@ -81,10 +90,14 @@ class CompilationServiceImplTest {
         assertEquals(1, responses.size());
         assertEquals(compilationResponse, responses.get(0));
 
-        verify(repository, times(1)).findAllByPinned(anyBoolean(), any(Pageable.class));
+        verify(repository, times(1))
+                .findAllByPinned(anyBoolean(), any(Pageable.class));
         verify(mapper, times(1)).toResponse(any(CompilationEntity.class));
     }
 
+    /**
+     * Tests the getCompilation method for an existing compilation.
+     */
     @Test
     void getCompilation() {
         when(repository.findById(anyInt())).thenReturn(Optional.of(compilationEntity));
@@ -99,11 +112,15 @@ class CompilationServiceImplTest {
         verify(mapper, times(1)).toResponse(any(CompilationEntity.class));
     }
 
+    /**
+     * Tests the getCompilation method for a non-existing compilation.
+     */
     @Test
     void getCompilation_NotExist() {
         when(repository.findById(anyInt())).thenReturn(Optional.empty());
 
-        NotExistException exception = assertThrows(NotExistException.class, () -> service.getCompilation(1));
+        NotExistException exception = assertThrows(NotExistException.class,
+                () -> service.getCompilation(1));
         assertEquals("Compilation doesn't exist", exception.getMessage());
 
         verify(repository, times(1)).findById(anyInt());

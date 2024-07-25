@@ -30,6 +30,9 @@ import java.util.Optional;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
+/**
+ * Test class for {@link PrivateUserEventsServiceImpl}.
+ */
 @ExtendWith(MockitoExtension.class)
 public class PrivateUserEventsServiceImplTest {
 
@@ -55,6 +58,9 @@ public class PrivateUserEventsServiceImplTest {
     private CategoryResponse categoryResponse;
     private CategoryEntity categoryEntity;
 
+    /**
+     * Sets up test data before each test.
+     */
     @BeforeEach
     void setUp() {
         userEntity = UserEntity.builder().id(1L).name("Test User").build();
@@ -101,28 +107,41 @@ public class PrivateUserEventsServiceImplTest {
                 .build();
     }
 
+    /**
+     * Tests the getEventsByUserId method.
+     */
     @Test
     void testGetEventsByUserId() {
         Page<EventEntity> page = new PageImpl<>(Collections.singletonList(eventEntity));
-        when(repository.findAllByInitiatorId(anyLong(), any(PageRequest.class))).thenReturn(Optional.of(page));
+        when(repository.findAllByInitiatorId(anyLong(), any(PageRequest.class)))
+                .thenReturn(Optional.of(page));
 
         List<EventResponse> responses = service.getEventsByUserId(1L, 0, 10);
 
-        verify(repository, times(1)).findAllByInitiatorId(anyLong(), any(PageRequest.class));
+        verify(repository, times(1))
+                .findAllByInitiatorId(anyLong(), any(PageRequest.class));
         assert responses.size() == 1;
         assert responses.get(0).getId().equals(eventEntity.getId());
     }
 
+    /**
+     * Tests the getByUserIdAndEventId method.
+     */
     @Test
     void testGetByUserIdAndEventId() {
-        when(repository.findByIdAndInitiatorId(anyLong(), anyLong())).thenReturn(Optional.of(eventEntity));
+        when(repository.findByIdAndInitiatorId(anyLong(), anyLong()))
+                .thenReturn(Optional.of(eventEntity));
 
         EventResponse response = service.getByUserIdAndEventId(1L, 1L);
 
-        verify(repository, times(1)).findByIdAndInitiatorId(anyLong(), anyLong());
+        verify(repository, times(1))
+                .findByIdAndInitiatorId(anyLong(), anyLong());
         assert response.getId().equals(eventEntity.getId());
     }
 
+    /**
+     * Tests the createEvent method.
+     */
     @Test
     void testCreateEvent() {
         when(adminUserService.findUserEntity(anyLong())).thenReturn(userEntity);
@@ -135,22 +154,31 @@ public class PrivateUserEventsServiceImplTest {
         assert response.getId().equals(eventEntity.getId());
     }
 
+    /**
+     * Tests the updateEvent method.
+     */
     @Test
     void testUpdateEvent() {
-        when(repository.findByIdAndInitiatorId(anyLong(), anyLong())).thenReturn(Optional.of(eventEntity));
+        when(repository.findByIdAndInitiatorId(anyLong(), anyLong()))
+                .thenReturn(Optional.of(eventEntity));
         when(repository.save(any(EventEntity.class))).thenReturn(eventEntity);
         when(categoryService.getCategoryEntity(anyInt())).thenReturn(categoryEntity);
 
         EventResponse response = service.updateEvent(1L, 1L, eventRequest);
 
-        verify(repository, times(1)).findByIdAndInitiatorId(anyLong(), anyLong());
+        verify(repository, times(1))
+                .findByIdAndInitiatorId(anyLong(), anyLong());
         verify(repository, times(1)).save(any(EventEntity.class));
         assert response.getId().equals(eventEntity.getId());
     }
 
+    /**
+     * Tests the updateEvent method for a non-existing event.
+     */
     @Test
     void testUpdateEvent_NotExist() {
-        when(repository.findByIdAndInitiatorId(anyLong(), anyLong())).thenReturn(Optional.empty());
+        when(repository.findByIdAndInitiatorId(anyLong(), anyLong()))
+                .thenReturn(Optional.empty());
 
         try {
             service.updateEvent(1L, 1L, eventRequest);
@@ -158,7 +186,8 @@ public class PrivateUserEventsServiceImplTest {
             assert e.getMessage().equals("This event does not exist");
         }
 
-        verify(repository, times(1)).findByIdAndInitiatorId(anyLong(), anyLong());
+        verify(repository, times(1))
+                .findByIdAndInitiatorId(anyLong(), anyLong());
         verify(repository, times(0)).save(any(EventEntity.class));
     }
 }

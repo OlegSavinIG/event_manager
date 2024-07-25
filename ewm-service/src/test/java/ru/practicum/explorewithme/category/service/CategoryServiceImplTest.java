@@ -22,6 +22,9 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+/**
+ * Test class for {@link CategoryServiceImpl}.
+ */
 @ExtendWith(MockitoExtension.class)
 class CategoryServiceImplTest {
 
@@ -34,6 +37,9 @@ class CategoryServiceImplTest {
     private CategoryEntity categoryEntity;
     private CategoryResponse categoryResponse;
 
+    /**
+     * Sets up test data before each test.
+     */
     @BeforeEach
     void setUp() {
         categoryEntity = CategoryEntity.builder()
@@ -47,10 +53,14 @@ class CategoryServiceImplTest {
                 .build();
     }
 
+    /**
+     * Tests the getCategories method.
+     */
     @Test
     void getCategories() {
         Pageable pageable = PageRequest.of(0, 10);
-        Page<CategoryEntity> categoryEntities = new PageImpl<>(Collections.singletonList(categoryEntity));
+        Page<CategoryEntity> categoryEntities = new PageImpl<>(
+                Collections.singletonList(categoryEntity));
 
         when(repository.findAll(pageable)).thenReturn(categoryEntities);
 
@@ -63,6 +73,9 @@ class CategoryServiceImplTest {
         verify(repository, times(1)).findAll(pageable);
     }
 
+    /**
+     * Tests the getCategory method for an existing category.
+     */
     @Test
     void getCategory() {
         when(repository.findById(anyInt())).thenReturn(Optional.of(categoryEntity));
@@ -75,16 +88,23 @@ class CategoryServiceImplTest {
         verify(repository, times(1)).findById(anyInt());
     }
 
+    /**
+     * Tests the getCategory method for a non-existing category.
+     */
     @Test
     void getCategory_NotExist() {
         when(repository.findById(anyInt())).thenReturn(Optional.empty());
 
-        NotExistException exception = assertThrows(NotExistException.class, () -> service.getCategory(1));
+        NotExistException exception = assertThrows(NotExistException.class,
+                () -> service.getCategory(1));
         assertEquals("This category does not exist", exception.getMessage());
 
         verify(repository, times(1)).findById(anyInt());
     }
 
+    /**
+     * Tests the getCategoryEntity method for an existing category.
+     */
     @Test
     void getCategoryEntity() {
         when(repository.findById(anyInt())).thenReturn(Optional.of(categoryEntity));
@@ -97,11 +117,15 @@ class CategoryServiceImplTest {
         verify(repository, times(1)).findById(anyInt());
     }
 
+    /**
+     * Tests the getCategoryEntity method for a non-existing category.
+     */
     @Test
     void getCategoryEntity_NotExist() {
         when(repository.findById(anyInt())).thenReturn(Optional.empty());
 
-        NotExistException exception = assertThrows(NotExistException.class, () -> service.getCategoryEntity(1));
+        NotExistException exception = assertThrows(NotExistException.class,
+                () -> service.getCategoryEntity(1));
         assertEquals("This category does not exist", exception.getMessage());
 
         verify(repository, times(1)).findById(anyInt());
