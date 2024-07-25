@@ -11,17 +11,17 @@ public interface AdminCompilationService {
     /**
      * Creates a new compilation.
      *
-     * @param compilation the compilation request containing details of the compilation to create
+     * @param compilation the compilation request containing details
      * @return the created compilation response
      */
-    CompilationResponse createCompilation(CompilationRequest compilation);
+    CompilationResponse createCompilation(final CompilationRequest compilation);
 
     /**
      * Deletes a compilation by its ID.
      *
      * @param compId the ID of the compilation to delete
      */
-    void deleteCompilationById(Integer compId);
+    void deleteCompilationById(final Integer compId);
 
     /**
      * Updates an existing compilation identified by its ID.
@@ -30,5 +30,6 @@ public interface AdminCompilationService {
      * @param compId      the ID of the compilation to update
      * @return the updated compilation response
      */
-    CompilationResponse updateCompilation(CompilationRequest compilation, Integer compId);
+    CompilationResponse updateCompilation(final CompilationRequest compilation,
+                                          final Integer compId);
 }

@@ -36,13 +36,13 @@ public class EventController {
      */
     @GetMapping
     public ResponseEntity<List<EventResponseShort>> getEvents(
-            @ModelAttribute EventSearchCriteria criteria,
-            @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
-            @Positive @RequestParam(defaultValue = "10") Integer size,
-            HttpServletRequest servletRequest
+            @ModelAttribute final EventSearchCriteria criteria,
+            @PositiveOrZero @RequestParam(defaultValue = "0") final Integer from,
+            @Positive @RequestParam(defaultValue = "10") final Integer size,
+            final HttpServletRequest servletRequest
     ) {
-        String remoteAddr = servletRequest.getRemoteAddr();
-        String requestURI = servletRequest.getRequestURI();
+        final String remoteAddr = servletRequest.getRemoteAddr();
+        final String requestURI = servletRequest.getRequestURI();
         client.sendRequestData(remoteAddr, requestURI);
         return ResponseEntity.ok(service.getEvents(criteria, from, size));
     }
@@ -56,11 +56,11 @@ public class EventController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<EventResponse> getEvent(
-            @PathVariable Long id,
-            HttpServletRequest servletRequest
+            @PathVariable final Long id,
+            final HttpServletRequest servletRequest
     ) {
-        String remoteAddr = servletRequest.getRemoteAddr();
-        String requestURI = servletRequest.getRequestURI();
+        final String remoteAddr = servletRequest.getRemoteAddr();
+        final String requestURI = servletRequest.getRequestURI();
         client.sendRequestData(remoteAddr, requestURI);
         return ResponseEntity.ok(service.getEvent(id));
     }

@@ -17,7 +17,7 @@ public interface CategoryService {
      * @param size the number of results to retrieve
      * @return the list of category responses
      */
-    List<CategoryResponse> getCategories(Integer from, Integer size);
+    List<CategoryResponse> getCategories(final Integer from, final Integer size);
 
     /**
      * Retrieves a specific category by its ID.
@@ -25,7 +25,7 @@ public interface CategoryService {
      * @param catId the ID of the category
      * @return the category response
      */
-    CategoryResponse getCategory(Integer catId);
+    CategoryResponse getCategory(final Integer catId);
 
     /**
      * Retrieves a specific category entity by its ID.
@@ -33,5 +33,5 @@ public interface CategoryService {
      * @param catId the ID of the category
      * @return the category entity
      */
-    CategoryEntity getCategoryEntity(Integer catId);
+    CategoryEntity getCategoryEntity(final Integer catId);
 }

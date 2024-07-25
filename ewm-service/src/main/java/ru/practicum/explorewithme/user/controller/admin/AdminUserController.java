@@ -21,6 +21,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AdminUserController {
 
+    /**
+     * Service for managing users.
+     */
     private final AdminUserService service;
 
     /**
@@ -31,7 +34,7 @@ public class AdminUserController {
      */
     @PostMapping("/users")
     public ResponseEntity<UserResponse> addNewUser(
-            @Valid @RequestBody UserRequest userRequest) {
+            @Valid @RequestBody final UserRequest userRequest) {
         return ResponseEntity.ok(service.addNewUser(userRequest));
     }
 
@@ -45,9 +48,9 @@ public class AdminUserController {
      */
     @GetMapping("/users")
     public ResponseEntity<Collection<UserResponse>> getUsersInformation(
-            @RequestParam(required = false) List<Long> ids,
-            @PositiveOrZero @RequestParam(defaultValue = "0") int from,
-            @Positive @RequestParam(defaultValue = "10") int size) {
+            @RequestParam(required = false) final List<Long> ids,
+            @PositiveOrZero @RequestParam(defaultValue = "0") final int from,
+            @Positive @RequestParam(defaultValue = "10") final int size) {
         if (ids != null && !ids.isEmpty()) {
             return ResponseEntity.ok(service.findByIds(ids, from, size));
         } else {
@@ -61,7 +64,7 @@ public class AdminUserController {
      * @param userId the ID of the user to delete
      */
     @DeleteMapping("/users/{userId}")
-    public void deleteUserById(@PathVariable Long userId) {
+    public void deleteUserById(@PathVariable final Long userId) {
         service.deleteUserById(userId);
     }
 }

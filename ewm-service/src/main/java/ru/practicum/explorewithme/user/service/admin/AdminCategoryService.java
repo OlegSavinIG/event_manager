@@ -13,22 +13,23 @@ public interface AdminCategoryService {
      *
      * @param catId the ID of the category to delete
      */
-    void deleteCategory(Integer catId);
+    void deleteCategory(final Integer catId);
 
     /**
      * Creates a new category based on the provided category request.
      *
-     * @param category the category request object containing category details
+     * @param category the category request object containing details
      * @return the created category response
      */
-    CategoryResponse createCategory(CategoryRequest category);
+    CategoryResponse createCategory(final CategoryRequest category);
 
     /**
      * Updates an existing category identified by its ID.
      *
-     * @param category the category request object containing updated category details
+     * @param category the category request object with updated details
      * @param catId    the ID of the category to update
      * @return the updated category response
      */
-    CategoryResponse updateCategory(CategoryRequest category, Integer catId);
+    CategoryResponse updateCategory(final CategoryRequest category,
+                                    final Integer catId);
 }

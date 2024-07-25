@@ -25,6 +25,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class AdminUserServiceImpl implements AdminUserService {
+
+    /** Repository for user operations */
     private final AdminUserRepository repository;
 
     /**
@@ -32,10 +34,10 @@ public class AdminUserServiceImpl implements AdminUserService {
      */
     @Override
     @Transactional
-    public UserResponse addNewUser(UserRequest userRequest) {
+    public UserResponse addNewUser(final UserRequest userRequest) {
         log.info("Adding new user with request: {}", userRequest);
-        UserEntity savedEntity = repository.save(UserMapper.toEntity(
-                userRequest));
+        UserEntity savedEntity = repository.save(
+                UserMapper.toEntity(userRequest));
         log.info("User added with ID: {}", savedEntity.getId());
         return UserMapper.toResponse(savedEntity);
     }
@@ -45,8 +47,8 @@ public class AdminUserServiceImpl implements AdminUserService {
      */
     @Override
     @Transactional(readOnly = true)
-    public Collection<UserResponse> findByIds(List<Long> ids, int from,
-                                              int size) {
+    public Collection<UserResponse> findByIds(final List<Long> ids,
+                                              final int from, final int size) {
         log.info("Finding users by IDs: {}, from: {}, size: {}", ids, from,
                 size);
         Pageable pageable = PageRequest.of(from / size, size);
@@ -63,7 +65,7 @@ public class AdminUserServiceImpl implements AdminUserService {
      */
     @Override
     @Transactional(readOnly = true)
-    public Collection<UserResponse> findAll(int from, int size) {
+    public Collection<UserResponse> findAll(final int from, final int size) {
         log.info("Finding all users from: {}, size: {}", from, size);
         Pageable pageable = PageRequest.of(from / size, size);
         Page<UserEntity> userEntities = repository.findAll(pageable);
@@ -79,7 +81,7 @@ public class AdminUserServiceImpl implements AdminUserService {
      */
     @Override
     @Transactional
-    public void deleteUserById(Long userId) {
+    public void deleteUserById(final Long userId) {
         log.info("Deleting user with ID: {}", userId);
         boolean existsById = repository.existsById(userId);
         if (!existsById) {
@@ -95,7 +97,7 @@ public class AdminUserServiceImpl implements AdminUserService {
      */
     @Override
     @Transactional(readOnly = true)
-    public UserResponse findById(Long userId) {
+    public UserResponse findById(final Long userId) {
         log.info("Finding user by ID: {}", userId);
         UserEntity userEntity = repository.findById(userId)
                 .orElseThrow(() -> {
@@ -111,7 +113,7 @@ public class AdminUserServiceImpl implements AdminUserService {
      */
     @Override
     @Transactional(readOnly = true)
-    public UserEntity findUserEntity(Long userId) {
+    public UserEntity findUserEntity(final Long userId) {
         log.info("Finding user entity by ID: {}", userId);
         return repository.findById(userId)
                 .orElseThrow(() -> {

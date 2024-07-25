@@ -18,9 +18,8 @@ import javax.validation.Valid;
 public class AdminCompilationController {
 
     /**
-     * REST service for managing compilations by admin.
+     * Service for managing compilations.
      */
-
     private final AdminCompilationService service;
 
     /**
@@ -31,8 +30,7 @@ public class AdminCompilationController {
      */
     @PostMapping("/compilations")
     public ResponseEntity<CompilationResponse> createCompilation(
-            @Valid @RequestBody CompilationRequest compilation
-    ) {
+            @Valid @RequestBody final CompilationRequest compilation) {
         return ResponseEntity.ok(service.createCompilation(compilation));
     }
 
@@ -42,7 +40,7 @@ public class AdminCompilationController {
      * @param compId the ID of the compilation to delete
      */
     @DeleteMapping("/compilations/{compId}")
-    public void deleteCompilationById(@PathVariable Integer compId) {
+    public void deleteCompilationById(@PathVariable final Integer compId) {
         service.deleteCompilationById(compId);
     }
 
@@ -55,9 +53,8 @@ public class AdminCompilationController {
      */
     @PatchMapping("/compilations/{compId}")
     public ResponseEntity<CompilationResponse> updateCompilation(
-            @Valid @RequestBody CompilationRequest compilation,
-            @PathVariable Integer compId
-    ) {
+            @Valid @RequestBody final CompilationRequest compilation,
+            @PathVariable final Integer compId) {
         return ResponseEntity.ok(service.updateCompilation(compilation, compId));
     }
 }

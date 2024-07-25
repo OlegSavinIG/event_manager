@@ -17,6 +17,9 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 public class AdminCategoryController {
 
+    /**
+     * Service for managing categories.
+     */
     private final AdminCategoryService service;
 
     /**
@@ -27,8 +30,7 @@ public class AdminCategoryController {
      */
     @PostMapping("/categories")
     public ResponseEntity<CategoryResponse> createCategory(
-            @Valid @RequestBody CategoryRequest category
-    ) {
+            @Valid @RequestBody final CategoryRequest category) {
         return ResponseEntity.ok(service.createCategory(category));
     }
 
@@ -38,7 +40,7 @@ public class AdminCategoryController {
      * @param catId the ID of the category to delete
      */
     @DeleteMapping("/categories/{catId}")
-    public void deleteCategory(@PathVariable Integer catId) {
+    public void deleteCategory(@PathVariable final Integer catId) {
         service.deleteCategory(catId);
     }
 
@@ -51,9 +53,8 @@ public class AdminCategoryController {
      */
     @PatchMapping("/categories/{catId}")
     public ResponseEntity<CategoryResponse> updateCategory(
-            @PathVariable Integer catId,
-            @Valid @RequestBody CategoryRequest category
-    ) {
+            @PathVariable final Integer catId,
+            @Valid @RequestBody final CategoryRequest category) {
         return ResponseEntity.ok(service.updateCategory(category, catId));
     }
 }

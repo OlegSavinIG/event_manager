@@ -19,6 +19,9 @@ import java.util.List;
 @RequestMapping("/admin")
 @RequiredArgsConstructor
 public class AdminEventController {
+    /**
+     * Service for managing events.
+     */
     private final AdminEventService service;
 
     /**
@@ -31,10 +34,9 @@ public class AdminEventController {
      */
     @GetMapping("/events")
     public ResponseEntity<List<EventResponse>> getEvents(
-            @ModelAttribute EventSearchCriteriaForAdmin criteria,
-            @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
-            @Positive @RequestParam(defaultValue = "10") Integer size
-    ) {
+            @ModelAttribute final EventSearchCriteriaForAdmin criteria,
+            @PositiveOrZero @RequestParam(defaultValue = "0") final Integer from,
+            @Positive @RequestParam(defaultValue = "10") final Integer size) {
         return ResponseEntity.ok(service.getEvents(criteria, from, size));
     }
 
@@ -47,8 +49,8 @@ public class AdminEventController {
      */
     @PatchMapping("/events/{eventId}")
     public ResponseEntity<EventResponse> approveEvent(
-            @RequestBody EventRequest request,
-            @PathVariable Long eventId) {
+            @RequestBody final EventRequest request,
+            @PathVariable final Long eventId) {
         EventResponse response = service.approveEvent(request, eventId);
         return ResponseEntity.ok(response);
     }

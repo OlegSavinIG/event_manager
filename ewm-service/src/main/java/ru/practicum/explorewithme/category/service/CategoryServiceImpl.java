@@ -31,7 +31,7 @@ public class CategoryServiceImpl implements CategoryService {
      */
     @Override
     @Transactional(readOnly = true)
-    public List<CategoryResponse> getCategories(Integer from, Integer size) {
+    public List<CategoryResponse> getCategories(final Integer from, final Integer size) {
         log.info("Getting categories from index {} with size {}", from, size);
         Pageable pageable = PageRequest.of(from / size, size);
         Page<CategoryEntity> categoryEntities = repository.findAll(pageable);
@@ -47,7 +47,7 @@ public class CategoryServiceImpl implements CategoryService {
      */
     @Override
     @Transactional(readOnly = true)
-    public CategoryResponse getCategory(Integer catId) {
+    public CategoryResponse getCategory(final Integer catId) {
         log.info("Getting category with ID {}", catId);
         CategoryEntity categoryEntity = repository.findById(catId)
                 .orElseThrow(() -> new NotExistException(
@@ -62,7 +62,7 @@ public class CategoryServiceImpl implements CategoryService {
      */
     @Override
     @Transactional(readOnly = true)
-    public CategoryEntity getCategoryEntity(Integer catId) {
+    public CategoryEntity getCategoryEntity(final Integer catId) {
         log.info("Getting category entity with ID {}", catId);
         CategoryEntity categoryEntity = repository.findById(catId)
                 .orElseThrow(() -> new NotExistException(

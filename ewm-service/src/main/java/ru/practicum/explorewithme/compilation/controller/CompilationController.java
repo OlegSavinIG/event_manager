@@ -32,9 +32,9 @@ public class CompilationController {
      */
     @GetMapping
     public ResponseEntity<List<CompilationResponse>> getCompilations(
-            @RequestParam(defaultValue = "false") Boolean pinned,
-            @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
-            @Positive @RequestParam(defaultValue = "10") Integer size) {
+            @RequestParam(defaultValue = "false") final Boolean pinned,
+            @PositiveOrZero @RequestParam(defaultValue = "0") final Integer from,
+            @Positive @RequestParam(defaultValue = "10") final Integer size) {
         log.info("Received request to get compilations with pinned={}, from={}, size={}",
                 pinned, from, size);
         List<CompilationResponse> compilations = service.getCompilations(
@@ -51,7 +51,7 @@ public class CompilationController {
      */
     @GetMapping("/{compId}")
     public ResponseEntity<CompilationResponse> getCompilation(
-            @PathVariable Integer compId) {
+            @PathVariable final Integer compId) {
         log.info("Received request to get compilation with ID {}", compId);
         CompilationResponse compilation = service.getCompilation(compId);
         log.info("Returning compilation: {}", compilation);

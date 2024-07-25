@@ -28,7 +28,7 @@ public class ExistChecker {
      * @param userId the ID of the user
      * @throws NotExistException if the user does not exist
      */
-    public void isUserExist(Long userId) {
+    public void isUserExist(final Long userId) {
         boolean existsById = adminUserRepository.existsById(userId);
         if (!existsById) {
             throw new NotExistException("User not exists");
@@ -41,7 +41,7 @@ public class ExistChecker {
      * @param eventId the ID of the event
      * @throws NotExistException if the event does not exist
      */
-    public void isEventExists(Long eventId) {
+    public void isEventExists(final Long eventId) {
         boolean existsById = eventRepository.existsById(eventId);
         if (!existsById) {
             throw new NotExistException("Event not exists");
@@ -54,7 +54,7 @@ public class ExistChecker {
      * @param compId the ID of the compilation
      * @throws NotExistException if the compilation does not exist
      */
-    public void isCompilationExists(Integer compId) {
+    public void isCompilationExists(final Integer compId) {
         boolean existsById = compilationRepository.existsById(compId);
         if (!existsById) {
             throw new NotExistException("Compilation not exists");
@@ -67,7 +67,7 @@ public class ExistChecker {
      * @param catId the ID of the category
      * @throws NotExistException if the category does not exist
      */
-    public void isCategoryExists(Integer catId) {
+    public void isCategoryExists(final Integer catId) {
         boolean existsById = categoryRepository.existsById(catId);
         if (!existsById) {
             throw new NotExistException("Category not exists");
@@ -80,7 +80,7 @@ public class ExistChecker {
      * @param reqId the ID of the request
      * @throws NotExistException if the request does not exist
      */
-    public void isRequestExists(Long reqId) {
+    public void isRequestExists(final Long reqId) {
         boolean existsById = requestRepository.existsById(reqId);
         if (!existsById) {
             throw new NotExistException("Request not exists");

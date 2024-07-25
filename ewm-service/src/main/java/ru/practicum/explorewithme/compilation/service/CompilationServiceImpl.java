@@ -31,9 +31,9 @@ public class CompilationServiceImpl implements CompilationService {
      */
     @Override
     @Transactional(readOnly = true)
-    public List<CompilationResponse> getCompilations(Boolean pinned,
-                                                     Integer from,
-                                                     Integer size) {
+    public List<CompilationResponse> getCompilations(final Boolean pinned,
+                                                     final Integer from,
+                                                     final Integer size) {
         log.info("Fetching compilations with pinned={}, from={}, size={}",
                 pinned, from, size);
         Pageable pageable = PageRequest.of(from / size, size);
@@ -51,7 +51,7 @@ public class CompilationServiceImpl implements CompilationService {
      */
     @Override
     @Transactional(readOnly = true)
-    public CompilationResponse getCompilation(Integer compId) {
+    public CompilationResponse getCompilation(final Integer compId) {
         log.info("Fetching compilation with ID {}", compId);
         CompilationEntity entity = repository.findById(compId)
                 .orElseThrow(() -> new NotExistException(

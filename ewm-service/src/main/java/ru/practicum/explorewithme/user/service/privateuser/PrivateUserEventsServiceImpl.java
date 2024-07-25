@@ -26,22 +26,38 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Implementation of the {@link PrivateUserEventsService} interface.
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class PrivateUserEventsServiceImpl implements PrivateUserEventsService {
+
+    /** Repository for event operations */
     private final EventRepository repository;
+    /** Service for admin user operations */
     private final AdminUserService adminUserService;
+    /** Service for category operations */
     private final CategoryService categoryService;
+    /** Service for existence checking */
     private final ExistChecker checker;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public List<EventResponse> getEventsByUserId(Long userId, Integer from, Integer size) {
-        log.info("Fetching events for user ID: {}, from: {}, size: {}", userId, from, size);
+    public List<EventResponse> getEventsByUserId(final Long userId,
+                                                 final Integer from,
+                                                 final Integer size) {
+        log.info("Fetching events for user ID: {}, from: {}, size: {}", userId,
+                from, size);
         checker.isUserExist(userId);
         Pageable pageable = PageRequest.of(from / size, size);
-        Page<EventEntity> eventEntities = repository.findAllByInitiatorId(userId, pageable)
-                .orElseThrow(() -> new NotExistException("This user does not have events"));
+        Page<EventEntity> eventEntities = repository
+                .findAllByInitiatorId(userId, pageable)
+                .orElseThrow(() -> new NotExistException(
+                        "This user does not have events"));
         List<EventResponse> responses = eventEntities.stream()
                 .map(EventMapper::toResponse)
                 .collect(Collectors.toList());
@@ -49,39 +65,59 @@ public class PrivateUserEventsServiceImpl implements PrivateUserEventsService {
         return responses;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public EventResponse getByUserIdAndEventId(Long userId, Long eventId) {
+    public EventResponse getByUserIdAndEventId(final Long userId,
+                                               final Long eventId) {
         log.info("Fetching event ID: {} for user ID: {}", eventId, userId);
         checker.isUserExist(userId);
         checker.isEventExists(eventId);
-        EventEntity entity = repository.findByIdAndInitiatorId(eventId, userId)
-                .orElseThrow(() -> new NotExistException("This event does not exist"));
+        EventEntity entity = repository
+                .findByIdAndInitiatorId(eventId, userId)
+                .orElseThrow(() -> new NotExistException(
+                        "This event does not exist"));
         log.info("Found event ID: {} for user ID: {}", eventId, userId);
         return EventMapper.toResponse(entity);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Transactional
-    public EventResponse createEvent(EventRequest request, Long userId) {
-        log.info("Creating event for user ID: {} with request: {}", userId, request);
+    public EventResponse createEvent(final EventRequest request,
+                                     final Long userId) {
+        log.info("Creating event for user ID: {} with request: {}", userId,
+                request);
         checker.isUserExist(userId);
         UserEntity userEntity = adminUserService.findUserEntity(userId);
-        CategoryResponse category = categoryService.getCategory(request.getCategory());
-        EventEntity eventEntity = repository.save(
-                EventMapper.toEntity(request, CategoryMapper.toEntity(category), userEntity));
+        CategoryResponse category = categoryService.getCategory(
+                request.getCategory());
+        EventEntity eventEntity = repository.save(EventMapper.toEntity(request,
+                CategoryMapper.toEntity(category), userEntity));
         eventEntity.setCreatedOn(LocalDateTime.now());
-        log.info("Event created with ID: {} for user ID: {}", eventEntity.getId(), userId);
+        log.info("Event created with ID: {} for user ID: {}", eventEntity.getId(),
+                userId);
         return EventMapper.toResponse(eventEntity);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Transactional
     @Override
-    public EventResponse updateEvent(Long userId, Long eventId, EventRequest request) {
-        log.info("Updating event ID: {} for user ID: {} with request: {}", eventId, userId, request);
+    public EventResponse updateEvent(final Long userId, final Long eventId,
+                                     final EventRequest request) {
+        log.info("Updating event ID: {} for user ID: {} with request: {}",
+                eventId, userId, request);
         checker.isUserExist(userId);
         checker.isEventExists(eventId);
-        EventEntity entity = repository.findByIdAndInitiatorId(eventId, userId)
-                .orElseThrow(() -> new NotExistException("This event does not exist"));
+        EventEntity entity = repository
+                .findByIdAndInitiatorId(eventId, userId)
+                .orElseThrow(() -> new NotExistException(
+                        "This event does not exist"));
 
         if (request.getTitle() != null) {
             entity.setTitle(request.getTitle());
@@ -108,7 +144,8 @@ public class PrivateUserEventsServiceImpl implements PrivateUserEventsService {
             entity.setState(EventStatus.valueOf(request.getStateAction()));
         }
         if (request.getCategory() != null) {
-            CategoryEntity category = categoryService.getCategoryEntity(request.getCategory());
+            CategoryEntity category = categoryService.getCategoryEntity(
+                    request.getCategory());
             entity.setCategory(category);
         }
 

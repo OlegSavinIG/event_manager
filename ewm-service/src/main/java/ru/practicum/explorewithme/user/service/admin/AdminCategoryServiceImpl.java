@@ -29,7 +29,7 @@ public class AdminCategoryServiceImpl implements AdminCategoryService {
      */
     @Override
     @Transactional
-    public void deleteCategory(Integer catId) {
+    public void deleteCategory(final Integer catId) {
         log.info("Deleting category with id: {}", catId);
         checker.isCategoryExists(catId);
         repository.deleteById(catId);
@@ -39,14 +39,15 @@ public class AdminCategoryServiceImpl implements AdminCategoryService {
     /**
      * Creates a new category based on the provided category request.
      *
-     * @param category the category request object containing category details
+     * @param category the category request object containing details
      * @return the created category response
      */
     @Override
     @Transactional
-    public CategoryResponse createCategory(CategoryRequest category) {
+    public CategoryResponse createCategory(final CategoryRequest category) {
         log.info("Creating category with name: {}", category.getName());
-        CategoryEntity entity = repository.save(CategoryMapper.toEntity(category));
+        CategoryEntity entity = repository.save(
+                CategoryMapper.toEntity(category));
         CategoryResponse response = CategoryMapper.toResponse(entity);
         log.info("Created category with id: {}", response.getId());
         return response;
@@ -55,16 +56,18 @@ public class AdminCategoryServiceImpl implements AdminCategoryService {
     /**
      * Updates an existing category identified by its ID.
      *
-     * @param category the category request object containing updated category details
+     * @param category the category request object with updated details
      * @param catId    the ID of the category to update
      * @return the updated category response
      */
     @Override
     @Transactional
-    public CategoryResponse updateCategory(CategoryRequest category, Integer catId) {
+    public CategoryResponse updateCategory(final CategoryRequest category,
+                                           final Integer catId) {
         log.info("Updating category with id: {}", catId);
         checker.isCategoryExists(catId);
-        CategoryEntity categoryEntity = repository.findById(catId).get();
+        CategoryEntity categoryEntity = repository.findById(catId)
+                .orElseThrow(() -> new IllegalArgumentException("Category not found"));
         if (category.getName() != null) {
             categoryEntity.setName(category.getName());
         }

@@ -33,8 +33,8 @@ public class CategoryController {
      */
     @GetMapping("/categories")
     public ResponseEntity<List<CategoryResponse>> getCategories(
-            @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
-            @Positive @RequestParam(defaultValue = "10") Integer size) {
+            @PositiveOrZero @RequestParam(defaultValue = "0") final Integer from,
+            @Positive @RequestParam(defaultValue = "10") final Integer size) {
         log.info("Received request to get categories from {} with size {}",
                 from, size);
         List<CategoryResponse> categories = service.getCategories(from, size);
@@ -50,7 +50,7 @@ public class CategoryController {
      */
     @GetMapping("/categories/{catId}")
     public ResponseEntity<CategoryResponse> getCategory(
-            @PathVariable Integer catId) {
+            @PathVariable final Integer catId) {
         log.info("Received request to get category with ID {}", catId);
         CategoryResponse category = service.getCategory(catId);
         log.info("Returning category: {}", category);

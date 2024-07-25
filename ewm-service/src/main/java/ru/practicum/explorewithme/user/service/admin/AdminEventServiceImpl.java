@@ -32,8 +32,14 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class AdminEventServiceImpl implements AdminEventService {
+
+    /** Repository for admin event operations */
     private final AdminEventRepository repository;
+
+    /** Repository for event operations */
     private final EventRepository eventRepository;
+
+    /** Repository for category operations */
     private final CategoryRepository categoryRepository;
 
     /**
@@ -42,7 +48,9 @@ public class AdminEventServiceImpl implements AdminEventService {
     @Override
     @Transactional(readOnly = true)
     public List<EventResponse> getEvents(
-            EventSearchCriteriaForAdmin criteria, Integer from, Integer size) {
+            final EventSearchCriteriaForAdmin criteria,
+            final Integer from,
+            final Integer size) {
         log.info("Fetching events with criteria: {}", criteria);
         Pageable pageable = PageRequest.of(from / size, size);
         Specification<EventEntity> spec = Specification.where(null);
@@ -80,7 +88,7 @@ public class AdminEventServiceImpl implements AdminEventService {
      */
     @Override
     @Transactional
-    public EventResponse approveEvent(EventRequest request, Long eventId) {
+    public EventResponse approveEvent(final EventRequest request, final Long eventId) {
         log.info("Approving event with id: {}", eventId);
         EventEntity event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotExistException(
@@ -131,7 +139,7 @@ public class AdminEventServiceImpl implements AdminEventService {
      * @param stateAction the state action to perform
      * @param event       the event entity to update
      */
-    private void handleStateAction(String stateAction, EventEntity event) {
+    private void handleStateAction(final String stateAction, final EventEntity event) {
         switch (stateAction) {
             case "PUBLISH_EVENT":
                 if (!event.getState().name().equals("PENDING")) {

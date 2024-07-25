@@ -33,17 +33,23 @@ import java.util.stream.Collectors;
 @Slf4j
 public class PrivateUserRequestServiceImpl implements PrivateUserRequestService {
 
+    /** Repository for user requests */
     private final RequestRepository repository;
+    /** Service for event-related operations */
     private final EventService eventService;
+    /** Repository for event entities */
     private final EventRepository eventRepository;
+    /** Service for admin user operations */
     private final AdminUserService adminUserService;
+    /** Checker for existence of various entities */
     private final ExistChecker checker;
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public List<UserEventRequestDto> getEventRequests(Long userId, Long eventId) {
+    public List<UserEventRequestDto> getEventRequests(final Long userId,
+                                                      final Long eventId) {
         log.info("Fetching event requests for event ID: {} by user ID: {}",
                 eventId, userId);
         checker.isEventExists(eventId);
@@ -70,12 +76,13 @@ public class PrivateUserRequestServiceImpl implements PrivateUserRequestService 
     @Override
     @Transactional
     public EventRequestStatusUpdateResult approveRequests(
-            Long userId, Long eventId, ApproveRequestCriteria criteria) {
+            final Long userId, final Long eventId,
+            final ApproveRequestCriteria criteria) {
         log.info("Approving requests for event ID: {} by user ID: {}",
                 eventId, userId);
         checker.isUserExist(userId);
         EventEntity event = eventService.getEventEntity(eventId);
-        if (event.getRequestModeration().equals(Boolean.FALSE)) {
+        if (Boolean.FALSE.equals(event.getRequestModeration())) {
             throw new IllegalArgumentException("Event doesn't have moderation");
         }
         if (!event.getInitiator().getId().equals(userId)) {
@@ -115,7 +122,7 @@ public class PrivateUserRequestServiceImpl implements PrivateUserRequestService 
      * {@inheritDoc}
      */
     @Override
-    public List<UserEventRequestDto> getUserRequests(Long userId) {
+    public List<UserEventRequestDto> getUserRequests(final Long userId) {
         log.info("Fetching user requests for user ID: {}", userId);
         boolean existsById = repository.existsById(userId);
         if (!existsById) {
@@ -134,7 +141,8 @@ public class PrivateUserRequestServiceImpl implements PrivateUserRequestService 
      * {@inheritDoc}
      */
     @Override
-    public UserEventRequestDto createRequest(Long userId, Long eventId) {
+    public UserEventRequestDto createRequest(final Long userId,
+                                             final Long eventId) {
         log.info("Creating request for event ID: {} by user ID: {}", eventId,
                 userId);
         boolean existed = repository.existsByRequesterIdAndEventId(userId,
@@ -162,7 +170,8 @@ public class PrivateUserRequestServiceImpl implements PrivateUserRequestService 
      * {@inheritDoc}
      */
     @Override
-    public UserEventRequestDto cancelRequest(Long userId, Long requestId) {
+    public UserEventRequestDto cancelRequest(final Long userId,
+                                             final Long requestId) {
         log.info("Cancelling request ID: {} by user ID: {}", requestId, userId);
         checker.isUserExist(userId);
         checker.isRequestExists(requestId);
@@ -181,8 +190,8 @@ public class PrivateUserRequestServiceImpl implements PrivateUserRequestService 
      * @param entity the user event request entity
      * @param status the new status
      */
-    private void updateRequestStatus(UserEventRequestEntity entity,
-                                     String status) {
+    private void updateRequestStatus(final UserEventRequestEntity entity,
+                                     final String status) {
         entity.setStatus(status);
         repository.save(entity);
     }

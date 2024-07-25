@@ -18,7 +18,8 @@ public interface PrivateUserRequestService {
      * @param eventId the ID of the event
      * @return the list of user event request DTOs
      */
-    List<UserEventRequestDto> getEventRequests(Long userId, Long eventId);
+    List<UserEventRequestDto> getEventRequests(final Long userId,
+                                               final Long eventId);
 
     /**
      * Approves or rejects user requests for an event based on criteria.
@@ -28,8 +29,9 @@ public interface PrivateUserRequestService {
      * @param criteria the criteria for approving or rejecting requests
      * @return the result of the request status update
      */
-    EventRequestStatusUpdateResult approveRequests(Long userId, Long eventId,
-                                                   ApproveRequestCriteria criteria);
+    EventRequestStatusUpdateResult approveRequests(final Long userId,
+                                                   final Long eventId,
+                                                   final ApproveRequestCriteria criteria);
 
     /**
      * Retrieves all requests made by a specific user.
@@ -37,7 +39,7 @@ public interface PrivateUserRequestService {
      * @param userId the ID of the user
      * @return the list of user event request DTOs
      */
-    List<UserEventRequestDto> getUserRequests(Long userId);
+    List<UserEventRequestDto> getUserRequests(final Long userId);
 
     /**
      * Creates a new request for an event by a user.
@@ -46,7 +48,7 @@ public interface PrivateUserRequestService {
      * @param eventId the ID of the event
      * @return the created user event request DTO
      */
-    UserEventRequestDto createRequest(Long userId, Long eventId);
+    UserEventRequestDto createRequest(final Long userId, final Long eventId);
 
     /**
      * Cancels a request made by a user.
@@ -55,5 +57,5 @@ public interface PrivateUserRequestService {
      * @param requestId the ID of the request
      * @return the canceled user event request DTO
      */
-    UserEventRequestDto cancelRequest(Long userId, Long requestId);
+    UserEventRequestDto cancelRequest(final Long userId, final Long requestId);
 }
