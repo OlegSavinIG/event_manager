@@ -37,10 +37,8 @@ public class PrivateUserEventsController {
     @GetMapping("/{userId}/events")
     public ResponseEntity<List<EventResponse>> getEventsByUserId(
             @PathVariable final Long userId,
-            @PositiveOrZero @RequestParam(defaultValue = "0")
-            final Integer from,
-            @Positive @RequestParam(defaultValue = "10")
-            final Integer size) {
+            @PositiveOrZero @RequestParam(defaultValue = "0") final Integer from,
+            @Positive @RequestParam(defaultValue = "10") final Integer size) {
         return ResponseEntity.ok(service.getEventsByUserId(userId, from, size));
     }
 

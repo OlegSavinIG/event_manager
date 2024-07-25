@@ -37,10 +37,8 @@ public class EventController {
     @GetMapping
     public ResponseEntity<List<EventResponseShort>> getEvents(
             @ModelAttribute final EventSearchCriteria criteria,
-            @PositiveOrZero @RequestParam(defaultValue = "0")
-            final Integer from,
-            @Positive @RequestParam(defaultValue = "10")
-            final Integer size,
+            @PositiveOrZero @RequestParam(defaultValue = "0") final Integer from,
+            @Positive @RequestParam(defaultValue = "10") final Integer size,
             final HttpServletRequest servletRequest
     ) {
         final String remoteAddr = servletRequest.getRemoteAddr();

@@ -35,27 +35,54 @@ import static org.mockito.Mockito.*;
  */
 @ExtendWith(MockitoExtension.class)
 public class PrivateUserEventsServiceImplTest {
-
+    /**
+     * Sets up test data before each test.
+     */
     @Mock
     private EventRepository repository;
-
+    /**
+     * Sets up test data before each test.
+     */
     @Mock
     private AdminUserService adminUserService;
-
+    /**
+     * Sets up test data before each test.
+     */
     @Mock
     private CategoryService categoryService;
-
+    /**
+     * Sets up test data before each test.
+     */
     @Mock
     private ExistChecker checker;
-
+    /**
+     * Sets up test data before each test.
+     */
     @InjectMocks
     private PrivateUserEventsServiceImpl service;
-
+    /**
+     * Sets up test data before each test.
+     */
     private EventRequest eventRequest;
+    /**
+     * Sets up test data before each test.
+     */
     private EventEntity eventEntity;
+    /**
+     * Sets up test data before each test.
+     */
     private EventResponse eventResponse;
+    /**
+     * Sets up test data before each test.
+     */
     private UserEntity userEntity;
+    /**
+     * Sets up test data before each test.
+     */
     private CategoryResponse categoryResponse;
+    /**
+     * Sets up test data before each test.
+     */
     private CategoryEntity categoryEntity;
 
     /**
@@ -63,9 +90,12 @@ public class PrivateUserEventsServiceImplTest {
      */
     @BeforeEach
     void setUp() {
-        userEntity = UserEntity.builder().id(1L).name("Test User").build();
-        categoryEntity = CategoryEntity.builder().id(1).name("Test Category").build();
-        categoryResponse = CategoryResponse.builder().id(1).name("Test Category").build();
+        userEntity = UserEntity.builder().id(1L)
+                .name("Test User").build();
+        categoryEntity = CategoryEntity.builder().id(1)
+                .name("Test Category").build();
+        categoryResponse = CategoryResponse.builder().id(1)
+                .name("Test Category").build();
 
         eventRequest = EventRequest.builder()
                 .title("Test Title")
@@ -112,11 +142,14 @@ public class PrivateUserEventsServiceImplTest {
      */
     @Test
     void testGetEventsByUserId() {
-        Page<EventEntity> page = new PageImpl<>(Collections.singletonList(eventEntity));
-        when(repository.findAllByInitiatorId(anyLong(), any(PageRequest.class)))
+        Page<EventEntity> page = new PageImpl<>(Collections
+                .singletonList(eventEntity));
+        when(repository.findAllByInitiatorId(anyLong(),
+                any(PageRequest.class)))
                 .thenReturn(Optional.of(page));
 
-        List<EventResponse> responses = service.getEventsByUserId(1L, 0, 10);
+        List<EventResponse> responses = service
+                .getEventsByUserId(1L, 0, 10);
 
         verify(repository, times(1))
                 .findAllByInitiatorId(anyLong(), any(PageRequest.class));
@@ -132,7 +165,8 @@ public class PrivateUserEventsServiceImplTest {
         when(repository.findByIdAndInitiatorId(anyLong(), anyLong()))
                 .thenReturn(Optional.of(eventEntity));
 
-        EventResponse response = service.getByUserIdAndEventId(1L, 1L);
+        EventResponse response = service
+                .getByUserIdAndEventId(1L, 1L);
 
         verify(repository, times(1))
                 .findByIdAndInitiatorId(anyLong(), anyLong());
@@ -144,13 +178,17 @@ public class PrivateUserEventsServiceImplTest {
      */
     @Test
     void testCreateEvent() {
-        when(adminUserService.findUserEntity(anyLong())).thenReturn(userEntity);
-        when(categoryService.getCategory(anyInt())).thenReturn(categoryResponse);
-        when(repository.save(any(EventEntity.class))).thenReturn(eventEntity);
+        when(adminUserService.findUserEntity(anyLong()))
+                .thenReturn(userEntity);
+        when(categoryService.getCategory(anyInt()))
+                .thenReturn(categoryResponse);
+        when(repository.save(any(EventEntity.class)))
+                .thenReturn(eventEntity);
 
         EventResponse response = service.createEvent(eventRequest, 1L);
 
-        verify(repository, times(1)).save(any(EventEntity.class));
+        verify(repository, times(1))
+                .save(any(EventEntity.class));
         assert response.getId().equals(eventEntity.getId());
     }
 
@@ -161,14 +199,18 @@ public class PrivateUserEventsServiceImplTest {
     void testUpdateEvent() {
         when(repository.findByIdAndInitiatorId(anyLong(), anyLong()))
                 .thenReturn(Optional.of(eventEntity));
-        when(repository.save(any(EventEntity.class))).thenReturn(eventEntity);
-        when(categoryService.getCategoryEntity(anyInt())).thenReturn(categoryEntity);
+        when(repository.save(any(EventEntity.class)))
+                .thenReturn(eventEntity);
+        when(categoryService.getCategoryEntity(anyInt()))
+                .thenReturn(categoryEntity);
 
-        EventResponse response = service.updateEvent(1L, 1L, eventRequest);
+        EventResponse response = service
+                .updateEvent(1L, 1L, eventRequest);
 
         verify(repository, times(1))
                 .findByIdAndInitiatorId(anyLong(), anyLong());
-        verify(repository, times(1)).save(any(EventEntity.class));
+        verify(repository, times(1))
+                .save(any(EventEntity.class));
         assert response.getId().equals(eventEntity.getId());
     }
 
@@ -188,6 +230,7 @@ public class PrivateUserEventsServiceImplTest {
 
         verify(repository, times(1))
                 .findByIdAndInitiatorId(anyLong(), anyLong());
-        verify(repository, times(0)).save(any(EventEntity.class));
+        verify(repository, times(0))
+                .save(any(EventEntity.class));
     }
 }

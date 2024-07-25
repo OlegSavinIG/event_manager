@@ -34,15 +34,25 @@ import java.util.stream.Collectors;
 public class PrivateUserRequestServiceImpl
         implements PrivateUserRequestService {
 
-    /** Repository for user requests */
+    /**
+     * Repository for user requests
+     */
     private final RequestRepository repository;
-    /** Service for event-related operations */
+    /**
+     * Service for event-related operations
+     */
     private final EventService eventService;
-    /** Repository for event entities */
+    /**
+     * Repository for event entities
+     */
     private final EventRepository eventRepository;
-    /** Service for admin user operations */
+    /**
+     * Service for admin user operations
+     */
     private final AdminUserService adminUserService;
-    /** Checker for existence of various entities */
+    /**
+     * Checker for existence of various entities
+     */
     private final ExistChecker checker;
 
     /**

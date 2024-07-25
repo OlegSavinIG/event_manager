@@ -37,24 +37,49 @@ import static org.mockito.Mockito.*;
  */
 @ExtendWith(MockitoExtension.class)
 public class AdminEventServiceImplTest {
-
+    /**
+     * Sets up test data before each test.
+     */
     @Mock
     private AdminEventRepository repository;
-
+    /**
+     * Sets up test data before each test.
+     */
     @Mock
     private EventRepository eventRepository;
-
+    /**
+     * Sets up test data before each test.
+     */
     @Mock
     private CategoryRepository categoryRepository;
-
+    /**
+     * Sets up test data before each test.
+     */
     @InjectMocks
     private AdminEventServiceImpl service;
-
+    /**
+     * Sets up test data before each test.
+     */
     private EventRequest eventRequest;
+    /**
+     * Sets up test data before each test.
+     */
     private EventEntity eventEntity;
+    /**
+     * Sets up test data before each test.
+     */
     private EventResponse eventResponse;
+    /**
+     * Sets up test data before each test.
+     */
     private EventSearchCriteriaForAdmin criteria;
+    /**
+     * Sets up test data before each test.
+     */
     private CategoryEntity categoryEntity;
+    /**
+     * Sets up test data before each test.
+     */
     private UserEntity userEntity;
 
     /**
@@ -62,8 +87,10 @@ public class AdminEventServiceImplTest {
      */
     @BeforeEach
     void setUp() {
-        categoryEntity = CategoryEntity.builder().id(1).name("Test Category").build();
-        userEntity = UserEntity.builder().id(1L).name("Test User").build();
+        categoryEntity = CategoryEntity.builder().id(1)
+                .name("Test Category").build();
+        userEntity = UserEntity.builder().id(1L)
+                .name("Test User").build();
 
         eventRequest = EventRequest.builder()
                 .annotation("Test Annotation")
@@ -118,13 +145,16 @@ public class AdminEventServiceImplTest {
      */
     @Test
     void testGetEvents() {
-        Page<EventEntity> page = new PageImpl<>(Collections.singletonList(eventEntity));
-        when(repository.findAll(any(Specification.class), any(PageRequest.class)))
+        Page<EventEntity> page = new PageImpl<>(Collections
+                .singletonList(eventEntity));
+        when(repository.findAll(any(Specification.class),
+                any(PageRequest.class)))
                 .thenReturn(page);
 
         List<EventResponse> responses = service.getEvents(criteria, 0, 10);
 
-        verify(repository, times(1)).findAll(any(Specification.class), any(PageRequest.class));
+        verify(repository, times(1))
+                .findAll(any(Specification.class), any(PageRequest.class));
         assert responses.size() == 1;
         assert responses.get(0).getId().equals(eventEntity.getId());
     }
@@ -134,14 +164,19 @@ public class AdminEventServiceImplTest {
      */
     @Test
     void testApproveEvent() {
-        when(eventRepository.findById(anyLong())).thenReturn(Optional.of(eventEntity));
-        when(eventRepository.save(any(EventEntity.class))).thenReturn(eventEntity);
-        when(categoryRepository.findById(anyInt())).thenReturn(Optional.of(categoryEntity));
+        when(eventRepository.findById(anyLong()))
+                .thenReturn(Optional.of(eventEntity));
+        when(eventRepository.save(any(EventEntity.class)))
+                .thenReturn(eventEntity);
+        when(categoryRepository.findById(anyInt()))
+                .thenReturn(Optional.of(categoryEntity));
 
         EventResponse response = service.approveEvent(eventRequest, 1L);
 
-        verify(eventRepository, times(1)).findById(anyLong());
-        verify(eventRepository, times(1)).save(any(EventEntity.class));
+        verify(eventRepository, times(1))
+                .findById(anyLong());
+        verify(eventRepository, times(1))
+                .save(any(EventEntity.class));
         assert response != null;
         assert response.getId().equals(eventEntity.getId());
     }
@@ -159,8 +194,10 @@ public class AdminEventServiceImplTest {
             assert e.getMessage().equals("Event with id=1 was not found");
         }
 
-        verify(eventRepository, times(1)).findById(anyLong());
-        verify(eventRepository, times(0)).save(any(EventEntity.class));
+        verify(eventRepository, times(1))
+                .findById(anyLong());
+        verify(eventRepository, times(0))
+                .save(any(EventEntity.class));
     }
 
     /**
@@ -168,8 +205,10 @@ public class AdminEventServiceImplTest {
      */
     @Test
     void testApproveEvent_InvalidCategory() {
-        when(eventRepository.findById(anyLong())).thenReturn(Optional.of(eventEntity));
-        when(categoryRepository.findById(anyInt())).thenReturn(Optional.empty());
+        when(eventRepository.findById(anyLong()))
+                .thenReturn(Optional.of(eventEntity));
+        when(categoryRepository.findById(anyInt()))
+                .thenReturn(Optional.empty());
 
         try {
             service.approveEvent(eventRequest, 1L);
@@ -177,8 +216,11 @@ public class AdminEventServiceImplTest {
             assert e.getMessage().equals("Category not found");
         }
 
-        verify(eventRepository, times(1)).findById(anyLong());
-        verify(categoryRepository, times(1)).findById(anyInt());
-        verify(eventRepository, times(0)).save(any(EventEntity.class));
+        verify(eventRepository, times(1))
+                .findById(anyLong());
+        verify(categoryRepository, times(1))
+                .findById(anyInt());
+        verify(eventRepository, times(0))
+                .save(any(EventEntity.class));
     }
 }

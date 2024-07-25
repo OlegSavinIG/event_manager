@@ -34,21 +34,44 @@ import static org.mockito.Mockito.*;
  */
 @ExtendWith(MockitoExtension.class)
 class EventServiceImplTest {
-
+    /**
+     * Sets up test data before each test.
+     */
     @Mock
     private EventRepository repository;
-
+    /**
+     * Sets up test data before each test.
+     */
     @Mock
     private EventClient eventClient;
-
+    /**
+     * Sets up test data before each test.
+     */
     @InjectMocks
     private EventServiceImpl service;
-
+    /**
+     * Sets up test data before each test.
+     */
     private EventEntity eventEntity;
+    /**
+     * Sets up test data before each test.
+     */
     private EventResponse eventResponse;
+    /**
+     * Sets up test data before each test.
+     */
     private EventResponseShort eventResponseShort;
+    /**
+     * Sets up test data before each test.
+     */
     private EventSearchCriteria criteria;
+    /**
+     * Sets up test data before each test.
+     */
     private CategoryEntity category;
+    /**
+     * Sets up test data before each test.
+     */
     private UserEntity userEntity;
 
     /**
@@ -91,9 +114,12 @@ class EventServiceImplTest {
      */
     @Test
     void getEvents() {
-        Page<EventEntity> page = new PageImpl<>(Collections.singletonList(eventEntity));
-        when(repository.findAll(any(Specification.class), any(Pageable.class))).thenReturn(page);
-        when(eventClient.getEventViews(anyLong())).thenReturn(CompletableFuture.completedFuture(100));
+        Page<EventEntity> page =
+                new PageImpl<>(Collections.singletonList(eventEntity));
+        when(repository.findAll(any(Specification.class),
+                any(Pageable.class))).thenReturn(page);
+        when(eventClient.getEventViews(anyLong()))
+                .thenReturn(CompletableFuture.completedFuture(100));
 
         List<EventResponseShort> responses = service.getEvents(criteria, 0, 10);
 
@@ -102,7 +128,8 @@ class EventServiceImplTest {
         assertEquals(eventResponseShort, responses.get(0));
         assertEquals(100, responses.get(0).getViews());
 
-        verify(repository, times(1)).findAll(any(Specification.class), any(Pageable.class));
+        verify(repository, times(1))
+                .findAll(any(Specification.class), any(Pageable.class));
         verify(eventClient, times(1)).getEventViews(anyLong());
     }
 
@@ -112,7 +139,8 @@ class EventServiceImplTest {
     @Test
     void getEvent() {
         when(repository.findById(anyLong())).thenReturn(Optional.of(eventEntity));
-        when(eventClient.getEventViews(anyLong())).thenReturn(CompletableFuture.completedFuture(100));
+        when(eventClient.getEventViews(anyLong()))
+                .thenReturn(CompletableFuture.completedFuture(100));
 
         EventResponse response = service.getEvent(1L);
 
@@ -142,9 +170,11 @@ class EventServiceImplTest {
      */
     @Test
     void getEventsByIds() {
-        when(repository.findAllById(anyList())).thenReturn(Collections.singletonList(eventEntity));
+        when(repository.findAllById(anyList()))
+                .thenReturn(Collections.singletonList(eventEntity));
 
-        List<EventResponse> responses = service.getEventsByIds(Collections.singletonList(1L));
+        List<EventResponse> responses = service
+                .getEventsByIds(Collections.singletonList(1L));
 
         assertNotNull(responses);
         assertEquals(1, responses.size());
@@ -158,14 +188,17 @@ class EventServiceImplTest {
      */
     @Test
     void getEventsByIds_Empty() {
-        when(repository.findAllById(anyList())).thenReturn(Collections.emptyList());
+        when(repository.findAllById(anyList()))
+                .thenReturn(Collections.emptyList());
 
-        List<EventResponse> responses = service.getEventsByIds(Collections.singletonList(1L));
+        List<EventResponse> responses = service
+                .getEventsByIds(Collections.singletonList(1L));
 
         assertNotNull(responses);
         assertTrue(responses.isEmpty());
 
-        verify(repository, times(1)).findAllById(anyList());
+        verify(repository, times(1))
+                .findAllById(anyList());
     }
 
     /**
@@ -173,7 +206,8 @@ class EventServiceImplTest {
      */
     @Test
     void getEventEntity() {
-        when(repository.findById(anyLong())).thenReturn(Optional.of(eventEntity));
+        when(repository.findById(anyLong()))
+                .thenReturn(Optional.of(eventEntity));
 
         EventEntity entity = service.getEventEntity(1L);
 
@@ -202,9 +236,11 @@ class EventServiceImplTest {
      */
     @Test
     void getEventEntities() {
-        when(repository.findAllById(anyList())).thenReturn(Collections.singletonList(eventEntity));
+        when(repository.findAllById(anyList()))
+                .thenReturn(Collections.singletonList(eventEntity));
 
-        List<EventEntity> entities = service.getEventEntities(Collections.singletonList(1L));
+        List<EventEntity> entities = service
+                .getEventEntities(Collections.singletonList(1L));
 
         assertNotNull(entities);
         assertEquals(1, entities.size());

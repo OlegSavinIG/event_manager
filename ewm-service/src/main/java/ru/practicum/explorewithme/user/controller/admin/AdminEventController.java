@@ -35,10 +35,8 @@ public class AdminEventController {
     @GetMapping("/events")
     public ResponseEntity<List<EventResponse>> getEvents(
             @ModelAttribute final EventSearchCriteriaForAdmin criteria,
-            @PositiveOrZero @RequestParam(defaultValue = "0")
-            final Integer from,
-            @Positive @RequestParam(defaultValue = "10")
-            final Integer size) {
+            @PositiveOrZero @RequestParam(defaultValue = "0") final Integer from,
+            @Positive @RequestParam(defaultValue = "10") final Integer size) {
         return ResponseEntity.ok(service.getEvents(criteria, from, size));
     }
 

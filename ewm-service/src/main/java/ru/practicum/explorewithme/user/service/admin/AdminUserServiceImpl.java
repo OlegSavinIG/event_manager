@@ -26,7 +26,9 @@ import java.util.stream.Collectors;
 @Slf4j
 public class AdminUserServiceImpl implements AdminUserService {
 
-    /** Repository for user operations */
+    /**
+     * Repository for user operations
+     */
     private final AdminUserRepository repository;
 
     /**

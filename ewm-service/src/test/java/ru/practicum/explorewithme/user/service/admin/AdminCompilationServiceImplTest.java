@@ -26,21 +26,37 @@ import static org.mockito.Mockito.*;
  */
 @ExtendWith(MockitoExtension.class)
 public class AdminCompilationServiceImplTest {
-
+    /**
+     * Sets up test data before each test.
+     */
     @Mock
     private AdminCompilationRepository repository;
-
+    /**
+     * Sets up test data before each test.
+     */
     @Mock
     private CompilationMapper mapper;
-
+    /**
+     * Sets up test data before each test.
+     */
     @Mock
     private EventService eventService;
-
+    /**
+     * Sets up test data before each test.
+     */
     @InjectMocks
     private AdminCompilationServiceImpl service;
-
+    /**
+     * Sets up test data before each test.
+     */
     private CompilationRequest compilationRequest;
+    /**
+     * Sets up test data before each test.
+     */
     private CompilationEntity compilationEntity;
+    /**
+     * Sets up test data before each test.
+     */
     private CompilationResponse compilationResponse;
 
     /**
@@ -74,16 +90,19 @@ public class AdminCompilationServiceImplTest {
      */
     @Test
     void testCreateCompilation() {
-        when(mapper.toEntity(any(CompilationRequest.class), any(EventService.class)))
+        when(mapper.toEntity(any(CompilationRequest.class),
+                any(EventService.class)))
                 .thenReturn(compilationEntity);
         when(repository.save(any(CompilationEntity.class)))
                 .thenReturn(compilationEntity);
         when(mapper.toResponse(any(CompilationEntity.class)))
                 .thenReturn(compilationResponse);
 
-        CompilationResponse response = service.createCompilation(compilationRequest);
+        CompilationResponse response = service
+                .createCompilation(compilationRequest);
 
-        verify(repository, times(1)).save(any(CompilationEntity.class));
+        verify(repository, times(1))
+                .save(any(CompilationEntity.class));
         assert response != null;
         assert response.getId().equals(compilationEntity.getId());
     }
@@ -124,15 +143,22 @@ public class AdminCompilationServiceImplTest {
      */
     @Test
     void testUpdateCompilation() {
-        when(repository.findById(anyInt())).thenReturn(Optional.of(compilationEntity));
-        when(eventService.getEventEntities(anyList())).thenReturn(Collections.singletonList(new EventEntity()));
-        when(repository.save(any(CompilationEntity.class))).thenReturn(compilationEntity);
-        when(mapper.toResponse(any(CompilationEntity.class))).thenReturn(compilationResponse);
+        when(repository.findById(anyInt()))
+                .thenReturn(Optional.of(compilationEntity));
+        when(eventService.getEventEntities(anyList()))
+                .thenReturn(Collections.singletonList(new EventEntity()));
+        when(repository.save(any(CompilationEntity.class)))
+                .thenReturn(compilationEntity);
+        when(mapper.toResponse(any(CompilationEntity.class)))
+                .thenReturn(compilationResponse);
 
-        CompilationResponse response = service.updateCompilation(compilationRequest, 1);
+        CompilationResponse response = service
+                .updateCompilation(compilationRequest, 1);
 
-        verify(repository, times(1)).findById(anyInt());
-        verify(repository, times(1)).save(any(CompilationEntity.class));
+        verify(repository, times(1))
+                .findById(anyInt());
+        verify(repository, times(1))
+                .save(any(CompilationEntity.class));
         assert response != null;
         assert response.getId().equals(compilationEntity.getId());
     }
@@ -151,6 +177,7 @@ public class AdminCompilationServiceImplTest {
         }
 
         verify(repository, times(1)).findById(anyInt());
-        verify(repository, times(0)).save(any(CompilationEntity.class));
+        verify(repository, times(0))
+                .save(any(CompilationEntity.class));
     }
 }

@@ -27,14 +27,23 @@ import static org.mockito.Mockito.*;
  */
 @ExtendWith(MockitoExtension.class)
 class CategoryServiceImplTest {
-
+    /**
+     * Sets up test data before each test.
+     */
     @Mock
     private CategoryRepository repository;
-
+    /**
+     * Sets up test data before each test.
+     */
     @InjectMocks
     private CategoryServiceImpl service;
-
+    /**
+     * Sets up test data before each test.
+     */
     private CategoryEntity categoryEntity;
+    /**
+     * Sets up test data before each test.
+     */
     private CategoryResponse categoryResponse;
 
     /**
@@ -78,7 +87,8 @@ class CategoryServiceImplTest {
      */
     @Test
     void getCategory() {
-        when(repository.findById(anyInt())).thenReturn(Optional.of(categoryEntity));
+        when(repository.findById(anyInt()))
+                .thenReturn(Optional.of(categoryEntity));
 
         CategoryResponse response = service.getCategory(1);
 
@@ -107,7 +117,8 @@ class CategoryServiceImplTest {
      */
     @Test
     void getCategoryEntity() {
-        when(repository.findById(anyInt())).thenReturn(Optional.of(categoryEntity));
+        when(repository.findById(anyInt()))
+                .thenReturn(Optional.of(categoryEntity));
 
         CategoryEntity response = service.getCategoryEntity(1);
 

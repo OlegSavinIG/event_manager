@@ -34,31 +34,61 @@ import static org.mockito.Mockito.*;
  */
 @ExtendWith(MockitoExtension.class)
 public class PrivateUserRequestServiceImplTest {
-
+    /**
+     * Sets up test data before each test.
+     */
     @Mock
     private RequestRepository repository;
-
+    /**
+     * Sets up test data before each test.
+     */
     @Mock
     private EventService eventService;
-
+    /**
+     * Sets up test data before each test.
+     */
     @Mock
     private EventRepository eventRepository;
-
+    /**
+     * Sets up test data before each test.
+     */
     @Mock
     private AdminUserService adminUserService;
-
+    /**
+     * Sets up test data before each test.
+     */
     @Mock
     private ExistChecker checker;
-
+    /**
+     * Sets up test data before each test.
+     */
     @InjectMocks
     private PrivateUserRequestServiceImpl service;
-
+    /**
+     * Sets up test data before each test.
+     */
     private UserEntity userEntity;
+    /**
+     * Sets up test data before each test.
+     */
     private EventEntity eventEntity;
+    /**
+     * Sets up test data before each test.
+     */
     private UserEventRequestEntity requestEntity;
+    /**
+     * Sets up test data before each test.
+     */
     private EventRequest eventRequest;
+    /**
+     * Sets up test data before each test.
+     */
     private EventResponse eventResponse;
+    /**
+     * Sets up test data before each test.
+     */
     private ApproveRequestCriteria criteria;
+
 
     /**
      * Sets up test data before each test.

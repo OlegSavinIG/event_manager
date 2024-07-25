@@ -42,9 +42,9 @@ public interface PrivateUserEventsService {
     /**
      * Updates an existing event for a user.
      *
-     * @param userId   the ID of the user
-     * @param eventId  the ID of the event
-     * @param request  the event request with updated data
+     * @param userId  the ID of the user
+     * @param eventId the ID of the event
+     * @param request the event request with updated data
      * @return the updated event response
      */
     EventResponse updateEvent(Long userId, Long eventId, EventRequest request);

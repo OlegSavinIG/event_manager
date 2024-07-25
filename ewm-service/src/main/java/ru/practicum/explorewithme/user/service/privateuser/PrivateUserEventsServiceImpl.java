@@ -34,13 +34,21 @@ import java.util.stream.Collectors;
 @Slf4j
 public class PrivateUserEventsServiceImpl implements PrivateUserEventsService {
 
-    /** Repository for event operations */
+    /**
+     * Repository for event operations
+     */
     private final EventRepository repository;
-    /** Service for admin user operations */
+    /**
+     * Service for admin user operations
+     */
     private final AdminUserService adminUserService;
-    /** Service for category operations */
+    /**
+     * Service for category operations
+     */
     private final CategoryService categoryService;
-    /** Service for existence checking */
+    /**
+     * Service for existence checking
+     */
     private final ExistChecker checker;
 
     /**

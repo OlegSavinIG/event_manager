@@ -28,15 +28,27 @@ import static org.mockito.Mockito.*;
  */
 @ExtendWith(MockitoExtension.class)
 public class AdminUserServiceImplTest {
-
+    /**
+     * Sets up test data before each test.
+     */
     @Mock
     private AdminUserRepository repository;
-
+    /**
+     * Sets up test data before each test.
+     */
     @InjectMocks
     private AdminUserServiceImpl service;
-
+    /**
+     * Sets up test data before each test.
+     */
     private UserRequest userRequest;
+    /**
+     * Sets up test data before each test.
+     */
     private UserEntity userEntity;
+    /**
+     * Sets up test data before each test.
+     */
     private UserResponse userResponse;
 
     /**
@@ -67,11 +79,13 @@ public class AdminUserServiceImplTest {
      */
     @Test
     void testAddNewUser() {
-        when(repository.save(any(UserEntity.class))).thenReturn(userEntity);
+        when(repository.save(any(UserEntity.class)))
+                .thenReturn(userEntity);
 
         UserResponse response = service.addNewUser(userRequest);
 
-        verify(repository, times(1)).save(any(UserEntity.class));
+        verify(repository, times(1))
+                .save(any(UserEntity.class));
         assert response.getId().equals(userEntity.getId());
     }
 
@@ -80,13 +94,17 @@ public class AdminUserServiceImplTest {
      */
     @Test
     void testFindByIds() {
-        Page<UserEntity> page = new PageImpl<>(Collections.singletonList(userEntity));
-        when(repository.findByIdIn(anyList(), any(PageRequest.class))).thenReturn(page);
+        Page<UserEntity> page = new PageImpl<>(Collections
+                .singletonList(userEntity));
+        when(repository.findByIdIn(anyList(),
+                any(PageRequest.class))).thenReturn(page);
 
         List<Long> ids = Collections.singletonList(1L);
-        Collection<UserResponse> responses = service.findByIds(ids, 0, 10);
+        Collection<UserResponse> responses = service
+                .findByIds(ids, 0, 10);
 
-        verify(repository, times(1)).findByIdIn(anyList(), any(PageRequest.class));
+        verify(repository, times(1))
+                .findByIdIn(anyList(), any(PageRequest.class));
         assert responses.size() == 1;
         assert responses.iterator().next().getId().equals(userEntity.getId());
     }
@@ -96,12 +114,14 @@ public class AdminUserServiceImplTest {
      */
     @Test
     void testFindAll() {
-        Page<UserEntity> page = new PageImpl<>(Collections.singletonList(userEntity));
+        Page<UserEntity> page = new PageImpl<>(Collections
+                .singletonList(userEntity));
         when(repository.findAll(any(PageRequest.class))).thenReturn(page);
 
         Collection<UserResponse> responses = service.findAll(0, 10);
 
-        verify(repository, times(1)).findAll(any(PageRequest.class));
+        verify(repository, times(1))
+                .findAll(any(PageRequest.class));
         assert responses.size() == 1;
         assert responses.iterator().next().getId().equals(userEntity.getId());
     }
@@ -115,8 +135,10 @@ public class AdminUserServiceImplTest {
 
         service.deleteUserById(1L);
 
-        verify(repository, times(1)).existsById(anyLong());
-        verify(repository, times(1)).deleteById(anyLong());
+        verify(repository, times(1))
+                .existsById(anyLong());
+        verify(repository, times(1))
+                .deleteById(anyLong());
     }
 
     /**
@@ -132,8 +154,10 @@ public class AdminUserServiceImplTest {
             assert e.getMessage().equals("User not exist");
         }
 
-        verify(repository, times(1)).existsById(anyLong());
-        verify(repository, times(0)).deleteById(anyLong());
+        verify(repository, times(1))
+                .existsById(anyLong());
+        verify(repository, times(0))
+                .deleteById(anyLong());
     }
 
     /**
@@ -141,11 +165,13 @@ public class AdminUserServiceImplTest {
      */
     @Test
     void testFindById() {
-        when(repository.findById(anyLong())).thenReturn(Optional.of(userEntity));
+        when(repository.findById(anyLong()))
+                .thenReturn(Optional.of(userEntity));
 
         UserResponse response = service.findById(1L);
 
-        verify(repository, times(1)).findById(anyLong());
+        verify(repository, times(1))
+                .findById(anyLong());
         assert response.getId().equals(userEntity.getId());
     }
 

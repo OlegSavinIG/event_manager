@@ -22,17 +22,28 @@ import static org.mockito.Mockito.*;
  */
 @ExtendWith(MockitoExtension.class)
 public class AdminCategoryServiceImplTest {
-
+    /**
+     * Sets up test data before each test.
+     */
     @Mock
     private CategoryRepository repository;
-
+    /**
+     * Sets up test data before each test.
+     */
     @Mock
     private ExistChecker checker;
-
+    /**
+     * Sets up test data before each test.
+     */
     @InjectMocks
     private AdminCategoryServiceImpl service;
-
+    /**
+     * Sets up test data before each test.
+     */
     private CategoryRequest categoryRequest;
+    /**
+     * Sets up test data before each test.
+     */
     private CategoryEntity categoryEntity;
 
     /**
@@ -55,11 +66,13 @@ public class AdminCategoryServiceImplTest {
      */
     @Test
     void testCreateCategory() {
-        when(repository.save(any(CategoryEntity.class))).thenReturn(categoryEntity);
+        when(repository.save(any(CategoryEntity.class)))
+                .thenReturn(categoryEntity);
 
         CategoryResponse response = service.createCategory(categoryRequest);
 
-        verify(repository, times(1)).save(any(CategoryEntity.class));
+        verify(repository, times(1))
+                .save(any(CategoryEntity.class));
         assert response != null;
         assert response.getId().equals(categoryEntity.getId());
     }

@@ -29,19 +29,36 @@ import static org.mockito.Mockito.*;
  */
 @ExtendWith(MockitoExtension.class)
 class CompilationServiceImplTest {
-
+    /**
+     * Sets up test data before each test.
+     */
     @Mock
     private CompilationRepository repository;
-
+    /**
+     * Sets up test data before each test.
+     */
     @Mock
     private CompilationMapper mapper;
-
+    /**
+     * Sets up test data before each test.
+     */
     @InjectMocks
     private CompilationServiceImpl service;
-
+    /**
+     * Sets up test data before each test.
+     */
     private CompilationEntity compilationEntity;
+    /**
+     * Sets up test data before each test.
+     */
     private CompilationResponse compilationResponse;
+    /**
+     * Sets up test data before each test.
+     */
     private EventEntity eventEntity;
+    /**
+     * Sets up test data before each test.
+     */
     private EventResponse eventResponse;
 
     /**
@@ -84,7 +101,8 @@ class CompilationServiceImplTest {
         when(mapper.toResponse(any(CompilationEntity.class)))
                 .thenReturn(compilationResponse);
 
-        List<CompilationResponse> responses = service.getCompilations(true, 0, 10);
+        List<CompilationResponse> responses = service
+                .getCompilations(true, 0, 10);
 
         assertNotNull(responses);
         assertEquals(1, responses.size());
@@ -92,7 +110,8 @@ class CompilationServiceImplTest {
 
         verify(repository, times(1))
                 .findAllByPinned(anyBoolean(), any(Pageable.class));
-        verify(mapper, times(1)).toResponse(any(CompilationEntity.class));
+        verify(mapper, times(1))
+                .toResponse(any(CompilationEntity.class));
     }
 
     /**
@@ -100,16 +119,20 @@ class CompilationServiceImplTest {
      */
     @Test
     void getCompilation() {
-        when(repository.findById(anyInt())).thenReturn(Optional.of(compilationEntity));
-        when(mapper.toResponse(any(CompilationEntity.class))).thenReturn(compilationResponse);
+        when(repository.findById(anyInt()))
+                .thenReturn(Optional.of(compilationEntity));
+        when(mapper.toResponse(any(CompilationEntity.class)))
+                .thenReturn(compilationResponse);
 
         CompilationResponse response = service.getCompilation(1);
 
         assertNotNull(response);
         assertEquals(compilationResponse, response);
 
-        verify(repository, times(1)).findById(anyInt());
-        verify(mapper, times(1)).toResponse(any(CompilationEntity.class));
+        verify(repository, times(1))
+                .findById(anyInt());
+        verify(mapper, times(1))
+                .toResponse(any(CompilationEntity.class));
     }
 
     /**
@@ -124,6 +147,7 @@ class CompilationServiceImplTest {
         assertEquals("Compilation doesn't exist", exception.getMessage());
 
         verify(repository, times(1)).findById(anyInt());
-        verify(mapper, times(0)).toResponse(any(CompilationEntity.class));
+        verify(mapper, times(0))
+                .toResponse(any(CompilationEntity.class));
     }
 }

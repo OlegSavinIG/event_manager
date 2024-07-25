@@ -33,13 +33,19 @@ import java.util.stream.Collectors;
 @Slf4j
 public class AdminEventServiceImpl implements AdminEventService {
 
-    /** Repository for admin event operations */
+    /**
+     * Repository for admin event operations
+     */
     private final AdminEventRepository repository;
 
-    /** Repository for event operations */
+    /**
+     * Repository for event operations
+     */
     private final EventRepository eventRepository;
 
-    /** Repository for category operations */
+    /**
+     * Repository for category operations
+     */
     private final CategoryRepository categoryRepository;
 
     /**
