@@ -20,6 +20,10 @@ import java.util.List;
 @RequestMapping("/users")
 @RequiredArgsConstructor
 public class PrivateUserEventsController {
+
+    /**
+     * REST service for managing compilations by admin.
+     */
     private final PrivateUserEventsService service;
 
     /**
@@ -32,9 +36,9 @@ public class PrivateUserEventsController {
      */
     @GetMapping("/{userId}/events")
     public ResponseEntity<List<EventResponse>> getEventsByUserId(
-            @PathVariable Long userId,
-            @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
-            @Positive @RequestParam(defaultValue = "10") Integer size) {
+            @PathVariable final Long userId,
+            @PositiveOrZero @RequestParam(defaultValue = "0") final Integer from,
+            @Positive @RequestParam(defaultValue = "10") final Integer size) {
         return ResponseEntity.ok(service.getEventsByUserId(userId, from, size));
     }
 
@@ -47,8 +51,8 @@ public class PrivateUserEventsController {
      */
     @GetMapping("/{userId}/events/{eventId}")
     public ResponseEntity<EventResponse> getByUserIdAndEventId(
-            @PathVariable Long userId,
-            @PathVariable Long eventId) {
+            @PathVariable final Long userId,
+            @PathVariable final Long eventId) {
         return ResponseEntity.ok(service.getByUserIdAndEventId(userId, eventId));
     }
 
@@ -61,8 +65,8 @@ public class PrivateUserEventsController {
      */
     @PostMapping("/{userId}/events")
     public ResponseEntity<EventResponse> createEvent(
-            @PathVariable Long userId,
-            @Validated(DefaultValidation.class) @RequestBody EventRequest request) {
+            @PathVariable final Long userId,
+            @Validated(DefaultValidation.class) @RequestBody final EventRequest request) {
         return ResponseEntity.ok(service.createEvent(request, userId));
     }
 
@@ -76,9 +80,9 @@ public class PrivateUserEventsController {
      */
     @PatchMapping("/{userId}/events/{eventId}")
     public ResponseEntity<EventResponse> updateEvent(
-            @PathVariable Long userId,
-            @PathVariable Long eventId,
-            @RequestBody EventRequest request) {
+            @PathVariable final Long userId,
+            @PathVariable final Long eventId,
+            @RequestBody final EventRequest request) {
         return ResponseEntity.ok(service.updateEvent(userId, eventId, request));
     }
 }

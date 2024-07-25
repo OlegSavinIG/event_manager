@@ -16,7 +16,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
-public class  PrivateUserRequestController {
+public class PrivateUserRequestController {
+
+    /**
+     * Service for handling private user request operations.
+     */
     private final PrivateUserRequestService service;
 
     /**
@@ -28,8 +32,8 @@ public class  PrivateUserRequestController {
      */
     @GetMapping("/{userId}/events/{eventId}/requests")
     public ResponseEntity<List<UserEventRequestDto>> getEventRequests(
-            @PathVariable Long userId,
-            @PathVariable Long eventId) {
+            @PathVariable final Long userId,
+            @PathVariable final Long eventId) {
         return ResponseEntity.ok(service.getEventRequests(userId, eventId));
     }
 
@@ -43,10 +47,9 @@ public class  PrivateUserRequestController {
      */
     @PatchMapping("/{userId}/events/{eventId}/requests")
     public ResponseEntity<EventRequestStatusUpdateResult> approveRequests(
-            @PathVariable Long userId,
-            @PathVariable Long eventId,
-            @RequestBody ApproveRequestCriteria criteria
-    ) {
+            @PathVariable final Long userId,
+            @PathVariable final Long eventId,
+            @RequestBody final ApproveRequestCriteria criteria) {
         return ResponseEntity.ok(service.approveRequests(userId, eventId, criteria));
     }
 
@@ -58,7 +61,7 @@ public class  PrivateUserRequestController {
      */
     @GetMapping("/{userId}/requests")
     public ResponseEntity<List<UserEventRequestDto>> getUserRequests(
-            @PathVariable Long userId) {
+            @PathVariable final Long userId) {
         return ResponseEntity.ok(service.getUserRequests(userId));
     }
 
@@ -71,8 +74,8 @@ public class  PrivateUserRequestController {
      */
     @PostMapping("/{userId}/requests")
     public ResponseEntity<UserEventRequestDto> createRequest(
-            @PathVariable Long userId,
-            @RequestParam Long eventId) {
+            @PathVariable final Long userId,
+            @RequestParam final Long eventId) {
         return ResponseEntity.ok(service.createRequest(userId, eventId));
     }
 
@@ -85,9 +88,8 @@ public class  PrivateUserRequestController {
      */
     @PatchMapping("/{userId}/requests/{requestId}/cancel")
     public ResponseEntity<UserEventRequestDto> cancelRequest(
-            @PathVariable Long userId,
-            @PathVariable Long requestId
-    ) {
+            @PathVariable final Long userId,
+            @PathVariable final Long requestId) {
         return ResponseEntity.ok(service.cancelRequest(userId, requestId));
     }
 }

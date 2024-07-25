@@ -17,6 +17,10 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 public class AdminCompilationController {
 
+    /**
+     * REST service for managing compilations by admin.
+     */
+
     private final AdminCompilationService service;
 
     /**
