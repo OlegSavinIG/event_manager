@@ -34,8 +34,8 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-stat:5432/stat_db
       SPRING_DATASOURCE_USERNAME: user
       SPRING_DATASOURCE_PASSWORD: password
-      EWM_SERVICE_URL: http://ewm-service:9090  # URL для взаимодействия с ewm-service
-      SERVER_URL: http://stats-server:8081  # Добавить эту переменную
+      EWM_SERVICE_URL: http://localhost:9090  # URL для взаимодействия с ewm-service
+      SERVER_URL: http://localhost:8081  # Добавить эту переменную
     depends_on:
       - postgres-stat
     ports:
@@ -50,8 +50,8 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-main:5432/main_db
       SPRING_DATASOURCE_USERNAME: user
       SPRING_DATASOURCE_PASSWORD: password
-      EWM_SERVICE_URL: http://ewm-service:9090  # URL для взаимодействия с ewm-service
-      STATS_SERVER_URL: http://stats-server:8081  # URL для использования в RestTemplate
+      EWM_SERVICE_URL: http://localhost:9090  # URL для взаимодействия с ewm-service
+      STATS_SERVER_URL: http://localhost:8081  # URL для использования в RestTemplate
     depends_on:
       - postgres-main
       - stats-server
