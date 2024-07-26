@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -34,5 +35,13 @@ public class CompilationRequest {
     /**
      * The list of event IDs in the compilation.
      */
-    private List<Long> events;
+    private List<Long> events = new ArrayList<>();
+    public String getTitle() { return title; }
+    public void setTitle(String title) { this.title = title; }
+
+    public Boolean getPinned() { return pinned; }
+    public void setPinned(Boolean pinned) { this.pinned = pinned; }
+
+    public List<Long> getEvents() { return events; }
+    public void setEvents(List<Long> events) { this.events = events; }
 }

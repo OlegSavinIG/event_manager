@@ -14,6 +14,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -53,5 +54,17 @@ public class CompilationEntity {
             joinColumns = @JoinColumn(name = "compilation_id"),
             inverseJoinColumns = @JoinColumn(name = "event_id")
     )
-    private List<EventEntity> events;
+    private List<EventEntity> events = new ArrayList<>();
+
+    public Integer getId() { return id; }
+    public void setId(Integer id) { this.id = id; }
+
+    public String getTitle() { return title; }
+    public void setTitle(String title) { this.title = title; }
+
+    public Boolean getPinned() { return pinned; }
+    public void setPinned(Boolean pinned) { this.pinned = pinned; }
+
+    public List<EventEntity> getEvents() { return events; }
+    public void setEvents(List<EventEntity> events) { this.events = events; }
 }
