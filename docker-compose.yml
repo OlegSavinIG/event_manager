@@ -31,15 +31,15 @@ services:
       context: ./stats-service/stats-server
       dockerfile: Dockerfile
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-stat:5432/stat_db
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db-stats:5432/stat_db
       SPRING_DATASOURCE_USERNAME: user
       SPRING_DATASOURCE_PASSWORD: password
-      EWM_SERVICE_URL: http://localhost:9090  # URL для взаимодействия с ewm-service
-      SERVER_URL: http://localhost:8081  # Добавить эту переменную
+      EWM_SERVICE_URL: http://ewm-service:8080  # Обновлено
+      SERVER_URL: http://localhost:9090  # Обновлено
     depends_on:
       - postgres-stat
     ports:
-      - "8081:8080"
+      - "9090:8080"  # Обновлено: маппинг внутреннего порта 8080 на хостовый порт 9090
 
   ewm-service:
     container_name: ewm-service
@@ -47,16 +47,16 @@ services:
       context: ./ewm-service
       dockerfile: Dockerfile
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-main:5432/main_db
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db-main:5432/main_db
       SPRING_DATASOURCE_USERNAME: user
       SPRING_DATASOURCE_PASSWORD: password
-      EWM_SERVICE_URL: http://localhost:9090  # URL для взаимодействия с ewm-service
-      STATS_SERVER_URL: http://localhost:8081  # URL для использования в RestTemplate
+      EWM_SERVICE_URL: http://localhost:8080  # Обновлено
+      STATS_SERVER_URL: http://localhost:9090  # Обновлено
     depends_on:
       - postgres-main
       - stats-server
     ports:
-      - "9090:9090"
+      - "8080:9090"  # Обновлено: маппинг внутреннего порта 9090 на хостовый порт 8080
 
 volumes:
   postgres-main-data:
