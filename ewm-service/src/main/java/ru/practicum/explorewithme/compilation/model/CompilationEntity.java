@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import ru.practicum.explorewithme.event.model.EventEntity;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -48,7 +49,7 @@ public class CompilationEntity {
     /**
      * The list of events in the compilation.
      */
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "compilation_events",
             joinColumns = @JoinColumn(name = "compilation_id"),
@@ -64,12 +65,4 @@ public class CompilationEntity {
         return events;
     }
 
-//    /**
-//     * The list of events in the compilation.
-//     * @param list of events
-//     * @return events list
-//     */
-//    public void setEvents(List<EventEntity> events) {
-//        this.events = events;
-//    }
 }

@@ -27,10 +27,6 @@ public class CompilationServiceImpl implements CompilationService {
      * REST repository for managing compilations.
      */
     private final CompilationRepository repository;
-    /**
-     * REST mapper for managing compilations.
-     */
-    private final CompilationMapper mapper;
 
     /**
      * {@inheritDoc}
@@ -46,7 +42,7 @@ public class CompilationServiceImpl implements CompilationService {
         List<CompilationEntity> entities = repository.findAllByPinned(pinned,
                 pageable);
         List<CompilationResponse> responses = entities.stream()
-                .map(mapper::toResponse)
+                .map(CompilationMapper::toResponse)
                 .collect(Collectors.toList());
         log.info("Retrieved {} compilations", responses.size());
         return responses;
@@ -62,7 +58,7 @@ public class CompilationServiceImpl implements CompilationService {
         CompilationEntity entity = repository.findById(compId)
                 .orElseThrow(() -> new NotExistException(
                         "Compilation doesn't exist"));
-        CompilationResponse response = mapper.toResponse(entity);
+        CompilationResponse response = CompilationMapper.toResponse(entity);
         log.info("Compilation retrieved: {}", response);
         return response;
     }

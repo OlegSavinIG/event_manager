@@ -10,15 +10,20 @@ import ru.practicum.explorewithme.compilation.model.CompilationEntity;
 import ru.practicum.explorewithme.compilation.model.CompilationMapper;
 import ru.practicum.explorewithme.compilation.model.CompilationRequest;
 import ru.practicum.explorewithme.compilation.model.CompilationResponse;
+import ru.practicum.explorewithme.event.model.EventEntity;
 import ru.practicum.explorewithme.event.service.EventService;
 import ru.practicum.explorewithme.exception.NotExistException;
 import ru.practicum.explorewithme.user.repository.AdminCompilationRepository;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.anyInt;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -33,11 +38,6 @@ public class AdminCompilationServiceImplTest {
      */
     @Mock
     private AdminCompilationRepository repository;
-    /**
-     * Sets up test data before each test.
-     */
-    @Mock
-    private CompilationMapper mapper;
     /**
      * Sets up test data before each test.
      */
@@ -70,18 +70,20 @@ public class AdminCompilationServiceImplTest {
                 .title("Test Compilation")
                 .pinned(true)
                 .build();
+        compilationRequest.getEvents().addAll(Collections.emptyList());
 
         compilationEntity = CompilationEntity.builder()
                 .id(1)
                 .title("Test Compilation")
                 .pinned(true)
                 .build();
-
+        compilationEntity.getEvents().addAll(Collections.emptyList());
         compilationResponse = CompilationResponse.builder()
                 .id(1)
                 .title("Test Compilation")
                 .pinned(true)
                 .build();
+        compilationResponse.getEvents().addAll(Collections.emptyList());
     }
 
     /**
@@ -89,13 +91,8 @@ public class AdminCompilationServiceImplTest {
      */
     @Test
     void testCreateCompilation() {
-        when(mapper.toEntity(any(CompilationRequest.class),
-                any(EventService.class)))
-                .thenReturn(compilationEntity);
         when(repository.save(any(CompilationEntity.class)))
                 .thenReturn(compilationEntity);
-        when(mapper.toResponse(any(CompilationEntity.class)))
-                .thenReturn(compilationResponse);
 
         CompilationResponse response = service
                 .createCompilation(compilationRequest);
@@ -146,8 +143,6 @@ public class AdminCompilationServiceImplTest {
                 .thenReturn(Optional.of(compilationEntity));
         when(repository.save(any(CompilationEntity.class)))
                 .thenReturn(compilationEntity);
-        when(mapper.toResponse(any(CompilationEntity.class)))
-                .thenReturn(compilationResponse);
 
         CompilationResponse response = service
                 .updateCompilation(compilationRequest, 1);

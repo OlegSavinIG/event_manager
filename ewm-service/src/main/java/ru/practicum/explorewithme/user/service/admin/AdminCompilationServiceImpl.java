@@ -28,10 +28,6 @@ public class AdminCompilationServiceImpl implements AdminCompilationService {
      */
     private final AdminCompilationRepository repository;
 
-    /**
-     * The mapper for transforming compilation data.
-     */
-    private final CompilationMapper mapper;
 
     /**
      * Service for handling event operations.
@@ -50,9 +46,10 @@ public class AdminCompilationServiceImpl implements AdminCompilationService {
     public CompilationResponse createCompilation(
             final CompilationRequest request) {
         log.info("Creating compilation with title: {}", request.getTitle());
+        List<EventEntity> eventEntities = eventService.getEventEntities(request.getEvents());
         CompilationEntity entity = repository.save(
-                mapper.toEntity(request, eventService));
-        CompilationResponse response = mapper.toResponse(entity);
+                CompilationMapper.toEntity(request, eventEntities));
+        CompilationResponse response = CompilationMapper.toResponse(entity);
         log.info("Created compilation with id: {}", response.getId());
         return response;
     }
@@ -103,7 +100,7 @@ public class AdminCompilationServiceImpl implements AdminCompilationService {
             entity.getEvents().addAll(eventsByIds);
         }
         repository.save(entity);
-        CompilationResponse response = mapper.toResponse(entity);
+        CompilationResponse response = CompilationMapper.toResponse(entity);
         log.info("Updated compilation with id: {}", response.getId());
         return response;
     }
