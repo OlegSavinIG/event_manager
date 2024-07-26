@@ -1,8 +1,5 @@
 package ru.practicum.explorewithme.compilation.model;
 
-import ru.practicum.explorewithme.compilation.model.CompilationEntity;
-import ru.practicum.explorewithme.compilation.model.CompilationRequest;
-import ru.practicum.explorewithme.compilation.model.CompilationResponse;
 import ru.practicum.explorewithme.event.model.EventEntity;
 import ru.practicum.explorewithme.event.model.mapper.EventMapper;
 
@@ -22,7 +19,8 @@ public class CompilationMapper {
      * @param entity the compilation entity to convert
      * @return the compilation response
      */
-    public static CompilationResponse toResponse(final CompilationEntity entity) {
+    public static CompilationResponse toResponse(
+            final CompilationEntity entity) {
         CompilationResponse compilationResponse = CompilationResponse.builder()
                 .id(entity.getId())
                 .title(entity.getTitle())

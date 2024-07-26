@@ -7,23 +7,18 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.practicum.explorewithme.compilation.model.CompilationEntity;
-import ru.practicum.explorewithme.compilation.model.CompilationMapper;
 import ru.practicum.explorewithme.compilation.model.CompilationRequest;
 import ru.practicum.explorewithme.compilation.model.CompilationResponse;
-import ru.practicum.explorewithme.event.model.EventEntity;
 import ru.practicum.explorewithme.event.service.EventService;
 import ru.practicum.explorewithme.exception.NotExistException;
 import ru.practicum.explorewithme.user.repository.AdminCompilationRepository;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.anyInt;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;

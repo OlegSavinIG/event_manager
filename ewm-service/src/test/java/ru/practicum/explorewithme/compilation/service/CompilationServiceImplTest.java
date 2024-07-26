@@ -8,7 +8,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Pageable;
 import ru.practicum.explorewithme.compilation.model.CompilationEntity;
-import ru.practicum.explorewithme.compilation.model.CompilationMapper;
 import ru.practicum.explorewithme.compilation.model.CompilationResponse;
 import ru.practicum.explorewithme.compilation.repository.CompilationRepository;
 import ru.practicum.explorewithme.event.model.EventEntity;
