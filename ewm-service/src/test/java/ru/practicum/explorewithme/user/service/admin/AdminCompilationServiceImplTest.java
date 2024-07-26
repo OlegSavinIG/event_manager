@@ -10,17 +10,14 @@ import ru.practicum.explorewithme.compilation.model.CompilationEntity;
 import ru.practicum.explorewithme.compilation.model.CompilationMapper;
 import ru.practicum.explorewithme.compilation.model.CompilationRequest;
 import ru.practicum.explorewithme.compilation.model.CompilationResponse;
-import ru.practicum.explorewithme.event.model.EventEntity;
 import ru.practicum.explorewithme.event.service.EventService;
 import ru.practicum.explorewithme.exception.NotExistException;
 import ru.practicum.explorewithme.user.repository.AdminCompilationRepository;
 
-import java.util.Collections;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.anyInt;
-import static org.mockito.Mockito.anyList;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -72,21 +69,18 @@ public class AdminCompilationServiceImplTest {
         compilationRequest = CompilationRequest.builder()
                 .title("Test Compilation")
                 .pinned(true)
-                .events(Collections.singletonList(1L))
                 .build();
 
         compilationEntity = CompilationEntity.builder()
                 .id(1)
                 .title("Test Compilation")
                 .pinned(true)
-                .events(Collections.singletonList(new EventEntity()))
                 .build();
 
         compilationResponse = CompilationResponse.builder()
                 .id(1)
                 .title("Test Compilation")
                 .pinned(true)
-                .events(Collections.emptyList())
                 .build();
     }
 
@@ -150,8 +144,6 @@ public class AdminCompilationServiceImplTest {
     void testUpdateCompilation() {
         when(repository.findById(anyInt()))
                 .thenReturn(Optional.of(compilationEntity));
-        when(eventService.getEventEntities(anyList()))
-                .thenReturn(Collections.singletonList(new EventEntity()));
         when(repository.save(any(CompilationEntity.class)))
                 .thenReturn(compilationEntity);
         when(mapper.toResponse(any(CompilationEntity.class)))

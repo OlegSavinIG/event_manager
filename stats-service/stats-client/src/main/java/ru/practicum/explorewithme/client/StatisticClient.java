@@ -15,12 +15,23 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class StatisticClient {
-
+    /**
+     * Template for handling statistics via RestTemplate.
+     */
     private final RestTemplate restTemplate;
 
-    public void sendStatistics(List<StatisticResponse> statistics) {
+    /**
+     * Sends a list of statistics to an external service.
+     *
+     * @param statistics the list of statistics to send
+     */
+    public void sendStatistics(final List<StatisticResponse> statistics) {
         try {
-            restTemplate.postForObject("/external-service-endpoint", statistics, Void.class);
+            restTemplate.postForObject(
+                    "/external-service-endpoint",
+                    statistics,
+                    Void.class
+            );
             log.info("Successfully sent statistics to external service");
         } catch (Exception e) {
             log.error("Failed to send statistics to external service", e);

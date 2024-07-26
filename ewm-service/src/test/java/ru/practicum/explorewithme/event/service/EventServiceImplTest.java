@@ -86,11 +86,11 @@ class EventServiceImplTest {
     /**
      * Sets up test data before each test.
      */
-   private int participants = 100;
+   private final int participants = 100;
     /**
      * Sets up test data before each test.
      */
-   private int pageSize = 10;
+   private final int pageSize = 10;
 
     /**
      * Sets up test data before each test.
@@ -119,7 +119,7 @@ class EventServiceImplTest {
 
         eventResponse = EventMapper.toResponse(eventEntity);
         eventResponseShort = EventMapper.toResponseShort(eventEntity);
-        eventResponseShort.setViews(participants);  // Устанавливаем просмотры для теста
+        eventResponseShort.setViews(participants);
 
         criteria = new EventSearchCriteria();
         criteria.setCategories(Collections.singletonList(1));
@@ -139,12 +139,13 @@ class EventServiceImplTest {
         when(eventClient.getEventViews(anyLong()))
                 .thenReturn(CompletableFuture.completedFuture(participants));
 
-        List<EventResponseShort> responses = service.getEvents(criteria, 0, pageSize);
+        List<EventResponseShort> responses = service
+                .getEvents(criteria, 0, pageSize);
 
         assertNotNull(responses);
         assertEquals(1, responses.size());
         assertEquals(eventResponseShort, responses.get(0));
-        assertEquals(100, responses.get(0).getViews());
+        assertEquals(participants, responses.get(0).getViews());
 
         verify(repository, times(1))
                 .findAll(any(Specification.class), any(Pageable.class));
@@ -156,7 +157,8 @@ class EventServiceImplTest {
      */
     @Test
     void getEvent() {
-        when(repository.findById(anyLong())).thenReturn(Optional.of(eventEntity));
+        when(repository.findById(anyLong()))
+                .thenReturn(Optional.of(eventEntity));
         when(eventClient.getEventViews(anyLong()))
                 .thenReturn(CompletableFuture.completedFuture(participants));
 

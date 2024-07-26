@@ -88,11 +88,11 @@ public class AdminEventServiceImplTest {
     /**
      * Sets up test data before each test.
      */
-   private int participants = 100;
+   private final int participants = 100;
     /**
      * Sets up test data before each test.
      */
-   private int pageSize = 10;
+   private final int pageSize = 10;
 
     /**
      * Sets up test data before each test.
@@ -164,7 +164,8 @@ public class AdminEventServiceImplTest {
                 any(PageRequest.class)))
                 .thenReturn(page);
 
-        List<EventResponse> responses = service.getEvents(criteria, 0, pageSize);
+        List<EventResponse> responses = service
+                .getEvents(criteria, 0, pageSize);
 
         verify(repository, times(1))
                 .findAll(any(Specification.class), any(PageRequest.class));

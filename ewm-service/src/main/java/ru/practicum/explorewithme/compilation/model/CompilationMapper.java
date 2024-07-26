@@ -4,7 +4,6 @@ import org.mapstruct.Context;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
-import org.springframework.stereotype.Component;
 import ru.practicum.explorewithme.event.model.EventEntity;
 import ru.practicum.explorewithme.event.model.EventResponse;
 import ru.practicum.explorewithme.event.model.mapper.EventMapper;
@@ -30,7 +29,8 @@ public interface CompilationMapper {
 //    @Mapping(target = "events",
 //            expression =
 //                    "java(mapIdsToEvents(request.getEvents(), eventService))")
-    @Mapping(target = "events", source = "events", qualifiedByName = "mapIdsToEvents")
+    @Mapping(target = "events", source = "events",
+            qualifiedByName = "mapIdsToEvents")
     CompilationEntity toEntity(CompilationRequest request,
                                @Context EventService eventService);
 
@@ -42,7 +42,8 @@ public interface CompilationMapper {
      */
 //    @Mapping(target = "events",
 //            expression = "java(mapToResponses(entity.getEvents()))")
-    @Mapping(target = "events", source = "events", qualifiedByName = "mapToResponses")
+    @Mapping(target = "events", source = "events",
+            qualifiedByName = "mapToResponses")
     CompilationResponse toResponse(CompilationEntity entity);
 
     /**

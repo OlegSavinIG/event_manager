@@ -54,17 +54,22 @@ public class CompilationEntity {
             joinColumns = @JoinColumn(name = "compilation_id"),
             inverseJoinColumns = @JoinColumn(name = "event_id")
     )
-    private List<EventEntity> events = new ArrayList<>();
+    private final List<EventEntity> events = new ArrayList<>();
 
-    public Integer getId() { return id; }
-    public void setId(Integer id) { this.id = id; }
+    /**
+     * The list of events in the compilation.
+     *  @return events
+     */
+    public List<EventEntity> getEvents() {
+        return events;
+    }
 
-    public String getTitle() { return title; }
-    public void setTitle(String title) { this.title = title; }
-
-    public Boolean getPinned() { return pinned; }
-    public void setPinned(Boolean pinned) { this.pinned = pinned; }
-
-    public List<EventEntity> getEvents() { return events; }
-    public void setEvents(List<EventEntity> events) { this.events = events; }
+//    /**
+//     * The list of events in the compilation.
+//     * @param list of events
+//     * @return events list
+//     */
+//    public void setEvents(List<EventEntity> events) {
+//        this.events = events;
+//    }
 }

@@ -15,32 +15,50 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Implementation of the StatisticService interface.
+ * Implementation of the {@link StatisticService} interface.
  */
 @Service
 @RequiredArgsConstructor
 @Transactional
 public class StatisticServiceImpl implements StatisticService {
+    /**
+     * Repository.
+     */
     private final StatisticRepository repository;
+    /**
+     * Client.
+     */
     private final StatisticClient client;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void saveStatistic(final StatisticRequest request) {
         repository.save(StatisticMapper.toEntity(request));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public List<StatisticResponse> getStatistic(final LocalDateTime start, final LocalDateTime end, final List<String> uris, final boolean unique) {
+    public List<StatisticResponse> getStatistic(final LocalDateTime start,
+                                                final LocalDateTime end,
+                                                final List<String> uris,
+                                                final boolean unique) {
         List<StatisticEntity> statistics;
         if (unique) {
             if (uris != null && !uris.isEmpty()) {
-                statistics = repository.findAllStatisticByUrisWithUniqueIp(start, end, uris);
+                statistics = repository.findAllStatisticByUrisWithUniqueIp(
+                        start, end, uris);
             } else {
-                statistics = repository.findAllStatisticWithUniqueIp(start, end);
+                statistics = repository.findAllStatisticWithUniqueIp(
+                        start, end);
             }
         } else {
             if (uris != null && !uris.isEmpty()) {
-                statistics = repository.findAllStatisticByUris(start, end, uris);
+                statistics = repository.findAllStatisticByUris(start, end,
+                        uris);
             } else {
                 statistics = repository.findAllStatistic(start, end);
             }

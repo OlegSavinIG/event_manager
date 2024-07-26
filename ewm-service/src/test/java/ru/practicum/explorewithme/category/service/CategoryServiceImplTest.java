@@ -53,7 +53,7 @@ class CategoryServiceImplTest {
     /**
      * Sets up test data before each test.
      */
-   private int pageSize = 10;
+   private final int pageSize = 10;
     /**
      * Sets up test data before each test.
      */

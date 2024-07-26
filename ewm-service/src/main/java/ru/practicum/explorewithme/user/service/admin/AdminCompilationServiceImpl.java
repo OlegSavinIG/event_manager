@@ -100,7 +100,7 @@ public class AdminCompilationServiceImpl implements AdminCompilationService {
         if (request.getEvents() != null && !request.getEvents().isEmpty()) {
             List<EventEntity> eventsByIds =
                     eventService.getEventEntities(request.getEvents());
-            entity.setEvents(eventsByIds);
+            entity.getEvents().addAll(eventsByIds);
         }
         repository.save(entity);
         CompilationResponse response = mapper.toResponse(entity);

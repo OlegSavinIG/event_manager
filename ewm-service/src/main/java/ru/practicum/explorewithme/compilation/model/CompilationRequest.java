@@ -35,13 +35,14 @@ public class CompilationRequest {
     /**
      * The list of event IDs in the compilation.
      */
-    private List<Long> events = new ArrayList<>();
-    public String getTitle() { return title; }
-    public void setTitle(String title) { this.title = title; }
+    private final List<Long> events = new ArrayList<>();
 
-    public Boolean getPinned() { return pinned; }
-    public void setPinned(Boolean pinned) { this.pinned = pinned; }
+    /**
+     * The list of events in the compilation.
+     * @return events
+     */
+    public List<Long> getEvents() {
+        return events;
+    }
 
-    public List<Long> getEvents() { return events; }
-    public void setEvents(List<Long> events) { this.events = events; }
 }

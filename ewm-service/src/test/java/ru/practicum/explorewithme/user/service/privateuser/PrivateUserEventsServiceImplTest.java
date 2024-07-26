@@ -91,11 +91,11 @@ public class PrivateUserEventsServiceImplTest {
     /**
      * Sets up test data before each test.
      */
-   private int participants = 100;
+   private final int participants = 100;
     /**
      * Sets up test data before each test.
      */
-   private int pageSize = 10;
+   private final int pageSize = 10;
 
     /**
      * Sets up test data before each test.

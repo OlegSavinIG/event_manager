@@ -15,7 +15,6 @@ public interface StatisticService {
      * Saves a statistic.
      *
      * @param request the statistic request
-     * @return the saved statistic response
      */
     void saveStatistic(StatisticRequest request);
 

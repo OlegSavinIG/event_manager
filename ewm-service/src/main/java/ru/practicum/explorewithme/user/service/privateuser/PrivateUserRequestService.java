@@ -29,8 +29,8 @@ public interface PrivateUserRequestService {
      * @param criteria the criteria for approving or rejecting requests
      * @return the result of the request status update
      */
-    EventRequestStatusUpdateResult approveRequests
-    (Long userId,
+    EventRequestStatusUpdateResult approveRequests(
+     Long userId,
      Long eventId,
      ApproveRequestCriteria criteria);
 

@@ -36,17 +36,14 @@ public class CompilationResponse {
     /**
      * The list of events in the compilation.
      */
-    private List<EventResponse> events = new ArrayList<>();
+    private final List<EventResponse> events = new ArrayList<>();
 
-    public Integer getId() { return id; }
-    public void setId(Integer id) { this.id = id; }
+    /**
+     * The list of events in the compilation.
+     * @return events
+     */
+    public List<EventResponse> getEvents() {
+        return events;
+    }
 
-    public String getTitle() { return title; }
-    public void setTitle(String title) { this.title = title; }
-
-    public Boolean getPinned() { return pinned; }
-    public void setPinned(Boolean pinned) { this.pinned = pinned; }
-
-    public List<EventResponse> getEvents() { return events; }
-    public void setEvents(List<EventResponse> events) { this.events = events; }
 }

@@ -68,7 +68,7 @@ class CompilationServiceImplTest {
     /**
      * Sets up test data before each test.
      */
-   private int pageSize = 10;
+   private final int pageSize = 10;
 
     /**
      * Sets up test data before each test.
@@ -89,14 +89,12 @@ class CompilationServiceImplTest {
                 .id(1)
                 .title("Test Compilation")
                 .pinned(true)
-                .events(Collections.singletonList(eventEntity))
                 .build();
 
         compilationResponse = CompilationResponse.builder()
                 .id(1)
                 .title("Test Compilation")
                 .pinned(true)
-                .events(Collections.singletonList(eventResponse))
                 .build();
     }
 
