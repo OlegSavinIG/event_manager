@@ -19,8 +19,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.anyInt;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Test class for {@link CategoryServiceImpl}.
@@ -45,7 +50,10 @@ class CategoryServiceImplTest {
      * Sets up test data before each test.
      */
     private CategoryResponse categoryResponse;
-
+    /**
+     * Sets up test data before each test.
+     */
+   private int pageSize = 10;
     /**
      * Sets up test data before each test.
      */
@@ -67,13 +75,13 @@ class CategoryServiceImplTest {
      */
     @Test
     void getCategories() {
-        Pageable pageable = PageRequest.of(0, 10);
+        Pageable pageable = PageRequest.of(0, pageSize);
         Page<CategoryEntity> categoryEntities = new PageImpl<>(
                 Collections.singletonList(categoryEntity));
 
         when(repository.findAll(pageable)).thenReturn(categoryEntities);
 
-        List<CategoryResponse> responses = service.getCategories(0, 10);
+        List<CategoryResponse> responses = service.getCategories(0, pageSize);
 
         assertNotNull(responses);
         assertEquals(1, responses.size());
@@ -102,7 +110,7 @@ class CategoryServiceImplTest {
      * Tests the getCategory method for a non-existing category.
      */
     @Test
-    void getCategory_NotExist() {
+    void getCategoryNotExist() {
         when(repository.findById(anyInt())).thenReturn(Optional.empty());
 
         NotExistException exception = assertThrows(NotExistException.class,
@@ -132,7 +140,7 @@ class CategoryServiceImplTest {
      * Tests the getCategoryEntity method for a non-existing category.
      */
     @Test
-    void getCategoryEntity_NotExist() {
+    void getCategoryEntityNotExist() {
         when(repository.findById(anyInt())).thenReturn(Optional.empty());
 
         NotExistException exception = assertThrows(NotExistException.class,

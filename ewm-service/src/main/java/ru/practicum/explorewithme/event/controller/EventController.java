@@ -2,7 +2,12 @@ package ru.practicum.explorewithme.event.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.explorewithme.event.client.EventClient;
 import ru.practicum.explorewithme.event.model.EventResponse;
 import ru.practicum.explorewithme.event.model.EventResponseShort;
@@ -21,8 +26,13 @@ import java.util.List;
 @RequestMapping("/events")
 @RequiredArgsConstructor
 public class EventController {
-
+    /**
+     * REST client for managing compilations.
+     */
     private final EventService service;
+    /**
+     * REST service for managing compilations.
+     */
     private final EventClient client;
 
     /**
@@ -37,8 +47,10 @@ public class EventController {
     @GetMapping
     public ResponseEntity<List<EventResponseShort>> getEvents(
             @ModelAttribute final EventSearchCriteria criteria,
-            @PositiveOrZero @RequestParam(defaultValue = "0") final Integer from,
-            @Positive @RequestParam(defaultValue = "10") final Integer size,
+            @PositiveOrZero @RequestParam(defaultValue = "0")
+            final Integer from,
+            @Positive @RequestParam(defaultValue = "10")
+            final Integer size,
             final HttpServletRequest servletRequest
     ) {
         final String remoteAddr = servletRequest.getRemoteAddr();

@@ -10,7 +10,7 @@ public class NotExistException extends RuntimeException {
      *
      * @param message the detail message
      */
-    public NotExistException(String message) {
+    public NotExistException(final String message) {
         super(message);
     }
 }

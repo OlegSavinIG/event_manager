@@ -17,9 +17,9 @@ public interface CompilationService {
      * @param size   the number of results to retrieve
      * @return the list of compilation responses
      */
-    List<CompilationResponse> getCompilations(final Boolean pinned,
-                                              final Integer from,
-                                              final Integer size);
+    List<CompilationResponse> getCompilations(Boolean pinned,
+                                              Integer from,
+                                              Integer size);
 
     /**
      * Retrieves a specific compilation by its ID.
@@ -27,5 +27,5 @@ public interface CompilationService {
      * @param compId the ID of the compilation
      * @return the compilation response
      */
-    CompilationResponse getCompilation(final Integer compId);
+    CompilationResponse getCompilation(Integer compId);
 }

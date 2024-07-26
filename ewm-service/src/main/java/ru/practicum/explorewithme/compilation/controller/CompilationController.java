@@ -3,7 +3,11 @@ package ru.practicum.explorewithme.compilation.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.explorewithme.compilation.model.CompilationResponse;
 import ru.practicum.explorewithme.compilation.service.CompilationService;
 
@@ -19,7 +23,9 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class CompilationController {
-
+    /**
+     * REST service for managing compilations.
+     */
     private final CompilationService service;
 
     /**
@@ -32,10 +38,15 @@ public class CompilationController {
      */
     @GetMapping
     public ResponseEntity<List<CompilationResponse>> getCompilations(
-            @RequestParam(defaultValue = "false") final Boolean pinned,
-            @PositiveOrZero @RequestParam(defaultValue = "0") final Integer from,
-            @Positive @RequestParam(defaultValue = "10") final Integer size) {
-        log.info("Received request to get compilations with pinned={}, from={}, size={}",
+            @RequestParam(defaultValue = "false")
+            final Boolean pinned,
+            @PositiveOrZero @RequestParam(defaultValue = "0")
+            final Integer from,
+            @Positive @RequestParam(defaultValue = "10")
+            final Integer size) {
+        log.info("Received request to get"
+                        +
+                        " compilations with pinned={}, from={}, size={}",
                 pinned, from, size);
         List<CompilationResponse> compilations = service.getCompilations(
                 pinned, from, size);

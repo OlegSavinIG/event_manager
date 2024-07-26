@@ -13,7 +13,11 @@ import ru.practicum.explorewithme.exception.NotExistException;
 import ru.practicum.explorewithme.exists.ExistChecker;
 import ru.practicum.explorewithme.user.model.UserEntity;
 import ru.practicum.explorewithme.user.repository.RequestRepository;
-import ru.practicum.explorewithme.user.request.model.*;
+import ru.practicum.explorewithme.user.request.model.ApproveRequestCriteria;
+import ru.practicum.explorewithme.user.request.model.EventRequestStatusUpdateResult;
+import ru.practicum.explorewithme.user.request.model.UserEvenRequestMapper;
+import ru.practicum.explorewithme.user.request.model.UserEventRequestDto;
+import ru.practicum.explorewithme.user.request.model.UserEventRequestEntity;
 import ru.practicum.explorewithme.user.service.admin.AdminUserService;
 
 import java.time.LocalDateTime;
@@ -35,23 +39,23 @@ public class PrivateUserRequestServiceImpl
         implements PrivateUserRequestService {
 
     /**
-     * Repository for user requests
+     * Repository for user requests.
      */
     private final RequestRepository repository;
     /**
-     * Service for event-related operations
+     * Service for event-related operations.
      */
     private final EventService eventService;
     /**
-     * Repository for event entities
+     * Repository for event entities.
      */
     private final EventRepository eventRepository;
     /**
-     * Service for admin user operations
+     * Service for admin user operations.
      */
     private final AdminUserService adminUserService;
     /**
-     * Checker for existence of various entities
+     * Checker for existence of various entities.
      */
     private final ExistChecker checker;
 

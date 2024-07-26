@@ -27,7 +27,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>>
-    handleValidationExceptions(MethodArgumentNotValidException ex) {
+    handleValidationExceptions(final MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
         ex.getBindingResult().getAllErrors().forEach((error) -> {
             String fieldName = ((FieldError) error).getField();
@@ -44,7 +44,8 @@ public class GlobalExceptionHandler {
      * @return a response entity with error details
      */
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Map<String, String>> handleExceptions(Exception ex) {
+    public ResponseEntity<Map<String, String>> handleExceptions(
+            final Exception ex) {
         Map<String, String> errorResponse = new HashMap<>();
         errorResponse.put("status", "BAD_REQUEST");
         errorResponse.put("reason", "Incorrectly made request.");
@@ -62,7 +63,8 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<Object> handleConstraintViolationException(
-            ConstraintViolationException ex, WebRequest request) {
+            final ConstraintViolationException ex,
+            final WebRequest request) {
         Map<String, Object> body = new HashMap<>();
         body.put("status", HttpStatus.CONFLICT);
         body.put("reason", "Integrity constraint has been violated.");
@@ -80,7 +82,8 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(NotExistException.class)
     public ResponseEntity<Object> handleNotExistException(
-            NotExistException ex, WebRequest request) {
+            final NotExistException ex,
+            final WebRequest request) {
         Map<String, Object> body = new HashMap<>();
         body.put("status", HttpStatus.NOT_FOUND);
         body.put("reason", "Resource not found.");
@@ -98,7 +101,8 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(AlreadyExistException.class)
     public ResponseEntity<Object> handleAlreadyExistException(
-            AlreadyExistException ex, WebRequest request) {
+            final AlreadyExistException ex,
+            final WebRequest request) {
         Map<String, Object> body = new HashMap<>();
         body.put("status", HttpStatus.CONFLICT);
         body.put("reason", "The resource already exists.");

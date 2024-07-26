@@ -12,7 +12,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import ru.practicum.explorewithme.category.model.CategoryEntity;
 import ru.practicum.explorewithme.event.client.EventClient;
-import ru.practicum.explorewithme.event.model.*;
+import ru.practicum.explorewithme.event.model.EventEntity;
+import ru.practicum.explorewithme.event.model.EventResponse;
+import ru.practicum.explorewithme.event.model.EventResponseShort;
+import ru.practicum.explorewithme.event.model.EventSearchCriteria;
+import ru.practicum.explorewithme.event.model.EventStatus;
 import ru.practicum.explorewithme.event.model.mapper.EventMapper;
 import ru.practicum.explorewithme.event.repository.EventRepository;
 import ru.practicum.explorewithme.exception.NotExistException;
@@ -24,10 +28,16 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.anyList;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Test class for {@link EventServiceImpl}.
@@ -73,6 +83,14 @@ class EventServiceImplTest {
      * Sets up test data before each test.
      */
     private UserEntity userEntity;
+    /**
+     * Sets up test data before each test.
+     */
+   private int participants = 100;
+    /**
+     * Sets up test data before each test.
+     */
+   private int pageSize = 10;
 
     /**
      * Sets up test data before each test.
@@ -101,7 +119,7 @@ class EventServiceImplTest {
 
         eventResponse = EventMapper.toResponse(eventEntity);
         eventResponseShort = EventMapper.toResponseShort(eventEntity);
-        eventResponseShort.setViews(100);  // Устанавливаем просмотры для теста
+        eventResponseShort.setViews(participants);  // Устанавливаем просмотры для теста
 
         criteria = new EventSearchCriteria();
         criteria.setCategories(Collections.singletonList(1));
@@ -119,9 +137,9 @@ class EventServiceImplTest {
         when(repository.findAll(any(Specification.class),
                 any(Pageable.class))).thenReturn(page);
         when(eventClient.getEventViews(anyLong()))
-                .thenReturn(CompletableFuture.completedFuture(100));
+                .thenReturn(CompletableFuture.completedFuture(participants));
 
-        List<EventResponseShort> responses = service.getEvents(criteria, 0, 10);
+        List<EventResponseShort> responses = service.getEvents(criteria, 0, pageSize);
 
         assertNotNull(responses);
         assertEquals(1, responses.size());
@@ -140,12 +158,12 @@ class EventServiceImplTest {
     void getEvent() {
         when(repository.findById(anyLong())).thenReturn(Optional.of(eventEntity));
         when(eventClient.getEventViews(anyLong()))
-                .thenReturn(CompletableFuture.completedFuture(100));
+                .thenReturn(CompletableFuture.completedFuture(participants));
 
         EventResponse response = service.getEvent(1L);
 
         assertNotNull(response);
-        assertEquals(100, response.getViews());
+        assertEquals(participants, response.getViews());
 
         verify(repository, times(1)).findById(anyLong());
         verify(eventClient, times(1)).getEventViews(anyLong());
@@ -155,7 +173,7 @@ class EventServiceImplTest {
      * Tests the getEvent method for a non-existing event.
      */
     @Test
-    void getEvent_NotExist() {
+    void getEventNotExist() {
         when(repository.findById(anyLong())).thenReturn(Optional.empty());
 
         NotExistException exception = assertThrows(NotExistException.class,
@@ -187,7 +205,7 @@ class EventServiceImplTest {
      * Tests the getEventsByIds method with an empty result.
      */
     @Test
-    void getEventsByIds_Empty() {
+    void getEventsByIdsEmpty() {
         when(repository.findAllById(anyList()))
                 .thenReturn(Collections.emptyList());
 
@@ -221,7 +239,7 @@ class EventServiceImplTest {
      * Tests the getEventEntity method for a non-existing event.
      */
     @Test
-    void getEventEntity_NotExist() {
+    void getEventEntityNotExist() {
         when(repository.findById(anyLong())).thenReturn(Optional.empty());
 
         NotExistException exception = assertThrows(NotExistException.class,

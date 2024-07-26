@@ -2,7 +2,14 @@ package ru.practicum.explorewithme.user.controller.privateuser;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.explorewithme.user.request.model.ApproveRequestCriteria;
 import ru.practicum.explorewithme.user.request.model.EventRequestStatusUpdateResult;
 import ru.practicum.explorewithme.user.request.model.UserEventRequestDto;
@@ -42,7 +49,8 @@ public class PrivateUserRequestController {
      *
      * @param userId   the ID of the user
      * @param eventId  the ID of the event
-     * @param criteria the ApproveRequestCriteria object containing approval criteria
+     * @param criteria the ApproveRequestCriteria
+     *                 object containing approval criteria
      * @return ResponseEntity with the EventRequestStatusUpdateResult object
      */
     @PatchMapping("/{userId}/events/{eventId}/requests")

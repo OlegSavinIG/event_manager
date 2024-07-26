@@ -30,7 +30,11 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.anyInt;
+import static org.mockito.Mockito.anyLong;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Test class for {@link AdminEventServiceImpl}.
@@ -81,10 +85,19 @@ public class AdminEventServiceImplTest {
      * Sets up test data before each test.
      */
     private UserEntity userEntity;
+    /**
+     * Sets up test data before each test.
+     */
+   private int participants = 100;
+    /**
+     * Sets up test data before each test.
+     */
+   private int pageSize = 10;
 
     /**
      * Sets up test data before each test.
      */
+
     @BeforeEach
     void setUp() {
         categoryEntity = CategoryEntity.builder().id(1)
@@ -98,7 +111,7 @@ public class AdminEventServiceImplTest {
                 .title("Test Title")
                 .eventDate(LocalDateTime.now().plusDays(1))
                 .paid(true)
-                .participantLimit(100)
+                .participantLimit(participants)
                 .requestModeration(true)
                 .category(1)
                 .stateAction("PUBLISH_EVENT")
@@ -111,7 +124,7 @@ public class AdminEventServiceImplTest {
                 .title("Test Title")
                 .eventDate(LocalDateTime.now().plusDays(1))
                 .paid(true)
-                .participantLimit(100)
+                .participantLimit(participants)
                 .requestModeration(true)
                 .state(EventStatus.PENDING)
                 .category(categoryEntity)
@@ -125,7 +138,7 @@ public class AdminEventServiceImplTest {
                 .title("Test Title")
                 .eventDate(LocalDateTime.now().plusDays(1))
                 .paid(true)
-                .participantLimit(100)
+                .participantLimit(participants)
                 .requestModeration(true)
                 .state(EventStatus.PUBLISHED)
                 .category(CategoryMapper.toResponse(categoryEntity))
@@ -151,7 +164,7 @@ public class AdminEventServiceImplTest {
                 any(PageRequest.class)))
                 .thenReturn(page);
 
-        List<EventResponse> responses = service.getEvents(criteria, 0, 10);
+        List<EventResponse> responses = service.getEvents(criteria, 0, pageSize);
 
         verify(repository, times(1))
                 .findAll(any(Specification.class), any(PageRequest.class));
@@ -185,7 +198,7 @@ public class AdminEventServiceImplTest {
      * Tests the approveEvent method for a non-existing event.
      */
     @Test
-    void testApproveEvent_NotExist() {
+    void testApproveEventNotExist() {
         when(eventRepository.findById(anyLong())).thenReturn(Optional.empty());
 
         try {
@@ -204,7 +217,7 @@ public class AdminEventServiceImplTest {
      * Tests the approveEvent method with an invalid category.
      */
     @Test
-    void testApproveEvent_InvalidCategory() {
+    void testApproveEventInvalidCategory() {
         when(eventRepository.findById(anyLong()))
                 .thenReturn(Optional.of(eventEntity));
         when(categoryRepository.findById(anyInt()))

@@ -27,8 +27,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Test class for {@link PrivateUserEventsServiceImpl}.
@@ -84,6 +88,14 @@ public class PrivateUserEventsServiceImplTest {
      * Sets up test data before each test.
      */
     private CategoryEntity categoryEntity;
+    /**
+     * Sets up test data before each test.
+     */
+   private int participants = 100;
+    /**
+     * Sets up test data before each test.
+     */
+   private int pageSize = 10;
 
     /**
      * Sets up test data before each test.
@@ -103,7 +115,7 @@ public class PrivateUserEventsServiceImplTest {
                 .description("Test Description")
                 .eventDate(LocalDateTime.now().plusDays(1))
                 .paid(true)
-                .participantLimit(100)
+                .participantLimit(participants)
                 .requestModeration(true)
                 .category(1)
                 .stateAction("PENDING")
@@ -116,7 +128,7 @@ public class PrivateUserEventsServiceImplTest {
                 .description("Test Description")
                 .eventDate(LocalDateTime.now().plusDays(1))
                 .paid(true)
-                .participantLimit(100)
+                .participantLimit(participants)
                 .requestModeration(true)
                 .state(EventStatus.PENDING)
                 .category(categoryEntity)
@@ -130,7 +142,7 @@ public class PrivateUserEventsServiceImplTest {
                 .description("Test Description")
                 .eventDate(LocalDateTime.now().plusDays(1))
                 .paid(true)
-                .participantLimit(100)
+                .participantLimit(participants)
                 .requestModeration(true)
                 .state(EventStatus.PENDING)
                 .category(categoryResponse)
@@ -149,7 +161,7 @@ public class PrivateUserEventsServiceImplTest {
                 .thenReturn(Optional.of(page));
 
         List<EventResponse> responses = service
-                .getEventsByUserId(1L, 0, 10);
+                .getEventsByUserId(1L, 0, pageSize);
 
         verify(repository, times(1))
                 .findAllByInitiatorId(anyLong(), any(PageRequest.class));
@@ -218,7 +230,7 @@ public class PrivateUserEventsServiceImplTest {
      * Tests the updateEvent method for a non-existing event.
      */
     @Test
-    void testUpdateEvent_NotExist() {
+    void testUpdateEventNotExist() {
         when(repository.findByIdAndInitiatorId(anyLong(), anyLong()))
                 .thenReturn(Optional.empty());
 

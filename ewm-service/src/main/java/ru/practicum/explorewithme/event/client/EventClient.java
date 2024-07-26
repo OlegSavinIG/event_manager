@@ -20,9 +20,13 @@ import java.util.concurrent.CompletableFuture;
 @Component
 @RequiredArgsConstructor
 public class EventClient {
-
+    /**
+     * REST template for managing compilations.
+     */
     private final RestTemplate restTemplate;
-
+    /**
+     * server.
+     */
     @Value("${stats.server.url}")
     private String statsServerUrl;
 
@@ -32,7 +36,8 @@ public class EventClient {
      * @param remoteAddr the remote address of the request
      * @param requestURI the URI of the request
      */
-    public void sendRequestData(String remoteAddr, String requestURI) {
+    public void sendRequestData(
+            final String remoteAddr, final String requestURI) {
         Map<String, String> requestData = new HashMap<>();
         requestData.put("remoteAddr", remoteAddr);
         requestData.put("requestURI", requestURI);
@@ -47,7 +52,8 @@ public class EventClient {
      * @return a CompletableFuture containing the number of event views
      */
     @Async
-    public CompletableFuture<Integer> getEventViews(Long eventId) {
+    public CompletableFuture<Integer> getEventViews(
+            final Long eventId) {
         String url = String.format(
                 "%s/stats?start=%s&end=%s&uris=/events/%d",
                 statsServerUrl,

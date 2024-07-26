@@ -27,7 +27,9 @@ import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Test class for {@link PrivateUserRequestServiceImpl}.
@@ -129,7 +131,8 @@ public class PrivateUserRequestServiceImplTest {
     @Test
     void testGetEventRequests() {
         when(repository.findAllByEventId(anyLong()))
-                .thenReturn(Optional.of(Collections.singletonList(requestEntity)));
+                .thenReturn(Optional.of(Collections
+                        .singletonList(requestEntity)));
         when(eventService.getEvent(anyLong())).thenReturn(eventResponse);
 
         List<UserEventRequestDto> responses = service.getEventRequests(1L, 1L);
@@ -179,9 +182,12 @@ public class PrivateUserRequestServiceImplTest {
     void testCreateRequest() {
         when(repository.existsByRequesterIdAndEventId(anyLong(), anyLong()))
                 .thenReturn(false);
-        when(eventService.getEventEntity(anyLong())).thenReturn(eventEntity);
-        when(adminUserService.findUserEntity(anyLong())).thenReturn(userEntity);
-        when(repository.save(any(UserEventRequestEntity.class))).thenReturn(requestEntity);
+        when(eventService.getEventEntity(anyLong()))
+                .thenReturn(eventEntity);
+        when(adminUserService.findUserEntity(anyLong()))
+                .thenReturn(userEntity);
+        when(repository.save(any(UserEventRequestEntity.class)))
+                .thenReturn(requestEntity);
 
         UserEventRequestDto response = service.createRequest(1L, 1L);
 

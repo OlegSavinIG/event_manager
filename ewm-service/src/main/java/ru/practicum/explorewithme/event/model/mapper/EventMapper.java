@@ -1,18 +1,21 @@
 package ru.practicum.explorewithme.event.model.mapper;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import ru.practicum.explorewithme.category.model.CategoryEntity;
 import ru.practicum.explorewithme.category.model.mapper.CategoryMapper;
-import ru.practicum.explorewithme.event.model.*;
+import ru.practicum.explorewithme.event.model.EventEntity;
+import ru.practicum.explorewithme.event.model.EventRequest;
+import ru.practicum.explorewithme.event.model.EventResponse;
+import ru.practicum.explorewithme.event.model.EventResponseShort;
+import ru.practicum.explorewithme.event.model.EventStatus;
 import ru.practicum.explorewithme.user.model.UserEntity;
 import ru.practicum.explorewithme.user.model.mapper.UserMapper;
 
 /**
  * Mapper class for converting between EventEntity and DTOs.
  */
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class EventMapper {
+    protected EventMapper() {
+    }
 
     /**
      * Converts an EventEntity to an EventResponse.
@@ -20,7 +23,7 @@ public class EventMapper {
      * @param entity the event entity to convert
      * @return the event response
      */
-    public static EventResponse toResponse(EventEntity entity) {
+    public static EventResponse toResponse(final EventEntity entity) {
         return EventResponse.builder()
                 .id(entity.getId())
                 .annotation(entity.getAnnotation())
@@ -47,7 +50,7 @@ public class EventMapper {
      * @param entity the event entity to convert
      * @return the short event response
      */
-    public static EventResponseShort toResponseShort(EventEntity entity) {
+    public static EventResponseShort toResponseShort(final EventEntity entity) {
         return EventResponseShort.builder()
                 .id(entity.getId())
                 .annotation(entity.getAnnotation())
@@ -71,7 +74,9 @@ public class EventMapper {
      * @return the event entity
      */
     public static EventEntity toEntity(
-            EventRequest request, CategoryEntity category, UserEntity user) {
+            final EventRequest request,
+            final CategoryEntity category,
+            final UserEntity user) {
         return EventEntity.builder()
                 .annotation(request.getAnnotation())
                 .category(category)

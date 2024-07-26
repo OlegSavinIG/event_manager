@@ -18,8 +18,13 @@ import ru.practicum.explorewithme.exists.ExistChecker;
 @RequiredArgsConstructor
 @Slf4j
 public class AdminCategoryServiceImpl implements AdminCategoryService {
-
+    /**
+     * Repository.
+     */
     private final CategoryRepository repository;
+    /**
+     * Checker.
+     */
     private final ExistChecker checker;
 
     /**

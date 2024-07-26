@@ -21,7 +21,11 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.anyList;
+import static org.mockito.Mockito.anyLong;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Test class for {@link AdminUserServiceImpl}.
@@ -50,7 +54,10 @@ public class AdminUserServiceImplTest {
      * Sets up test data before each test.
      */
     private UserResponse userResponse;
-
+    /**
+     * Sets up test data before each test.
+     */
+   private int pageSize = 10;
     /**
      * Sets up test data before each test.
      */
@@ -101,7 +108,7 @@ public class AdminUserServiceImplTest {
 
         List<Long> ids = Collections.singletonList(1L);
         Collection<UserResponse> responses = service
-                .findByIds(ids, 0, 10);
+                .findByIds(ids, 0, pageSize);
 
         verify(repository, times(1))
                 .findByIdIn(anyList(), any(PageRequest.class));
@@ -118,7 +125,7 @@ public class AdminUserServiceImplTest {
                 .singletonList(userEntity));
         when(repository.findAll(any(PageRequest.class))).thenReturn(page);
 
-        Collection<UserResponse> responses = service.findAll(0, 10);
+        Collection<UserResponse> responses = service.findAll(0, pageSize);
 
         verify(repository, times(1))
                 .findAll(any(PageRequest.class));
@@ -145,7 +152,7 @@ public class AdminUserServiceImplTest {
      * Tests the deleteUserById method for a non-existing user.
      */
     @Test
-    void testDeleteUserById_NotExist() {
+    void testDeleteUserByIdNotExist() {
         when(repository.existsById(anyLong())).thenReturn(false);
 
         try {
@@ -179,7 +186,7 @@ public class AdminUserServiceImplTest {
      * Tests the findById method for a non-existing user.
      */
     @Test
-    void testFindById_NotExist() {
+    void testFindByIdNotExist() {
         when(repository.findById(anyLong())).thenReturn(Optional.empty());
 
         try {
@@ -196,11 +203,13 @@ public class AdminUserServiceImplTest {
      */
     @Test
     void testFindUserEntity() {
-        when(repository.findById(anyLong())).thenReturn(Optional.of(userEntity));
+        when(repository.findById(anyLong()))
+                .thenReturn(Optional.of(userEntity));
 
         UserEntity response = service.findUserEntity(1L);
 
-        verify(repository, times(1)).findById(anyLong());
+        verify(repository, times(1))
+                .findById(anyLong());
         assert response.getId().equals(userEntity.getId());
     }
 
@@ -208,7 +217,7 @@ public class AdminUserServiceImplTest {
      * Tests the findUserEntity method for a non-existing user.
      */
     @Test
-    void testFindUserEntity_NotExist() {
+    void testFindUserEntityNotExist() {
         when(repository.findById(anyLong())).thenReturn(Optional.empty());
 
         try {

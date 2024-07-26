@@ -11,7 +11,7 @@ public class InvalidEventStateException extends RuntimeException {
      *
      * @param message the detail message
      */
-    public InvalidEventStateException(String message) {
+    public InvalidEventStateException(final String message) {
         super(message);
     }
 }

@@ -6,6 +6,8 @@ package ru.practicum.explorewithme.user.request.model;
  * to UserEventRequestDto objects.
  */
 public class UserEvenRequestMapper {
+    protected UserEvenRequestMapper() {
+    }
 
     /**
      * Converts a UserEventRequestEntity
@@ -14,7 +16,8 @@ public class UserEvenRequestMapper {
      * @param entity the UserEventRequestEntity object to convert
      * @return the corresponding UserEventRequestDto object
      */
-    public static UserEventRequestDto toDto(UserEventRequestEntity entity) {
+    public static UserEventRequestDto toDto(
+            final UserEventRequestEntity entity) {
         return UserEventRequestDto.builder()
                 .id(entity.getId())
                 .requester(entity.getRequester().getId())

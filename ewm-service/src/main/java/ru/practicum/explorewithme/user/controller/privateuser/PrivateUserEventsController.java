@@ -3,7 +3,14 @@ package ru.practicum.explorewithme.user.controller.privateuser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.explorewithme.annotation.DefaultValidation;
 import ru.practicum.explorewithme.event.model.EventRequest;
 import ru.practicum.explorewithme.event.model.EventResponse;
@@ -37,9 +44,12 @@ public class PrivateUserEventsController {
     @GetMapping("/{userId}/events")
     public ResponseEntity<List<EventResponse>> getEventsByUserId(
             @PathVariable final Long userId,
-            @PositiveOrZero @RequestParam(defaultValue = "0") final Integer from,
-            @Positive @RequestParam(defaultValue = "10") final Integer size) {
-        return ResponseEntity.ok(service.getEventsByUserId(userId, from, size));
+            @PositiveOrZero @RequestParam(defaultValue = "0")
+            final Integer from,
+            @Positive @RequestParam(defaultValue = "10")
+            final Integer size) {
+        return ResponseEntity.ok(service
+                .getEventsByUserId(userId, from, size));
     }
 
     /**
@@ -69,7 +79,8 @@ public class PrivateUserEventsController {
             @PathVariable final Long userId,
             @Validated(DefaultValidation.class)
             @RequestBody final EventRequest request) {
-        return ResponseEntity.ok(service.createEvent(request, userId));
+        return ResponseEntity.ok(service
+                .createEvent(request, userId));
     }
 
     /**
@@ -85,6 +96,7 @@ public class PrivateUserEventsController {
             @PathVariable final Long userId,
             @PathVariable final Long eventId,
             @RequestBody final EventRequest request) {
-        return ResponseEntity.ok(service.updateEvent(userId, eventId, request));
+        return ResponseEntity.ok(service
+                .updateEvent(userId, eventId, request));
     }
 }

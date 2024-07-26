@@ -15,7 +15,11 @@ import ru.practicum.explorewithme.exists.ExistChecker;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.anyInt;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Test class for {@link AdminCategoryServiceImpl}.
@@ -96,8 +100,10 @@ public class AdminCategoryServiceImplTest {
      */
     @Test
     void testUpdateCategory() {
-        when(repository.findById(anyInt())).thenReturn(Optional.of(categoryEntity));
-        when(repository.save(any(CategoryEntity.class))).thenReturn(categoryEntity);
+        when(repository.findById(anyInt()))
+                .thenReturn(Optional.of(categoryEntity));
+        when(repository.save(any(CategoryEntity.class)))
+                .thenReturn(categoryEntity);
 
         CategoryResponse response = service.updateCategory(categoryRequest, 1);
 

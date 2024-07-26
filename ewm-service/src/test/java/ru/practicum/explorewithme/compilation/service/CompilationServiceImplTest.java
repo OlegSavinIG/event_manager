@@ -19,10 +19,15 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.anyInt;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Test class for {@link CompilationServiceImpl}.
@@ -60,6 +65,10 @@ class CompilationServiceImplTest {
      * Sets up test data before each test.
      */
     private EventResponse eventResponse;
+    /**
+     * Sets up test data before each test.
+     */
+   private int pageSize = 10;
 
     /**
      * Sets up test data before each test.
@@ -102,7 +111,7 @@ class CompilationServiceImplTest {
                 .thenReturn(compilationResponse);
 
         List<CompilationResponse> responses = service
-                .getCompilations(true, 0, 10);
+                .getCompilations(true, 0, pageSize);
 
         assertNotNull(responses);
         assertEquals(1, responses.size());
@@ -139,7 +148,7 @@ class CompilationServiceImplTest {
      * Tests the getCompilation method for a non-existing compilation.
      */
     @Test
-    void getCompilation_NotExist() {
+    void getCompilationNotExist() {
         when(repository.findById(anyInt())).thenReturn(Optional.empty());
 
         NotExistException exception = assertThrows(NotExistException.class,

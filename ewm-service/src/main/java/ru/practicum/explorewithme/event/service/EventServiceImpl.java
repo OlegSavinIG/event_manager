@@ -10,7 +10,11 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.explorewithme.event.client.EventClient;
-import ru.practicum.explorewithme.event.model.*;
+import ru.practicum.explorewithme.event.model.EventEntity;
+import ru.practicum.explorewithme.event.model.EventResponse;
+import ru.practicum.explorewithme.event.model.EventResponseShort;
+import ru.practicum.explorewithme.event.model.EventSearchCriteria;
+import ru.practicum.explorewithme.event.model.EventStatus;
 import ru.practicum.explorewithme.event.model.mapper.EventMapper;
 import ru.practicum.explorewithme.event.repository.EventRepository;
 import ru.practicum.explorewithme.event.specification.EventSpecification;
@@ -31,8 +35,13 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class EventServiceImpl implements EventService {
-
+    /**
+     * REST repository for managing compilations.
+     */
     private final EventRepository repository;
+    /**
+     * REST client for managing compilations.
+     */
     private final EventClient eventClient;
 
     /**
@@ -40,21 +49,24 @@ public class EventServiceImpl implements EventService {
      */
     @Override
     @Transactional(readOnly = true)
-    public List<EventResponseShort> getEvents(EventSearchCriteria criteria,
-                                              Integer from, Integer size) {
+    public List<EventResponseShort> getEvents(
+            final EventSearchCriteria criteria,
+            final Integer from, final Integer size) {
         log.info("Fetching events with criteria: {}, from: {}, size: {}",
                 criteria, from, size);
         Specification<EventEntity> spec = Specification.where(null);
 
-        if (criteria.getCategories() != null &&
-                !criteria.getCategories().isEmpty()) {
+        if (criteria.getCategories() != null
+                && !criteria.getCategories().isEmpty()) {
             spec = spec.and(EventSpecification.hasCategories(
                     criteria.getCategories()));
         }
         spec = spec.and(EventSpecification.dateAfter(criteria.getRangeStart()));
-        spec = spec.and(EventSpecification.dateBefore(criteria.getRangeEnd()));
+        spec = spec.and(EventSpecification
+                .dateBefore(criteria.getRangeEnd()));
         if (criteria.getText() != null && !criteria.getText().isEmpty()) {
-            spec = spec.and(EventSpecification.containsText(criteria.getText()));
+            spec = spec
+                    .and(EventSpecification.containsText(criteria.getText()));
         }
         if (Boolean.TRUE.equals(criteria.getOnlyAvailable())) {
             spec = spec.and(EventSpecification.isAvailable());
@@ -94,7 +106,7 @@ public class EventServiceImpl implements EventService {
      */
     @Override
     @Transactional(readOnly = true)
-    public EventResponse getEvent(Long id) {
+    public EventResponse getEvent(final Long id) {
         log.info("Fetching event with ID: {}", id);
         EventEntity eventEntity = repository.findById(id)
                 .orElseThrow(() -> new NotExistException(
@@ -116,7 +128,7 @@ public class EventServiceImpl implements EventService {
      */
     @Override
     @Transactional(readOnly = true)
-    public List<EventResponse> getEventsByIds(List<Long> ids) {
+    public List<EventResponse> getEventsByIds(final List<Long> ids) {
         log.info("Fetching events with IDs: {}", ids);
         List<EventEntity> eventEntities = repository.findAllById(ids);
         if (eventEntities.isEmpty()) {
@@ -135,7 +147,7 @@ public class EventServiceImpl implements EventService {
      */
     @Override
     @Transactional(readOnly = true)
-    public EventEntity getEventEntity(Long id) {
+    public EventEntity getEventEntity(final Long id) {
         log.info("Fetching event entity with ID: {}", id);
         EventEntity eventEntity = repository.findById(id)
                 .orElseThrow(() -> new NotExistException(
@@ -148,7 +160,7 @@ public class EventServiceImpl implements EventService {
      * {@inheritDoc}
      */
     @Transactional(readOnly = true)
-    public List<EventEntity> getEventEntities(List<Long> ids) {
+    public List<EventEntity> getEventEntities(final List<Long> ids) {
         log.info("Fetching event entities with IDs: {}", ids);
         List<EventEntity> eventEntities = repository.findAllById(ids);
         log.info("Found {} event entities with IDs: {}", eventEntities.size(),
@@ -163,7 +175,7 @@ public class EventServiceImpl implements EventService {
      * @return a list of CompletableFutures for the event entities
      */
     private List<CompletableFuture<EventEntity>> setEventsViews(
-            Page<EventEntity> eventEntities) {
+            final Page<EventEntity> eventEntities) {
         int numCores = Runtime.getRuntime().availableProcessors();
         int numThreads = numCores * 2;
         ExecutorService executor = Executors.newFixedThreadPool(numThreads);

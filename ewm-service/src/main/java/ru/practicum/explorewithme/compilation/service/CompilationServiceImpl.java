@@ -23,7 +23,13 @@ import java.util.stream.Collectors;
 @Slf4j
 public class CompilationServiceImpl implements CompilationService {
 
+    /**
+     * REST repository for managing compilations.
+     */
     private final CompilationRepository repository;
+    /**
+     * REST mapper for managing compilations.
+     */
     private final CompilationMapper mapper;
 
     /**

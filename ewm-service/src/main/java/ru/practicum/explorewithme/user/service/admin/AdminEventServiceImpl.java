@@ -34,17 +34,17 @@ import java.util.stream.Collectors;
 public class AdminEventServiceImpl implements AdminEventService {
 
     /**
-     * Repository for admin event operations
+     * Repository for admin event operations.
      */
     private final AdminEventRepository repository;
 
     /**
-     * Repository for event operations
+     * Repository for event operations.
      */
     private final EventRepository eventRepository;
 
     /**
-     * Repository for category operations
+     * Repository for category operations.
      */
     private final CategoryRepository categoryRepository;
 
@@ -133,8 +133,10 @@ public class AdminEventServiceImpl implements AdminEventService {
         if (request.getTitle() != null) {
             event.setTitle(request.getTitle());
         }
-        if (request.getStateAction() != null &&
-                (request.getStateAction().equals("PUBLISH_EVENT") ||
+        if (request.getStateAction() != null
+                &&
+                (request.getStateAction().equals("PUBLISH_EVENT")
+                        ||
                         request.getStateAction().equals("REJECT_EVENT"))) {
             handleStateAction(request.getStateAction(), event);
         }
@@ -169,6 +171,8 @@ public class AdminEventServiceImpl implements AdminEventService {
                             "Invalid state action: " + stateAction);
                 }
                 event.setState(EventStatus.REJECTED);
+                break;
+            default:
                 break;
         }
     }

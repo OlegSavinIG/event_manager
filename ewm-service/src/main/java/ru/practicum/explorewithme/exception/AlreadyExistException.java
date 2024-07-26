@@ -10,7 +10,7 @@ public class AlreadyExistException extends RuntimeException {
      *
      * @param message the detail message
      */
-    public AlreadyExistException(String message) {
+    public AlreadyExistException(final String message) {
         super(message);
     }
 }

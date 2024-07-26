@@ -23,19 +23,18 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class AdminCompilationServiceImpl implements AdminCompilationService {
-
     /**
-     * The repository for accessing compilations
+     * The repository for accessing compilations.
      */
     private final AdminCompilationRepository repository;
 
     /**
-     * The mapper for transforming compilation data
+     * The mapper for transforming compilation data.
      */
     private final CompilationMapper mapper;
 
     /**
-     * Service for handling event operations
+     * Service for handling event operations.
      */
     private final EventService eventService;
 

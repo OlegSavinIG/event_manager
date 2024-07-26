@@ -13,6 +13,8 @@ import java.util.List;
  * Specifications for querying EventEntity objects.
  */
 public class EventSpecification {
+    protected EventSpecification() {
+    }
 
     /**
      * Creates a specification for filtering events by user IDs.
