@@ -70,7 +70,7 @@ public class PrivateUserRequestServiceImpl
         checker.isEventExists(eventId);
         checker.isUserExist(userId);
         EventResponse event = eventService.getEvent(eventId);
-        if (event.getInitiator().getId() == userId) {
+        if (event.getInitiator().getId().equals(userId)) {
             List<UserEventRequestEntity> eventRequestEntities =
                     repository.findAllByEventId(eventId)
                             .orElseThrow(() -> new NotExistException(
