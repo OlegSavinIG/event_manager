@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.explorewithme.exception.NotExistException;
+import ru.practicum.explorewithme.exists.ExistChecker;
 import ru.practicum.explorewithme.user.model.UserEntity;
 import ru.practicum.explorewithme.user.model.UserRequest;
 import ru.practicum.explorewithme.user.model.UserResponse;
@@ -30,6 +31,10 @@ public class AdminUserServiceImpl implements AdminUserService {
      * Repository for user operations.
      */
     private final AdminUserRepository repository;
+    /**
+     * Checker for user operations.
+     */
+    private final ExistChecker checker;
 
     /**
      * {@inheritDoc}
@@ -37,6 +42,7 @@ public class AdminUserServiceImpl implements AdminUserService {
     @Override
     @Transactional
     public UserResponse addNewUser(final UserRequest userRequest) {
+        checker.isUserExistsByEmail(userRequest.getEmail());
         log.info("Adding new user with request: {}", userRequest);
         UserEntity savedEntity = repository.save(
                 UserMapper.toEntity(userRequest));

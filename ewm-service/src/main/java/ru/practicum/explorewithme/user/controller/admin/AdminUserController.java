@@ -1,6 +1,7 @@
 package ru.practicum.explorewithme.user.controller.admin;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -42,7 +43,7 @@ public class AdminUserController {
     @PostMapping("/users")
     public ResponseEntity<UserResponse> addNewUser(
             @Valid @RequestBody final UserRequest userRequest) {
-        return ResponseEntity.ok(service.addNewUser(userRequest));
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.addNewUser(userRequest));
     }
 
     /**
@@ -71,8 +72,9 @@ public class AdminUserController {
      * @param userId the ID of the user to delete
      */
     @DeleteMapping("/users/{userId}")
-    public void deleteUserById(
+    public ResponseEntity deleteUserById(
             @PathVariable final Long userId) {
         service.deleteUserById(userId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

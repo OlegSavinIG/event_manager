@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,12 +25,13 @@ public class CompilationRequest {
      */
     @NotNull
     @NotBlank
+    @Size(max = 50)
     private String title;
 
     /**
      * Indicates if the compilation is pinned.
      */
-    @NotNull
+    @NotBlank
     private Boolean pinned;
 
     /**
@@ -41,7 +43,7 @@ public class CompilationRequest {
      * The list of events in the compilation.
      * @return events
      */
-    public List<Long> getEvents() {
+     public List<Long> getEvents() {
         return events;
     }
 

@@ -1,6 +1,7 @@
 package ru.practicum.explorewithme.user.controller.admin;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -37,7 +38,8 @@ public class AdminCategoryController {
     @PostMapping("/categories")
     public ResponseEntity<CategoryResponse> createCategory(
             @Valid @RequestBody final CategoryRequest category) {
-        return ResponseEntity.ok(service.createCategory(category));
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(service.createCategory(category));
     }
 
     /**
@@ -46,8 +48,9 @@ public class AdminCategoryController {
      * @param catId the ID of the category to delete
      */
     @DeleteMapping("/categories/{catId}")
-    public void deleteCategory(@PathVariable final Integer catId) {
+    public ResponseEntity deleteCategory(@PathVariable final Integer catId) {
         service.deleteCategory(catId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     /**

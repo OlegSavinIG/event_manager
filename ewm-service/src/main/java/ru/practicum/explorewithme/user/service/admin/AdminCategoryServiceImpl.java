@@ -2,6 +2,8 @@ package ru.practicum.explorewithme.user.service.admin;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.explorewithme.category.model.CategoryEntity;
@@ -39,6 +41,7 @@ public class AdminCategoryServiceImpl implements AdminCategoryService {
         checker.isCategoryExists(catId);
         repository.deleteById(catId);
         log.info("Deleted category with id: {}", catId);
+
     }
 
     /**
@@ -50,6 +53,7 @@ public class AdminCategoryServiceImpl implements AdminCategoryService {
     @Override
     @Transactional
     public CategoryResponse createCategory(final CategoryRequest category) {
+        checker.isCategoryExistsByName(category.getName());
         log.info("Creating category with name: {}", category.getName());
         CategoryEntity entity = repository.save(
                 CategoryMapper.toEntity(category));
@@ -71,6 +75,7 @@ public class AdminCategoryServiceImpl implements AdminCategoryService {
                                            final Integer catId) {
         log.info("Updating category with id: {}", catId);
         checker.isCategoryExists(catId);
+        checker.isCategoryExistsByName(category.getName());
         CategoryEntity categoryEntity = repository.findById(catId)
                 .orElseThrow(() ->
                         new IllegalArgumentException("Category not found"));

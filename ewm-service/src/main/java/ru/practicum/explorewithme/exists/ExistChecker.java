@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import ru.practicum.explorewithme.category.repository.CategoryRepository;
 import ru.practicum.explorewithme.compilation.repository.CompilationRepository;
 import ru.practicum.explorewithme.event.repository.EventRepository;
+import ru.practicum.explorewithme.exception.AlreadyExistException;
 import ru.practicum.explorewithme.exception.NotExistException;
 import ru.practicum.explorewithme.user.repository.AdminUserRepository;
 import ru.practicum.explorewithme.user.repository.RequestRepository;
@@ -98,6 +99,18 @@ public class ExistChecker {
         boolean existsById = requestRepository.existsById(reqId);
         if (!existsById) {
             throw new NotExistException("Request not exists");
+        }
+    }
+    public void isCategoryExistsByName(final String name) {
+        boolean existsByName = categoryRepository.existsByName(name);
+        if (existsByName) {
+            throw new AlreadyExistException("Category already exist");
+        }
+    }
+    public void isUserExistsByEmail(final String email) {
+        boolean existsByEmail = adminUserRepository.existsByEmail(email);
+        if (existsByEmail) {
+            throw new AlreadyExistException("Email already exists");
         }
     }
 }

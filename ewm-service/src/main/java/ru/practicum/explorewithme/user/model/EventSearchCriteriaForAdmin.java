@@ -1,5 +1,6 @@
 package ru.practicum.explorewithme.user.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -30,10 +31,12 @@ public class EventSearchCriteriaForAdmin {
     /**
      * Start of the date and time range to filter events.
      */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime rangeStart;
 
     /**
      * End of the date and time range to filter events.
      */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime rangeEnd;
 }

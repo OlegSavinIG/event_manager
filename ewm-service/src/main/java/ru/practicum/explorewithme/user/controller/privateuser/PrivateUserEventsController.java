@@ -1,6 +1,7 @@
 package ru.practicum.explorewithme.user.controller.privateuser;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -79,7 +80,7 @@ public class PrivateUserEventsController {
             @PathVariable final Long userId,
             @Validated(DefaultValidation.class)
             @RequestBody final EventRequest request) {
-        return ResponseEntity.ok(service
+        return ResponseEntity.status(HttpStatus.CREATED).body(service
                 .createEvent(request, userId));
     }
 

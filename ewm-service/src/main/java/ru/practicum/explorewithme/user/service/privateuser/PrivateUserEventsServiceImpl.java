@@ -158,8 +158,8 @@ public class PrivateUserEventsServiceImpl implements PrivateUserEventsService {
             entity.setCategory(category);
         }
 
-        repository.save(entity);
+        EventEntity saved = repository.save(entity);
         log.info("Event ID: {} for user ID: {} updated", eventId, userId);
-        return EventMapper.toResponse(entity);
+        return EventMapper.toResponse(saved);
     }
 }

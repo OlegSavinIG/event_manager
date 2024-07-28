@@ -1,6 +1,7 @@
 package ru.practicum.explorewithme.user.controller.admin;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -37,7 +38,7 @@ public class AdminCompilationController {
     @PostMapping("/compilations")
     public ResponseEntity<CompilationResponse> createCompilation(
             @Valid @RequestBody final CompilationRequest compilation) {
-        return ResponseEntity.ok(service.createCompilation(compilation));
+        return new  ResponseEntity<>(service.createCompilation(compilation), HttpStatus.CREATED);
     }
 
     /**
