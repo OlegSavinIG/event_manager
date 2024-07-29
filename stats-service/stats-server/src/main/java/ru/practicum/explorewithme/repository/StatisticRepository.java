@@ -25,7 +25,8 @@ public interface StatisticRepository
      * @return the list of statistic entities
      */
     @Query("SELECT s FROM StatisticEntity s "
-            + "WHERE s.creationTime BETWEEN :start AND :end")
+            + "WHERE s.creationTime BETWEEN :start AND :end "
+            + "ORDER BY s.hits DESC")
     List<StatisticEntity> findAllStatistic(
             @Param("start")  LocalDateTime start,
             @Param("end")  LocalDateTime end);
@@ -40,7 +41,8 @@ public interface StatisticRepository
      * @return the list of statistic entities
      */
     @Query("SELECT s FROM StatisticEntity s "
-            + "WHERE s.creationTime BETWEEN :start AND :end AND s.uri IN :uris")
+            + "WHERE s.creationTime BETWEEN :start AND :end AND s.uri IN :uris "
+            + "ORDER BY s.hits DESC")
     List<StatisticEntity> findAllStatisticByUris(
             @Param("start")  LocalDateTime start,
             @Param("end")  LocalDateTime end,
@@ -55,7 +57,8 @@ public interface StatisticRepository
      */
     @Query("SELECT s FROM StatisticEntity s "
             + "WHERE s.creationTime BETWEEN :start "
-            + "AND :end GROUP BY s.ip, s.app, s.uri, s.creationTime")
+            + "AND :end GROUP BY s.ip, s.app, s.uri, s.creationTime "
+            + "ORDER BY s.hits DESC")
     List<StatisticEntity> findAllStatisticWithUniqueIp(
             @Param("start")  LocalDateTime start,
             @Param("end")  LocalDateTime end);
@@ -72,9 +75,14 @@ public interface StatisticRepository
      */
     @Query("SELECT s FROM StatisticEntity s"
             + " WHERE s.creationTime BETWEEN :start AND :end "
-            + "AND s.uri IN :uris GROUP BY s.ip, s.app, s.uri, s.creationTime")
+            + "AND s.uri IN :uris GROUP BY s.ip, s.app, s.uri, s.creationTime "
+            + "ORDER BY s.hits DESC")
     List<StatisticEntity> findAllStatisticByUrisWithUniqueIp(
             @Param("start")  LocalDateTime start,
             @Param("end")  LocalDateTime end,
             @Param("uris")  List<String> uris);
+
+    boolean existsByUri(String uri);
+
+    StatisticEntity getByUri(String uri);
 }

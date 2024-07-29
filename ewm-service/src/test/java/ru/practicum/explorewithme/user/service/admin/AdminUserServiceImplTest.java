@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import ru.practicum.explorewithme.exception.NotExistException;
+import ru.practicum.explorewithme.exists.ExistChecker;
 import ru.practicum.explorewithme.user.model.UserEntity;
 import ru.practicum.explorewithme.user.model.UserRequest;
 import ru.practicum.explorewithme.user.model.UserResponse;
@@ -21,11 +22,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.anyList;
-import static org.mockito.Mockito.anyLong;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * Test class for {@link AdminUserServiceImpl}.
@@ -37,6 +34,11 @@ public class AdminUserServiceImplTest {
      */
     @Mock
     private AdminUserRepository repository;
+    /**
+     * Sets up test data before each test.
+     */
+    @Mock
+    private ExistChecker checker;
     /**
      * Sets up test data before each test.
      */
@@ -88,6 +90,7 @@ public class AdminUserServiceImplTest {
     void testAddNewUser() {
         when(repository.save(any(UserEntity.class)))
                 .thenReturn(userEntity);
+       doNothing().when(checker).isUserExistsByEmail(any(String.class));
 
         UserResponse response = service.addNewUser(userRequest);
 

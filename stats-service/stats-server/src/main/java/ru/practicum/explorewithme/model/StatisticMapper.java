@@ -38,6 +38,7 @@ public class StatisticMapper {
                 .ip(entity.getIp())
                 .creationTime(entity.getCreationTime())
                 .id(entity.getId())
+                .hits(entity.getHits())
                 .build();
     }
 }

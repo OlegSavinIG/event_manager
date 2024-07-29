@@ -35,7 +35,16 @@ public class StatisticServiceImpl implements StatisticService {
      */
     @Override
     public void saveStatistic(final StatisticRequest request) {
-        repository.save(StatisticMapper.toEntity(request));
+        boolean existsByUri = repository.existsByUri(request.getUri());
+        if (existsByUri) {
+            StatisticEntity entity = repository.getByUri(request.getUri());
+            entity.setHits(entity.getHits() + 1);
+            repository.save(entity);
+        }
+            request.setCreationTime(LocalDateTime.now());
+            StatisticEntity entity = StatisticMapper.toEntity(request);
+            entity.setHits(1);
+            repository.save(entity);
     }
 
     /**
@@ -64,12 +73,11 @@ public class StatisticServiceImpl implements StatisticService {
             }
         }
 
-        List<StatisticResponse> responses = statistics.stream()
+
+//        client.sendStatistics(responses);
+
+        return statistics.stream()
                 .map(StatisticMapper::toResponse)
                 .collect(Collectors.toList());
-
-        client.sendStatistics(responses);
-
-        return responses;
     }
 }

@@ -36,6 +36,11 @@ public class StatisticResponse {
     private String ip;
 
     /**
+     * The hits of the uri.
+     */
+    private Integer hits;
+
+    /**
      * The creation time of the statistic record.
      */
     private LocalDateTime creationTime;

@@ -39,7 +39,7 @@ services:
     depends_on:
       - postgres-stat
     ports:
-      - "9090:9090"
+      - "9090:8080"
 
   ewm-service:
     container_name: ewm-service
