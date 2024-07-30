@@ -15,10 +15,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class StatisticResponse {
-    /**
-     * The unique identifier of the statistic record.
-     */
-    private Long id;
 
     /**
      * The name of the application.
@@ -30,18 +26,10 @@ public class StatisticResponse {
      */
     private String uri;
 
-    /**
-     * The IP address of the client.
-     */
-    private String ip;
 
     /**
      * The hits of the uri.
      */
-    private Integer hits;
+    private Long hits;
 
-    /**
-     * The creation time of the statistic record.
-     */
-    private LocalDateTime creationTime;
 }

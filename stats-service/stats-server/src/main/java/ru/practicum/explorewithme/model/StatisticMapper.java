@@ -35,9 +35,6 @@ public class StatisticMapper {
         return StatisticResponse.builder()
                 .app(entity.getApp())
                 .uri(entity.getUri())
-                .ip(entity.getIp())
-                .creationTime(entity.getCreationTime())
-                .id(entity.getId())
                 .hits(entity.getHits())
                 .build();
     }

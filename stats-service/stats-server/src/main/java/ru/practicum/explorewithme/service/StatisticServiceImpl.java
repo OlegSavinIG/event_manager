@@ -1,6 +1,9 @@
 package ru.practicum.explorewithme.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import ru.practicum.explorewithme.StatisticRequest;
 import ru.practicum.explorewithme.StatisticResponse;
@@ -20,6 +23,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class StatisticServiceImpl implements StatisticService {
     /**
      * Repository.
@@ -35,17 +39,37 @@ public class StatisticServiceImpl implements StatisticService {
      */
     @Override
     public void saveStatistic(final StatisticRequest request) {
-        boolean existsByUri = repository.existsByUri(request.getUri());
-        if (existsByUri) {
-            StatisticEntity entity = repository.getByUri(request.getUri());
-            entity.setHits(entity.getHits() + 1);
-            repository.save(entity);
-        }
-            request.setCreationTime(LocalDateTime.now());
-            StatisticEntity entity = StatisticMapper.toEntity(request);
-            entity.setHits(1);
-            repository.save(entity);
+        log.info("Attempting to save statistic for URI: {}", request.getUri());
+        repository.save(StatisticMapper.toEntity(request));
+        log.info("Statistic saved successfully for URI: {}", request.getUri());
+//        if (request == null || request.getUri() == null) {
+//            log.info("Request or URI is null. Cannot process saveStatistic.");
+//            throw new IllegalArgumentException("Request and URI must not be null");
+//        }
+//
+//        log.info("Attempting to save statistic for URI: {}", request.getUri());
+//        StatisticEntity entity = repository.getByUri(request.getUri())
+//                .orElseGet(() -> {
+//                    log.info("No existing statistic found for URI: {}. Creating new record.", request.getUri());
+//                    StatisticEntity newEntity = StatisticMapper.toEntity(request);
+//                    if (newEntity == null) {
+//                        log.info("StatisticMapper.toEntity returned null for request: {}", request);
+//                        throw new IllegalStateException("Failed to map request to entity");
+//                    }
+//                    newEntity.setCreationTime(LocalDateTime.now());
+//                    return newEntity;
+//                });
+//
+//        if (entity.getHits() == null) {
+//            entity.setHits(1);
+//        } else {
+//            entity.setHits(entity.getHits() + 1);
+//        }
+//
+//        repository.save(entity);
+//        log.info("Statistic saved successfully for URI: {}", request.getUri());
     }
+
 
     /**
      * {@inheritDoc}
@@ -55,29 +79,21 @@ public class StatisticServiceImpl implements StatisticService {
                                                 final LocalDateTime end,
                                                 final List<String> uris,
                                                 final boolean unique) {
-        List<StatisticEntity> statistics;
+        log.info("Fetching statistics for uris {} from {} to {}, unique: {}",uris , start, end, unique);
+        List<StatisticResponse> statistics;
+
         if (unique) {
-            if (uris != null && !uris.isEmpty()) {
-                statistics = repository.findAllStatisticByUrisWithUniqueIp(
-                        start, end, uris);
-            } else {
-                statistics = repository.findAllStatisticWithUniqueIp(
-                        start, end);
-            }
+            statistics = (uris != null && !uris.isEmpty())
+                    ? repository.findStatisticsWithUniqueIpAndUriIn(start, end, uris)
+                    : repository.findStatisticsWithUniqueIp(start, end);
+            log.info("Fetched {} unique statistics records", statistics.size());
         } else {
-            if (uris != null && !uris.isEmpty()) {
-                statistics = repository.findAllStatisticByUris(start, end,
-                        uris);
-            } else {
-                statistics = repository.findAllStatistic(start, end);
-            }
+            statistics = (uris != null && !uris.isEmpty())
+                    ? repository.findByUriInAndCreationTimeBetween(uris, start, end)
+                    : repository.findAllByCreationTimeBetween(start, end);
+            log.info("Fetched {} statistics records", statistics.size());
         }
 
-
-//        client.sendStatistics(responses);
-
-        return statistics.stream()
-                .map(StatisticMapper::toResponse)
-                .collect(Collectors.toList());
+        return statistics;
     }
 }

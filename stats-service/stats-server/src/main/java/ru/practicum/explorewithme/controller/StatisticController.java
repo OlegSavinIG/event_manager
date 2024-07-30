@@ -2,6 +2,8 @@ package ru.practicum.explorewithme.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -36,9 +38,10 @@ public class StatisticController {
      * @param request the statistic request containing data to be saved
      */
     @PostMapping("/hit")
-    public void saveStatistic(@Valid @RequestBody
+    public ResponseEntity saveStatistic(@Valid @RequestBody
                                   final StatisticRequest request) {
         service.saveStatistic(request);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     /**
