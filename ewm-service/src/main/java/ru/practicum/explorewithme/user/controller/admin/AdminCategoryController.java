@@ -46,6 +46,7 @@ public class AdminCategoryController {
      * Deletes a category by its ID.
      *
      * @param catId the ID of the category to delete
+     * @return only HttpStatus
      */
     @DeleteMapping("/categories/{catId}")
     public ResponseEntity deleteCategory(@PathVariable final Integer catId) {

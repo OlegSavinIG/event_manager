@@ -38,7 +38,8 @@ public class AdminCompilationController {
     @PostMapping("/compilations")
     public ResponseEntity<CompilationResponse> createCompilation(
             @Valid @RequestBody final CompilationRequest compilation) {
-        return new  ResponseEntity<>(service.createCompilation(compilation), HttpStatus.CREATED);
+        return new  ResponseEntity<>(
+                service.createCompilation(compilation), HttpStatus.CREATED);
     }
 
     /**

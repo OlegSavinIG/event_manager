@@ -19,13 +19,16 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CompilationRequest {
-
+    /**
+     * Константа для максимальной длины title категории.
+     */
+    private static final int MAX_TITLE_LENGTH = 50;
     /**
      * The title of the compilation.
      */
     @NotNull
     @NotBlank
-    @Size(max = 50)
+    @Size(max = MAX_TITLE_LENGTH)
     private String title;
 
     /**

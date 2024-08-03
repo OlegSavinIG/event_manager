@@ -17,12 +17,15 @@ import javax.validation.constraints.Size;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CategoryRequest {
-
+    /**
+     * Константа для максимальной длины имени категории.
+     */
+    private static final int MAX_NAME_LENGTH = 50;
     /**
      * The name of the category.
      */
     @NotNull
     @NotBlank
-    @Size(max = 50)
+    @Size(max = MAX_NAME_LENGTH)
     private String name;
 }

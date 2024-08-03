@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Email;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -20,11 +19,27 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor
 public class UserRequest {
     /**
+     * Константа для максимальной длины name категории.
+     */
+    private static final int MAX_NAME_LENGTH = 250;
+    /**
+     * Константа для минимальной длины name категории.
+     */
+    private static final int MIN_NAME_LENGTH = 2;
+    /**
+     * Константа для максимальной длины email категории.
+     */
+    private static final int MAX_EMAIL_LENGTH = 64;
+    /**
+     * Константа для минимальной длины email категории.
+     */
+    private static final int MIN_EMAIL_LENGTH = 6;
+    /**
      * The name of the user.
      */
     @NotNull
     @NotBlank
-    @Size(min = 2, max = 250)
+    @Size(min = MIN_NAME_LENGTH, max = MAX_NAME_LENGTH)
     private String name;
 
     /**
@@ -33,6 +48,6 @@ public class UserRequest {
     @NotNull
     @NotBlank
     @Email
-    @Size(min = 6, max = 64)
+    @Size(min = MIN_EMAIL_LENGTH, max = MAX_EMAIL_LENGTH)
     private String email;
 }

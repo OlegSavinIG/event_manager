@@ -8,5 +8,10 @@ import ru.practicum.explorewithme.category.model.CategoryEntity;
  */
 public interface CategoryRepository extends JpaRepository<CategoryEntity,
         Integer> {
+    /**
+     * Method for ExistChecker.
+     * @param name category name
+     * @return true or false
+     */
     boolean existsByName(String name);
 }

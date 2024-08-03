@@ -36,6 +36,7 @@ public class StatisticController {
      * Saves statistical data.
      *
      * @param request the statistic request containing data to be saved
+     * @return HttpStatus
      */
     @PostMapping("/hit")
     public ResponseEntity saveStatistic(@Valid @RequestBody

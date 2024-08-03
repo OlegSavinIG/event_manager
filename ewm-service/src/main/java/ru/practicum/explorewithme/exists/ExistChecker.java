@@ -101,12 +101,24 @@ public class ExistChecker {
             throw new NotExistException("Request not exists");
         }
     }
+    /**
+     * Checks if a category exists.
+     *
+     * @param name the name of the category
+     * @throws NotExistException if the category does not exist
+     */
     public void isCategoryExistsByName(final String name) {
         boolean existsByName = categoryRepository.existsByName(name);
         if (existsByName) {
             throw new AlreadyExistException("Category already exist");
         }
     }
+    /**
+     * Checks if a user exists.
+     *
+     * @param email the email of the user
+     * @throws NotExistException if the user does not exist
+     */
     public void isUserExistsByEmail(final String email) {
         boolean existsByEmail = adminUserRepository.existsByEmail(email);
         if (existsByEmail) {

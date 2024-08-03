@@ -43,7 +43,8 @@ public class AdminUserController {
     @PostMapping("/users")
     public ResponseEntity<UserResponse> addNewUser(
             @Valid @RequestBody final UserRequest userRequest) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.addNewUser(userRequest));
+        return ResponseEntity.status(
+                HttpStatus.CREATED).body(service.addNewUser(userRequest));
     }
 
     /**
@@ -70,6 +71,7 @@ public class AdminUserController {
      * Deletes a user by their ID.
      *
      * @param userId the ID of the user to delete
+     * @return HttpStatus
      */
     @DeleteMapping("/users/{userId}")
     public ResponseEntity deleteUserById(
