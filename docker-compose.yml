@@ -54,7 +54,7 @@ services:
       STATS_SERVER_URL: http://localhost:9090
     depends_on:
       - postgres-main
-#      - stats-server
+      - stats-server
     ports:
       - "8080:8080"
 
