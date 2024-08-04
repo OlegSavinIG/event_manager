@@ -54,39 +54,9 @@ public class EventServiceImpl implements EventService {
             final Integer from, final Integer size) {
         log.info("Fetching events with criteria: {}, from: {}, size: {}",
                 criteria, from, size);
-        Specification<EventEntity> spec = Specification.where(null);
 
-        if (criteria.getCategories() != null
-                && !criteria.getCategories().isEmpty()) {
-            spec = spec.and(EventSpecification.hasCategories(
-                    criteria.getCategories()));
-        }
-        spec = spec.and(EventSpecification.dateAfter(criteria.getRangeStart()));
-        spec = spec.and(EventSpecification
-                .dateBefore(criteria.getRangeEnd()));
-        if (criteria.getText() != null && !criteria.getText().isEmpty()) {
-            spec = spec
-                    .and(EventSpecification.containsText(criteria.getText()));
-        }
-        if (Boolean.TRUE.equals(criteria.getOnlyAvailable())) {
-            spec = spec.and(EventSpecification.isAvailable());
-        }
-        if (criteria.getPaid() != null) {
-            spec = spec.and(EventSpecification.isPaid(criteria.getPaid()));
-        }
-        spec = spec.and(EventSpecification.excludeStatuses(EventStatus.WAITING,
-                EventStatus.REJECTED));
-
-        Sort sort = Sort.unsorted();
-        if ("EVENT_DATE".equalsIgnoreCase(criteria.getSort())) {
-            sort = Sort.by(Sort.Direction.ASC, "eventDate");
-        }
-        if ("VIEWS".equalsIgnoreCase(criteria.getSort())) {
-            sort = Sort.by(Sort.Direction.DESC, "views");
-        }
-
-        Pageable pageable = PageRequest.of(from / size, size, sort);
-
+        Specification<EventEntity> spec = createSpecification(criteria);
+        Pageable pageable = createPageRequest(criteria, from, size);
         Page<EventEntity> eventEntities = repository.findAll(spec, pageable);
 
         List<CompletableFuture<EventEntity>> futures = setEventsViews(
@@ -96,8 +66,10 @@ public class EventServiceImpl implements EventService {
                 .map(CompletableFuture::join)
                 .map(EventMapper::toResponseShort)
                 .collect(Collectors.toList());
+
         log.info("Found {} events with criteria: {}, from: {}, size: {}",
                 responses.size(), criteria, from, size);
+
         return responses;
     }
 
@@ -132,7 +104,7 @@ public class EventServiceImpl implements EventService {
         log.info("Fetching events with IDs: {}", ids);
         List<EventEntity> eventEntities = repository.findAllById(ids);
         if (eventEntities.isEmpty()) {
-            log.warn("No events found with IDs: {}", ids);
+            log.info("No events found with IDs: {}", ids);
             return Collections.emptyList();
         }
         List<EventResponse> responses = eventEntities.stream()
@@ -191,5 +163,61 @@ public class EventServiceImpl implements EventService {
                     return event;
                 }, executor))
                 .collect(Collectors.toList());
+    }
+    /**
+     * Creates a specification for filtering events based on the given criteria.
+     *
+     * @param criteria The criteria to filter events.
+     * @return The specification for filtering events.
+     */
+    private Specification<EventEntity> createSpecification(
+           final EventSearchCriteria criteria) {
+        Specification<EventEntity> spec = Specification.where(null);
+
+        if (criteria.getCategories() != null
+                && !criteria.getCategories().isEmpty()) {
+            spec = spec.and(EventSpecification.hasCategories(
+                    criteria.getCategories()));
+        }
+        if (criteria.getRangeStart() != null) {
+            spec = spec.and(EventSpecification.dateAfter(
+                    criteria.getRangeStart()));
+        }
+        if (criteria.getRangeEnd() != null) {
+            spec = spec.and(EventSpecification.dateBefore(
+                    criteria.getRangeEnd()));
+        }
+        if (criteria.getText() != null && !criteria.getText().isEmpty()) {
+            spec = spec.and(EventSpecification.containsText(
+                    criteria.getText()));
+        }
+        if (Boolean.TRUE.equals(criteria.getOnlyAvailable())) {
+            spec = spec.and(EventSpecification.isAvailable());
+        }
+        if (criteria.getPaid() != null) {
+            spec = spec.and(EventSpecification.isPaid(criteria.getPaid()));
+        }
+        spec = spec.and(EventSpecification.excludeStatuses(
+                EventStatus.WAITING, EventStatus.REJECTED));
+        return spec;
+    }
+
+    /**
+     * Creates a pageable object for pagination based on the given criteria.
+     *
+     * @param criteria The criteria for pagination and sorting.
+     * @param from     The starting index of the page.
+     * @param size     The size of the page.
+     * @return The pageable object.
+     */
+    private Pageable createPageRequest(final EventSearchCriteria criteria,
+                                      final Integer from, final Integer size) {
+        Sort sort = Sort.unsorted();
+        if ("EVENT_DATE".equalsIgnoreCase(criteria.getSort())) {
+            sort = Sort.by(Sort.Direction.ASC, "eventDate");
+        } else if ("VIEWS".equalsIgnoreCase(criteria.getSort())) {
+            sort = Sort.by(Sort.Direction.DESC, "views");
+        }
+        return PageRequest.of(from / size, size, sort);
     }
 }
