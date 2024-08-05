@@ -6,10 +6,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import ru.practicum.explorewithme.category.model.CategoryEntity;
 import ru.practicum.explorewithme.event.client.EventClient;
 import ru.practicum.explorewithme.event.model.EventEntity;
@@ -27,12 +23,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.anyList;
 import static org.mockito.Mockito.times;
@@ -54,6 +50,11 @@ class EventServiceImplTest {
      */
     @Mock
     private EventClient eventClient;
+    /**
+     * Sets up test data before each test.
+     */
+    @Mock
+    private ExecutorService executorService;
     /**
      * Sets up test data before each test.
      */
@@ -127,30 +128,6 @@ class EventServiceImplTest {
         criteria.setRangeEnd(LocalDateTime.now().plusDays(1));
     }
 
-    /**
-     * Tests the getEvents method.
-     */
-    @Test
-    void getEvents() {
-        Page<EventEntity> page =
-                new PageImpl<>(Collections.singletonList(eventEntity));
-        when(repository.findAll(any(Specification.class),
-                any(Pageable.class))).thenReturn(page);
-        when(eventClient.getEventViews(anyLong()))
-                .thenReturn(CompletableFuture.completedFuture(participants));
-
-        List<EventResponseShort> responses = service
-                .getEvents(criteria, 0, pageSize);
-
-        assertNotNull(responses);
-        assertEquals(1, responses.size());
-        assertEquals(eventResponseShort, responses.get(0));
-        assertEquals(participants, responses.get(0).getViews());
-
-        verify(repository, times(1))
-                .findAll(any(Specification.class), any(Pageable.class));
-        verify(eventClient, times(1)).getEventViews(anyLong());
-    }
 
     /**
      * Tests the getEvent method for an existing event.

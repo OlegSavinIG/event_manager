@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 /**
@@ -43,6 +42,10 @@ public class EventServiceImpl implements EventService {
      * REST client for managing compilations.
      */
     private final EventClient eventClient;
+    /**
+     * Service for managing event views.
+     */
+    private final ExecutorService executorService;
 
     /**
      * {@inheritDoc}
@@ -58,6 +61,12 @@ public class EventServiceImpl implements EventService {
         Specification<EventEntity> spec = createSpecification(criteria);
         Pageable pageable = createPageRequest(criteria, from, size);
         Page<EventEntity> eventEntities = repository.findAll(spec, pageable);
+
+        if (eventEntities.isEmpty()) {
+            log.info("No events found with criteria:"
+                    + " {}, from: {}, size: {}", criteria, from, size);
+            return Collections.emptyList();
+        }
 
         List<CompletableFuture<EventEntity>> futures = setEventsViews(
                 eventEntities);
@@ -148,9 +157,6 @@ public class EventServiceImpl implements EventService {
      */
     private List<CompletableFuture<EventEntity>> setEventsViews(
             final Page<EventEntity> eventEntities) {
-        int numCores = Runtime.getRuntime().availableProcessors();
-        int numThreads = numCores * 2;
-        ExecutorService executor = Executors.newFixedThreadPool(numThreads);
         return eventEntities.stream()
                 .map(event -> CompletableFuture.supplyAsync(() -> {
                     try {
@@ -158,10 +164,12 @@ public class EventServiceImpl implements EventService {
                                 event.getId()).get();
                         event.setViews(views);
                     } catch (InterruptedException | ExecutionException e) {
+                        log.info("Error fetching event views for event id: {}",
+                                event.getId(), e);
                         throw new RuntimeException(e);
                     }
                     return event;
-                }, executor))
+                }, executorService))
                 .collect(Collectors.toList());
     }
     /**

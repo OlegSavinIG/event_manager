@@ -21,12 +21,10 @@ import ru.practicum.explorewithme.user.request.model.UserEventRequestEntity;
 import ru.practicum.explorewithme.user.service.admin.AdminUserService;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 /**
@@ -58,6 +56,10 @@ public class PrivateUserRequestServiceImpl
      * Checker for existence of various entities.
      */
     private final ExistChecker checker;
+    /**
+     * Service .
+     */
+    private final ExecutorService executorService;
 
     /**
      * {@inheritDoc}
@@ -93,11 +95,11 @@ public class PrivateUserRequestServiceImpl
     public EventRequestStatusUpdateResult approveRequests(
             final Long userId, final Long eventId,
             final ApproveRequestCriteria criteria) {
-        log.info("Approving requests for event ID: {} by user ID: {}",
-                eventId, userId);
+        log.info("Approving requests for event ID:"
+                + " {} by user ID: {}", eventId, userId);
         checker.isUserExist(userId);
         EventEntity event = eventService.getEventEntity(eventId);
-        if (Boolean.FALSE.equals(event.getRequestModeration())) {
+        if (event.getRequestModeration().equals(Boolean.FALSE)) {
             throw new IllegalArgumentException("Event doesn't have moderation");
         }
         if (!event.getInitiator().getId().equals(userId)) {
@@ -105,33 +107,33 @@ public class PrivateUserRequestServiceImpl
         }
         List<Long> ids = criteria.getIds();
         String status = criteria.getStatus();
-        ExecutorService executor = Executors.newFixedThreadPool(
-                Runtime.getRuntime().availableProcessors());
         List<UserEventRequestEntity> requests = repository.findAllById(ids);
-        try {
-            List<Callable<Void>> tasks = requests.stream()
-                    .map(request -> (Callable<Void>) () -> {
-                                updateRequestStatus(request, status);
-                                return null;
-                            }
-                    )
-                    .collect(Collectors.toList());
-            List<Future<Void>> futures = executor.invokeAll(tasks);
-            for (Future<Void> future : futures) {
-                future.get();
+
+        List<UserEventRequestDto> confirmedRequests = new ArrayList<>();
+        List<UserEventRequestDto> rejectedRequests = new ArrayList<>();
+
+        for (UserEventRequestEntity request : requests) {
+            updateRequestStatus(request, status);
+            UserEventRequestDto dto = UserEvenRequestMapper.toDto(request);
+            if ("CONFIRMED".equalsIgnoreCase(dto.getStatus())) {
+                confirmedRequests.add(dto);
+            } else if ("REJECTED".equalsIgnoreCase(dto.getStatus())) {
+                rejectedRequests.add(dto);
             }
-        } catch (Exception e) {
-            log.error("Error approving requests: {}", e.getMessage());
-        } finally {
-            executor.shutdown();
         }
-        if ("CONFIRMED".equals(status)) {
-            int confirmedRequests = event.getConfirmedRequests();
-            event.setConfirmedRequests(confirmedRequests + requests.size());
+        if ("CONFIRMED".equalsIgnoreCase(status)) {
+            int confirmedRequestsCount = event.getConfirmedRequests();
+            event.setConfirmedRequests(
+                    confirmedRequestsCount + confirmedRequests.size());
             eventRepository.save(event);
         }
-        return null;
+        EventRequestStatusUpdateResult result =
+                new EventRequestStatusUpdateResult();
+        result.setConfirmedRequests(confirmedRequests);
+        result.setRejectedRequests(rejectedRequests);
+        return result;
     }
+
 
     /**
      * {@inheritDoc}
