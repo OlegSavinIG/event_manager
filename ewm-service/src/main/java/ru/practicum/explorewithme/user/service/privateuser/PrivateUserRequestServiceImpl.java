@@ -56,10 +56,6 @@ public class PrivateUserRequestServiceImpl
      * Checker for existence of various entities.
      */
     private final ExistChecker checker;
-    /**
-     * Service .
-     */
-    private final ExecutorService executorService;
 
     /**
      * {@inheritDoc}
