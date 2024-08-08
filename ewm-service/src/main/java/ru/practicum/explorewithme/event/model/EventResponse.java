@@ -80,7 +80,7 @@ public class EventResponse {
     /**
      * The number of views of the event.
      */
-    private Integer views;
+    private long views;
 
     /**
      * The status of the event.

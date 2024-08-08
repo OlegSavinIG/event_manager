@@ -5,6 +5,7 @@ import ru.practicum.explorewithme.event.model.EventResponse;
 import ru.practicum.explorewithme.event.model.EventResponseShort;
 import ru.practicum.explorewithme.event.model.EventSearchCriteria;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -54,4 +55,6 @@ public interface EventService {
      * @return the list of event entities
      */
     List<EventEntity> getEventEntities(List<Long> ids);
+
+    void saveStatistic(HttpServletRequest servletRequest);
 }

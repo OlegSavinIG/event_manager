@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ru.practicum.explorewithme.event.client.EventClient;
+import ru.practicum.explorewithme.client.StatisticClient;
 import ru.practicum.explorewithme.event.model.EventResponse;
 import ru.practicum.explorewithme.event.model.EventResponseShort;
 import ru.practicum.explorewithme.event.model.EventSearchCriteria;
@@ -30,10 +30,6 @@ public class EventController {
      * REST client for managing compilations.
      */
     private final EventService service;
-    /**
-     * REST service for managing compilations.
-     */
-    private final EventClient client;
 
     /**
      * Retrieves a list of events based on search criteria.
@@ -53,9 +49,7 @@ public class EventController {
             final Integer size,
             final HttpServletRequest servletRequest
     ) {
-        final String remoteAddr = servletRequest.getRemoteAddr();
-        final String requestURI = servletRequest.getRequestURI();
-        client.sendRequestData(remoteAddr, requestURI);
+        service.saveStatistic(servletRequest);
         return ResponseEntity.ok(service.getEvents(criteria, from, size));
     }
 
@@ -71,9 +65,7 @@ public class EventController {
             @PathVariable final Long id,
             final HttpServletRequest servletRequest
     ) {
-        final String remoteAddr = servletRequest.getRemoteAddr();
-        final String requestURI = servletRequest.getRequestURI();
-        client.sendRequestData(remoteAddr, requestURI);
+        service.saveStatistic(servletRequest);
         return ResponseEntity.ok(service.getEvent(id));
     }
 }

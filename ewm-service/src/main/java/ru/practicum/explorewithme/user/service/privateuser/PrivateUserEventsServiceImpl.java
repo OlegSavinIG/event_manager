@@ -103,9 +103,15 @@ public class PrivateUserEventsServiceImpl implements PrivateUserEventsService {
         UserEntity userEntity = adminUserService.findUserEntity(userId);
         CategoryResponse category = categoryService.getCategory(
                 request.getCategory());
-        EventEntity eventEntity = repository.save(EventMapper.toEntity(request,
-                CategoryMapper.toEntity(category), userEntity));
-        eventEntity.setCreatedOn(LocalDateTime.now());
+
+        log.info("Mapping event from request: {}  user: {} and category: {}",
+                request, userEntity, category);
+        EventEntity entity = EventMapper.toEntity(request,
+                CategoryMapper.toEntity(category), userEntity);
+        entity.setCreatedOn(LocalDateTime.now());
+        log.info("Mapped successfully {}", entity);
+        EventEntity eventEntity = repository.save(entity);
+
         log.info("Event created with ID: {} for user ID: {}",
                 eventEntity.getId(),
                 userId);
@@ -149,8 +155,8 @@ public class PrivateUserEventsServiceImpl implements PrivateUserEventsService {
         if (request.getRequestModeration() != null) {
             entity.setRequestModeration(request.getRequestModeration());
         }
-        if (request.getStateAction() != null) {
-            entity.setState(EventStatus.valueOf(request.getStateAction()));
+        if (request.getState() != null) {
+            entity.setState((request.getState()));
         }
         if (request.getCategory() != null) {
             CategoryEntity category = categoryService.getCategoryEntity(

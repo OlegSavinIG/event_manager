@@ -1,40 +1,38 @@
 package ru.practicum.explorewithme.client;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
+import ru.practicum.explorewithme.StatisticRequest;
 import ru.practicum.explorewithme.StatisticResponse;
 
 import java.util.List;
+import java.util.Map;
 
-/**
- * Service for handling statistics via RestTemplate.
- */
-@Service
-@RequiredArgsConstructor
-@Slf4j
+@Component
 public class StatisticClient {
-    /**
-     * Template for handling statistics via RestTemplate.
-     */
-    private final RestTemplate restTemplate;
 
-    /**
-     * Sends a list of statistics to an external service.
-     *
-     * @param statistics the list of statistics to send
-     */
-    public void sendStatistics(final List<StatisticResponse> statistics) {
-        try {
-            restTemplate.postForObject(
-                    "/external-service-endpoint",
-                    statistics,
-                    Void.class
-            );
-            log.info("Successfully sent statistics to external service");
-        } catch (Exception e) {
-            log.error("Failed to send statistics to external service", e);
-        }
+    private final WebClient webClient;
+    public StatisticClient(WebClient.Builder webClientBuilder) {
+        this.webClient = webClientBuilder.build();
+    }
+    public Mono<Void> sendStats(StatisticRequest stats) {
+        return webClient.post()
+                .uri("/hit")
+                .bodyValue(stats)
+                .retrieve()
+                .bodyToMono(Void.class);
+    }
+
+    public Mono<Map<Long, Integer>> getEventViews(List<String> uris) {
+        return webClient.get()
+                .uri(uriBuilder -> uriBuilder.path("/views")
+                        .queryParam("uris", String.join(",", uris))
+                        .build())
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<Map<Long, Integer>>() {});
     }
 }
+

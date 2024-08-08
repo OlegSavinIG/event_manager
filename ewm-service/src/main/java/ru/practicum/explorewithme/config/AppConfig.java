@@ -14,15 +14,6 @@ import java.util.concurrent.Executors;
 public class AppConfig {
 
     /**
-     * Creates and configures a RestTemplate bean.
-     *
-     * @return the configured RestTemplate
-     */
-    @Bean
-    public RestTemplate restTemplate() {
-        return new RestTemplate();
-    }
-    /**
      * Creates and configures an ExecutorService bean.
      *
      * @return the configured ExecutorService

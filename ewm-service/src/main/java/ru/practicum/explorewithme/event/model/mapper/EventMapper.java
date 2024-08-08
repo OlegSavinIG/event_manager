@@ -81,7 +81,7 @@ public class EventMapper {
                 .annotation(request.getAnnotation())
                 .category(category)
                 .paid(request.getPaid())
-                .state(EventStatus.valueOf(request.getStateAction()))
+                .state(request.getState())
                 .title(request.getTitle())
                 .eventDate(request.getEventDate())
                 .initiator(user)

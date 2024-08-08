@@ -9,7 +9,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.explorewithme.event.client.EventClient;
+import reactor.core.publisher.Mono;
+import ru.practicum.explorewithme.StatisticRequest;
+import ru.practicum.explorewithme.client.StatisticClient;
 import ru.practicum.explorewithme.event.model.EventEntity;
 import ru.practicum.explorewithme.event.model.EventResponse;
 import ru.practicum.explorewithme.event.model.EventResponseShort;
@@ -20,10 +22,10 @@ import ru.practicum.explorewithme.event.repository.EventRepository;
 import ru.practicum.explorewithme.event.specification.EventSpecification;
 import ru.practicum.explorewithme.exception.NotExistException;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
 
@@ -41,7 +43,7 @@ public class EventServiceImpl implements EventService {
     /**
      * REST client for managing compilations.
      */
-    private final EventClient eventClient;
+    private final StatisticClient client;
     /**
      * Service for managing event views.
      */
@@ -68,18 +70,14 @@ public class EventServiceImpl implements EventService {
             return Collections.emptyList();
         }
 
-        List<CompletableFuture<EventEntity>> futures = setEventsViews(
-                eventEntities);
+        List<EventEntity> entities = setEventsViews(eventEntities);
 
-        List<EventResponseShort> responses = futures.stream()
-                .map(CompletableFuture::join)
+        log.info("Found {} events with criteria: {}",
+                entities.size(), criteria);
+
+        return entities.stream()
                 .map(EventMapper::toResponseShort)
                 .collect(Collectors.toList());
-
-        log.info("Found {} events with criteria: {}, from: {}, size: {}",
-                responses.size(), criteria, from, size);
-
-        return responses;
     }
 
     /**
@@ -93,15 +91,14 @@ public class EventServiceImpl implements EventService {
                 .orElseThrow(() -> new NotExistException(
                         "This event does not exist"));
         log.info("Found event with ID: {}", id);
-        CompletableFuture<Integer> eventViews = eventClient.getEventViews(id);
-        try {
-            Integer views = eventViews.get();
-            eventEntity.setViews(views);
-        } catch (InterruptedException | ExecutionException e) {
-            log.info("Error fetching event views", e);
-            throw new RuntimeException(e);
-        }
-        return EventMapper.toResponse(eventEntity);
+        List<String> uris = createEventsUri(List.of(eventEntity));
+        Mono<Map<Long, Integer>> eventViewsResponse = client.getEventViews(uris);
+        Map<Long, Integer> eventViews = eventViewsResponse.block();
+        int views = eventViews != null ? eventViews.getOrDefault(id, 0) : 0;
+
+        EventResponse response = EventMapper.toResponse(eventEntity);
+        response.setViews(views);
+        return response;
     }
 
     /**
@@ -149,29 +146,31 @@ public class EventServiceImpl implements EventService {
         return eventEntities;
     }
 
+    @Override
+    public void saveStatistic(HttpServletRequest servletRequest) {
+        StatisticRequest statisticRequest = StatisticRequest.builder()
+                .app("ewm-main-service")
+                .ip(servletRequest.getRemoteAddr())
+                .uri(servletRequest.getRequestURI())
+                .build();
+        client.sendStats(statisticRequest).subscribe();
+    }
+
     /**
      * Sets the views for a list of event entities asynchronously.
      *
      * @param eventEntities the list of event entities
      * @return a list of CompletableFutures for the event entities
      */
-    private List<CompletableFuture<EventEntity>> setEventsViews(
+    private List<EventEntity> setEventsViews(
             final Page<EventEntity> eventEntities) {
+        Map<Long, Integer> eventViews =
+                client.getEventViews(createEventsUri(eventEntities.toList())).block();
         return eventEntities.stream()
-                .map(event -> CompletableFuture.supplyAsync(() -> {
-                    try {
-                        Integer views = eventClient.getEventViews(
-                                event.getId()).get();
-                        event.setViews(views);
-                    } catch (InterruptedException | ExecutionException e) {
-                        log.info("Error fetching event views for event id: {}",
-                                event.getId(), e);
-                        throw new RuntimeException(e);
-                    }
-                    return event;
-                }, executorService))
+                .peek(entity -> entity.setViews(eventViews.get(entity.getId())))
                 .collect(Collectors.toList());
     }
+
     /**
      * Creates a specification for filtering events based on the given criteria.
      *
@@ -179,7 +178,7 @@ public class EventServiceImpl implements EventService {
      * @return The specification for filtering events.
      */
     private Specification<EventEntity> createSpecification(
-           final EventSearchCriteria criteria) {
+            final EventSearchCriteria criteria) {
         Specification<EventEntity> spec = Specification.where(null);
 
         if (criteria.getCategories() != null
@@ -219,7 +218,7 @@ public class EventServiceImpl implements EventService {
      * @return The pageable object.
      */
     private Pageable createPageRequest(final EventSearchCriteria criteria,
-                                      final Integer from, final Integer size) {
+                                       final Integer from, final Integer size) {
         Sort sort = Sort.unsorted();
         if ("EVENT_DATE".equalsIgnoreCase(criteria.getSort())) {
             sort = Sort.by(Sort.Direction.ASC, "eventDate");
@@ -227,5 +226,11 @@ public class EventServiceImpl implements EventService {
             sort = Sort.by(Sort.Direction.DESC, "views");
         }
         return PageRequest.of(from / size, size, sort);
+    }
+
+    private List<String> createEventsUri(List<EventEntity> eventEntity) {
+        return eventEntity.stream()
+                .map(entity -> String.format("event/" + entity.getId()))
+                .collect(Collectors.toList());
     }
 }

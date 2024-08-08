@@ -51,7 +51,7 @@ public class StatisticEntity {
      * The hits of the uri.
      */
     @Transient
-    private Long hits;
+    private long hits;
 
     /**
      * The creation time of the statistic record.

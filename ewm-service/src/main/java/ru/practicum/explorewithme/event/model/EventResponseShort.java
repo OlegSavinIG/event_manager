@@ -51,7 +51,7 @@ public class EventResponseShort {
     /**
      * The number of views of the event.
      */
-    private Integer views;
+    private long views;
 
     /**
      * The title of the event.

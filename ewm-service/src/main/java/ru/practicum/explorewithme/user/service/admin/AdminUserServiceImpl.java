@@ -125,7 +125,7 @@ public class AdminUserServiceImpl implements AdminUserService {
         log.info("Finding user entity by ID: {}", userId);
         return repository.findById(userId)
                 .orElseThrow(() -> {
-                    log.error("User with ID {} does not exist", userId);
+                    log.info("User with ID {} does not exist", userId);
                     return new NotExistException("User does not exist");
                 });
     }

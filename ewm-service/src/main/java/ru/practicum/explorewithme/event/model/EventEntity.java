@@ -85,7 +85,7 @@ public class EventEntity {
     /**
      * The number of views of the event.
      */
-    private int views;
+    private long views;
 
     /**
      * The number of confirmed requests for the event.

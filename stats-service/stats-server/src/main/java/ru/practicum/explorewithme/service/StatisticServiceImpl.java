@@ -12,7 +12,9 @@ import ru.practicum.explorewithme.repository.StatisticRepository;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Implementation of the {@link StatisticService} interface.
@@ -72,5 +74,29 @@ public class StatisticServiceImpl implements StatisticService {
             log.info("Fetched {} statistics records", statistics.size());
         }
         return statistics;
+    }
+
+    @Override
+    public Map<Long, Long> getEventViews(List<String> uris) {
+        List<StatisticResponse> stats =
+                repository.findAllStatisticByUriIn(uris);
+        Map<Long, Long> eventsViews = new HashMap<>();
+        stats.stream()
+                .peek(statistic -> {
+                    String uri = statistic.getUri();
+                    eventsViews.put(eventIdExtractor(uri),
+                            statistic.getHits());
+                });
+        return eventsViews;
+    }
+
+    private Long eventIdExtractor(String uri) {
+        char lastChar = uri.charAt(uri.length() - 1);
+        if (!Character.isDigit(lastChar)) {
+            throw new IllegalStateException(
+                    "Error in forming event id from uri " + uri);
+        }
+        String lastCharAsString = Character.toString(lastChar);
+        return Long.parseLong(lastCharAsString);
     }
 }
