@@ -7,8 +7,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.practicum.explorewithme.annotation.DefaultValidation;
 
+import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 /**
@@ -25,6 +27,7 @@ public class EventRequest {
      */
     @NotNull(groups = DefaultValidation.class)
     @NotBlank(groups = DefaultValidation.class)
+    @Size(min = 20, max = 2000)
     private String annotation;
 
     /**
@@ -32,6 +35,7 @@ public class EventRequest {
      */
     @NotNull(groups = DefaultValidation.class)
     @NotBlank(groups = DefaultValidation.class)
+    @Size(min = 20, max = 7000)
     private String description;
 
     /**
@@ -39,11 +43,13 @@ public class EventRequest {
      */
     @NotNull(groups = DefaultValidation.class)
     @NotBlank(groups = DefaultValidation.class)
+    @Size(min = 3, max = 120)
     private String title;
 
     /**
      * The date and time when the event will take place.
      */
+    @FutureOrPresent
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime eventDate;
 

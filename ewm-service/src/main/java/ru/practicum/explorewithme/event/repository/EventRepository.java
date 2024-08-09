@@ -32,4 +32,6 @@ public interface EventRepository extends JpaRepository<EventEntity, Long>,
      * @return the event entity
      */
     Optional<EventEntity> findByIdAndInitiatorId(Long eventId, Long userId);
+
+    Optional<EventEntity> findByIdAndStatePublished(Long id);
 }

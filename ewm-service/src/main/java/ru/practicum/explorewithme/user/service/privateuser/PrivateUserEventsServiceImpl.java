@@ -17,6 +17,7 @@ import ru.practicum.explorewithme.event.model.EventResponse;
 import ru.practicum.explorewithme.event.model.EventStatus;
 import ru.practicum.explorewithme.event.model.mapper.EventMapper;
 import ru.practicum.explorewithme.event.repository.EventRepository;
+import ru.practicum.explorewithme.exception.AlreadyExistException;
 import ru.practicum.explorewithme.exception.NotExistException;
 import ru.practicum.explorewithme.exists.ExistChecker;
 import ru.practicum.explorewithme.user.model.UserEntity;
@@ -104,13 +105,13 @@ public class PrivateUserEventsServiceImpl implements PrivateUserEventsService {
         CategoryResponse category = categoryService.getCategory(
                 request.getCategory());
 
-//        log.info("Mapping event from request title: {}  user: {} and category: {}",
-//                request.getTitle(), userEntity, category);
+        log.info("Mapping event from request title: {}  user: {} and category: {}",
+                request.getTitle(), userEntity, category);
         EventEntity entity = EventMapper.toEntity(request,
                 CategoryMapper.toEntity(category), userEntity);
         entity.setCreatedOn(LocalDateTime.now());
         entity.setState(EventStatus.PENDING);
-//        log.info("Mapped successfully {}", entity);
+        log.info("Mapped successfully {}", entity);
         EventEntity eventEntity = repository.save(entity);
 
         log.info("Event created with ID: {} for user ID: {}",
@@ -134,7 +135,9 @@ public class PrivateUserEventsServiceImpl implements PrivateUserEventsService {
                 .findByIdAndInitiatorId(eventId, userId)
                 .orElseThrow(() -> new NotExistException(
                         "This event does not exist"));
-
+        if (entity.getState().equals(EventStatus.PUBLISHED)) {
+             throw new AlreadyExistException("Event already published");
+        }
         if (request.getTitle() != null) {
             entity.setTitle(request.getTitle());
         }

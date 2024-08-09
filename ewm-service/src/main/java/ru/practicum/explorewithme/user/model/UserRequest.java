@@ -29,7 +29,7 @@ public class UserRequest {
     /**
      * Константа для максимальной длины email категории.
      */
-    private static final int MAX_EMAIL_LENGTH = 64;
+    private static final int MAX_EMAIL_LENGTH = 254;
     /**
      * Константа для минимальной длины email категории.
      */

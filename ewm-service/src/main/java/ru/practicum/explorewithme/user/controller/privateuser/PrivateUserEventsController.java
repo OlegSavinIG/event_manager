@@ -17,6 +17,7 @@ import ru.practicum.explorewithme.event.model.EventRequest;
 import ru.practicum.explorewithme.event.model.EventResponse;
 import ru.practicum.explorewithme.user.service.privateuser.PrivateUserEventsService;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
@@ -79,7 +80,7 @@ public class PrivateUserEventsController {
     public ResponseEntity<EventResponse> createEvent(
             @PathVariable final Long userId,
             @Validated(DefaultValidation.class)
-            @RequestBody final EventRequest request) {
+            @Valid @RequestBody final EventRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service
                 .createEvent(request, userId));
     }
@@ -96,7 +97,7 @@ public class PrivateUserEventsController {
     public ResponseEntity<EventResponse> updateEvent(
             @PathVariable final Long userId,
             @PathVariable final Long eventId,
-            @RequestBody final EventRequest request) {
+            @Valid @RequestBody final EventRequest request) {
         return ResponseEntity.ok(service
                 .updateEvent(userId, eventId, request));
     }

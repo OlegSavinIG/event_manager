@@ -15,6 +15,7 @@ import ru.practicum.explorewithme.event.model.EventResponse;
 import ru.practicum.explorewithme.user.model.EventSearchCriteriaForAdmin;
 import ru.practicum.explorewithme.user.service.admin.AdminEventService;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
@@ -58,7 +59,7 @@ public class AdminEventController {
      */
     @PatchMapping("/events/{eventId}")
     public ResponseEntity<EventResponse> approveEvent(
-            @RequestBody final EventRequest request,
+           @Valid @RequestBody final EventRequest request,
             @PathVariable final Long eventId) {
         EventResponse response = service.approveEvent(request, eventId);
         return ResponseEntity.ok(response);

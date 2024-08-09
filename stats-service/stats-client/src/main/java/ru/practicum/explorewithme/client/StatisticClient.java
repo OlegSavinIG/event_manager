@@ -32,7 +32,8 @@ public class StatisticClient {
                         .queryParam("uris", String.join(",", uris))
                         .build())
                 .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<Map<Long, Integer>>() {});
+                .bodyToMono(new ParameterizedTypeReference<>() {
+                });
     }
 }
 

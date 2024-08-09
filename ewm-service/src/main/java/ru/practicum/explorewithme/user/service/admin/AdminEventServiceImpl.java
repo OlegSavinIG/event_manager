@@ -17,7 +17,9 @@ import ru.practicum.explorewithme.event.model.EventStatus;
 import ru.practicum.explorewithme.event.model.mapper.EventMapper;
 import ru.practicum.explorewithme.event.repository.EventRepository;
 import ru.practicum.explorewithme.event.specification.EventSpecification;
+import ru.practicum.explorewithme.exception.AlreadyExistException;
 import ru.practicum.explorewithme.exception.NotExistException;
+import ru.practicum.explorewithme.exists.ExistChecker;
 import ru.practicum.explorewithme.user.model.EventSearchCriteriaForAdmin;
 import ru.practicum.explorewithme.user.repository.AdminEventRepository;
 
@@ -47,6 +49,10 @@ public class AdminEventServiceImpl implements AdminEventService {
      * Repository for category operations.
      */
     private final CategoryRepository categoryRepository;
+    /**
+     * Exist checker for category operations.
+     */
+    private final ExistChecker checker;
 
     /**
      * {@inheritDoc}
@@ -104,7 +110,12 @@ public class AdminEventServiceImpl implements AdminEventService {
         EventEntity event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotExistException(
                         "Event with id=" + eventId + " was not found"));
-
+        if (event.getState().equals(EventStatus.PUBLISHED)) {
+            throw new AlreadyExistException("Event already approved");
+        }
+        if (event.getState().equals(EventStatus.REJECTED)) {
+            throw new AlreadyExistException("Event rejected");
+        }
         if (request.getAnnotation() != null) {
             event.setAnnotation(request.getAnnotation());
         }

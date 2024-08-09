@@ -1,6 +1,7 @@
 package ru.practicum.explorewithme.user.controller.privateuser;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -85,7 +86,8 @@ public class PrivateUserRequestController {
     public ResponseEntity<UserEventRequestDto> createRequest(
             @PathVariable final Long userId,
             @RequestParam final Long eventId) {
-        return ResponseEntity.ok(service.createRequest(userId, eventId));
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(service.createRequest(userId, eventId));
     }
 
     /**

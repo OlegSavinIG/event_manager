@@ -80,7 +80,7 @@ public class EventEntity {
     /**
      * Indicates if the event is paid.
      */
-    private boolean paid;
+    private Boolean paid;
 
     /**
      * The number of views of the event.
@@ -90,12 +90,12 @@ public class EventEntity {
     /**
      * The number of confirmed requests for the event.
      */
-    private int confirmedRequests;
+    private Integer confirmedRequests;
 
     /**
      * The participant limit for the event.
      */
-    private int participantLimit;
+    private Integer participantLimit;
 
     /**
      * Indicates if the event requires request moderation.

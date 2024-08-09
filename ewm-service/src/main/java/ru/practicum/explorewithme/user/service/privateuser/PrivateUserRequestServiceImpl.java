@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.explorewithme.event.model.EventEntity;
 import ru.practicum.explorewithme.event.model.EventResponse;
+import ru.practicum.explorewithme.event.model.EventStatus;
 import ru.practicum.explorewithme.event.repository.EventRepository;
 import ru.practicum.explorewithme.event.service.EventService;
 import ru.practicum.explorewithme.exception.AlreadyExistException;
@@ -24,6 +25,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
 
@@ -94,7 +96,11 @@ public class PrivateUserRequestServiceImpl
         log.info("Approving requests for event ID:"
                 + " {} by user ID: {}", eventId, userId);
         checker.isUserExist(userId);
+        checker.isEventExists(eventId);
         EventEntity event = eventService.getEventEntity(eventId);
+        if (event.getParticipantLimit().equals(event.getConfirmedRequests())){
+            throw new AlreadyExistException("Participants limit");
+        }
         if (event.getRequestModeration().equals(Boolean.FALSE)) {
             throw new IllegalArgumentException("Event doesn't have moderation");
         }
@@ -160,11 +166,24 @@ public class PrivateUserRequestServiceImpl
                 userId);
         boolean existed = repository.existsByRequesterIdAndEventId(userId,
                 eventId);
+        boolean isInitiator = repository.existsByInitiatorIdAndEventId(userId,
+                eventId);
         if (existed) {
             throw new AlreadyExistException(
                     "User already has a request for this event");
         }
+        if (isInitiator) {
+            throw new AlreadyExistException(
+                    "This your event");
+        }
         EventEntity entity = eventService.getEventEntity(eventId);
+        if (entity.getState().equals(EventStatus.PENDING)) {
+            throw new AlreadyExistException("This event not published");
+        }
+        if (Objects.equals(entity.getParticipantLimit(),
+                entity.getConfirmedRequests())){
+            throw new AlreadyExistException("Participants list are full");
+        }
         UserEntity userEntity = adminUserService.findUserEntity(userId);
         UserEventRequestEntity eventRequestEntity =
                 UserEventRequestEntity.builder()

@@ -87,13 +87,14 @@ public class EventServiceImpl implements EventService {
     @Transactional(readOnly = true)
     public EventResponse getEvent(final Long id) {
         log.info("Fetching event with ID: {}", id);
-        EventEntity eventEntity = repository.findById(id)
+        EventEntity eventEntity = repository.findByIdAndStatePublished(id)
                 .orElseThrow(() -> new NotExistException(
                         "This event does not exist"));
         log.info("Found event with ID: {}", id);
-        List<String> uris = createEventsUri(List.of(eventEntity));
-        Mono<Map<Long, Integer>> eventViewsResponse = client.getEventViews(uris);
+        Mono<Map<Long, Integer>> eventViewsResponse =
+                client.getEventViews(createEventsUri(List.of(eventEntity)));
         Map<Long, Integer> eventViews = eventViewsResponse.block();
+        log.info("Found event views: {}", eventViews);
         int views = eventViews != null ? eventViews.getOrDefault(id, 0) : 0;
 
         EventResponse response = EventMapper.toResponse(eventEntity);

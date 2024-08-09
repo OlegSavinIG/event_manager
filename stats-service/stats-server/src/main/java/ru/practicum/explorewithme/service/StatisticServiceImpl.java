@@ -79,7 +79,7 @@ public class StatisticServiceImpl implements StatisticService {
     @Override
     public Map<Long, Long> getEventViews(List<String> uris) {
         List<StatisticResponse> stats =
-                repository.findAllStatisticByUriIn(uris);
+                repository.findStatisticByUriIn(uris);
         Map<Long, Long> eventsViews = new HashMap<>();
         stats.stream()
                 .peek(statistic -> {

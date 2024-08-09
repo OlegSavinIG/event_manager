@@ -10,6 +10,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * DTO for compilation requests.
@@ -34,20 +35,22 @@ public class CompilationRequest {
     /**
      * Indicates if the compilation is pinned.
      */
-    @NotBlank
+//    @NotBlank
     private Boolean pinned;
 
     /**
      * The list of event IDs in the compilation.
      */
-    private final List<Long> events = new ArrayList<>();
+    private final List<Integer> events = new ArrayList<>();
 
     /**
      * The list of events in the compilation.
      * @return events
      */
      public List<Long> getEvents() {
-        return events;
+        return events.stream()
+                .map(Integer::longValue)
+                .collect(Collectors.toList());
     }
 
 }
