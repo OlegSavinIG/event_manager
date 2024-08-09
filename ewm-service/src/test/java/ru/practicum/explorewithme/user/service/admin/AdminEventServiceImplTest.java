@@ -114,7 +114,7 @@ public class AdminEventServiceImplTest {
                 .participantLimit(participants)
                 .requestModeration(true)
                 .category(1)
-                .stateAction("PUBLISH_EVENT")
+                .state(EventStatus.PUBLISHED)
                 .build();
 
         eventEntity = EventEntity.builder()

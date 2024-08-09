@@ -133,12 +133,12 @@ public class AdminEventServiceImpl implements AdminEventService {
         if (request.getTitle() != null) {
             event.setTitle(request.getTitle());
         }
-        if (request.getStateAction() != null
+        if (request.getState() != null
                 &&
-                (request.getStateAction().equals("PUBLISH_EVENT")
+                (request.getState().name().equals("PUBLISHED")
                         ||
-                        request.getStateAction().equals("REJECT_EVENT"))) {
-            handleStateAction(request.getStateAction(), event);
+                        request.getState().name().equals("REJECTED"))) {
+            handleStateAction(request.getState(), event);
         }
 
         eventRepository.save(event);
@@ -153,9 +153,9 @@ public class AdminEventServiceImpl implements AdminEventService {
      * @param event       the event entity to update
      */
     private void handleStateAction(
-            final String stateAction, final EventEntity event) {
+            final EventStatus stateAction, final EventEntity event) {
         switch (stateAction) {
-            case "PUBLISH_EVENT":
+            case PUBLISHED:
                 if (!event.getState().name().equals("PENDING")) {
                     log.info("Invalid state action: {}", stateAction);
                     throw new IllegalArgumentException(
@@ -164,7 +164,7 @@ public class AdminEventServiceImpl implements AdminEventService {
                 event.setState(EventStatus.PUBLISHED);
                 event.setPublishedOn(LocalDateTime.now());
                 break;
-            case "REJECT_EVENT":
+            case REJECTED:
                 if (event.getState().name().equals("PUBLISHED")) {
                     log.info("Invalid state action: {}", stateAction);
                     throw new IllegalArgumentException(

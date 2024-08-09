@@ -118,7 +118,7 @@ public class PrivateUserEventsServiceImplTest {
                 .participantLimit(participants)
                 .requestModeration(true)
                 .category(1)
-                .stateAction("PENDING")
+                .state(EventStatus.PENDING)
                 .build();
 
         eventEntity = EventEntity.builder()

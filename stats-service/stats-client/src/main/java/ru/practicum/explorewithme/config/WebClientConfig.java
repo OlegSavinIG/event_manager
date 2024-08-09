@@ -11,8 +11,8 @@ import java.time.Duration;
 
 @Configuration
 public class WebClientConfig {
-    @Value("${ewm.service.url}")
-    private String statsServerUrl;
+//    @Value("${ewm.service.url}")
+    private final String statsServerUrl = "http://localhost:9090";
     @Bean
     public WebClient.Builder webClientBuilder() {
         return WebClient.builder()

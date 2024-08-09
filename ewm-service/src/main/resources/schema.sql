@@ -13,8 +13,8 @@ CREATE TABLE IF NOT EXISTS categories (
 
 -- Schema for EventEntity
 CREATE TABLE IF NOT EXISTS events (
-    id SERIAL PRIMARY KEY,
-    title VARCHAR(255) NOT NULL,
+    id SERIAL PRIMARY KEY,main
+    title TEXT NOT NULL,
     annotation TEXT,
     description TEXT,
     created_on TIMESTAMP NOT NULL,

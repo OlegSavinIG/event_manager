@@ -97,19 +97,20 @@ public class PrivateUserEventsServiceImpl implements PrivateUserEventsService {
     @Transactional
     public EventResponse createEvent(final EventRequest request,
                                      final Long userId) {
-        log.info("Creating event for user ID: {} with request: {}", userId,
-                request);
+        log.info("Creating event for user ID: {} with request annotation: {}", userId,
+                request.getAnnotation());
         checker.isUserExist(userId);
         UserEntity userEntity = adminUserService.findUserEntity(userId);
         CategoryResponse category = categoryService.getCategory(
                 request.getCategory());
 
-        log.info("Mapping event from request: {}  user: {} and category: {}",
-                request, userEntity, category);
+//        log.info("Mapping event from request title: {}  user: {} and category: {}",
+//                request.getTitle(), userEntity, category);
         EventEntity entity = EventMapper.toEntity(request,
                 CategoryMapper.toEntity(category), userEntity);
         entity.setCreatedOn(LocalDateTime.now());
-        log.info("Mapped successfully {}", entity);
+        entity.setState(EventStatus.PENDING);
+//        log.info("Mapped successfully {}", entity);
         EventEntity eventEntity = repository.save(entity);
 
         log.info("Event created with ID: {} for user ID: {}",

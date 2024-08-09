@@ -76,6 +76,10 @@ public class EventResponse {
      * The title of the event.
      */
     private String title;
+    /**
+     * The location of the event.
+     */
+    private String location;
 
     /**
      * The number of views of the event.
