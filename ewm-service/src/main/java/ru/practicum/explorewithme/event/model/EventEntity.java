@@ -10,6 +10,7 @@ import lombok.ToString;
 import ru.practicum.explorewithme.category.model.CategoryEntity;
 import ru.practicum.explorewithme.user.model.UserEntity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -80,7 +81,8 @@ public class EventEntity {
     /**
      * Indicates if the event is paid.
      */
-    private Boolean paid;
+    @Column(columnDefinition = "boolean default false")
+    private Boolean paid = false;
 
     /**
      * The number of views of the event.
@@ -90,11 +92,12 @@ public class EventEntity {
     /**
      * The number of confirmed requests for the event.
      */
-    private Integer confirmedRequests;
+    private int confirmedRequests;
 
     /**
      * The participant limit for the event.
      */
+    @Column(nullable = true)
     private Integer participantLimit;
 
     /**

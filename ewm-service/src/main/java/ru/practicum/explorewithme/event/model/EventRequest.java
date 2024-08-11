@@ -76,5 +76,5 @@ public class EventRequest {
     /**
      * The state action for the event.
      */
-    private EventStatus state;
+    private EventStatus stateAction;
 }

@@ -17,7 +17,12 @@ public enum EventStatus {
     /**
      * The event is approved and awaiting further action.
      */
-    APPROVED,
+    PUBLISH_EVENT,
+
+    /**
+     * The event is approved and awaiting further action.
+     */
+    REJECT_EVENT,
 
     /**
      * The event is waiting for approval or further action.

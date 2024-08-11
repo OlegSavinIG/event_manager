@@ -78,25 +78,28 @@ public class StatisticServiceImpl implements StatisticService {
 
     @Override
     public Map<Long, Long> getEventViews(List<String> uris) {
-        List<StatisticResponse> stats =
-                repository.findStatisticByUriIn(uris);
+        log.info("Fetching statistics records by uris: {}", uris);
+        List<StatisticResponse> stats = repository.findStatisticByUriIn(uris);
+        log.info("Stats found: {}", stats);
+
         Map<Long, Long> eventsViews = new HashMap<>();
-        stats.stream()
-                .peek(statistic -> {
-                    String uri = statistic.getUri();
-                    eventsViews.put(eventIdExtractor(uri),
-                            statistic.getHits());
-                });
+        stats.forEach(statistic -> {
+            String uri = statistic.getUri();
+            Long eventId = eventIdExtractor(uri);
+            eventsViews.put(eventId, statistic.getHits());
+        });
+
+        log.info("Views found: {}", eventsViews);
         return eventsViews;
     }
 
     private Long eventIdExtractor(String uri) {
-        char lastChar = uri.charAt(uri.length() - 1);
-        if (!Character.isDigit(lastChar)) {
-            throw new IllegalStateException(
-                    "Error in forming event id from uri " + uri);
+        String[] parts = uri.split("/");
+        String idString = parts[parts.length - 1];
+        try {
+            return Long.parseLong(idString);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Invalid ID in URI: " + uri, e);
         }
-        String lastCharAsString = Character.toString(lastChar);
-        return Long.parseLong(lastCharAsString);
     }
 }

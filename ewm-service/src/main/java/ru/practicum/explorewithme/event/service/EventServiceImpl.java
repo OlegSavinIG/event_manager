@@ -87,7 +87,7 @@ public class EventServiceImpl implements EventService {
     @Transactional(readOnly = true)
     public EventResponse getEvent(final Long id) {
         log.info("Fetching event with ID: {}", id);
-        EventEntity eventEntity = repository.findByIdAndStatePublished(id)
+        EventEntity eventEntity = repository.findByIdAndState(id, EventStatus.PUBLISHED)
                 .orElseThrow(() -> new NotExistException(
                         "This event does not exist"));
         log.info("Found event with ID: {}", id);
@@ -149,6 +149,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public void saveStatistic(HttpServletRequest servletRequest) {
+        log.info("Saving statistic with uri: {}", servletRequest.getRequestURI());
         StatisticRequest statisticRequest = StatisticRequest.builder()
                 .app("ewm-main-service")
                 .ip(servletRequest.getRemoteAddr())
@@ -231,7 +232,7 @@ public class EventServiceImpl implements EventService {
 
     private List<String> createEventsUri(List<EventEntity> eventEntity) {
         return eventEntity.stream()
-                .map(entity -> String.format("event/" + entity.getId()))
+                .map(entity -> String.format("/events/" + entity.getId()))
                 .collect(Collectors.toList());
     }
 }

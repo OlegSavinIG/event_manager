@@ -47,12 +47,5 @@ public interface RequestRepository
      * @return true if the request exists, false otherwise
      */
     boolean existsByRequesterIdAndEventId(Long userId, Long eventId);
-    /**
-     * Checks if a user event request exists for a specific user and event.
-     *
-     * @param userId  the ID of the initiator user
-     * @param eventId the ID of the event
-     * @return true if the request exists, false otherwise
-     */
-    boolean existsByInitiatorIdAndEventId(Long userId, Long eventId);
+
 }

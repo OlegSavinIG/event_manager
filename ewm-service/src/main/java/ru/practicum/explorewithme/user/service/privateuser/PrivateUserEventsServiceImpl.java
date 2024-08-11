@@ -159,8 +159,8 @@ public class PrivateUserEventsServiceImpl implements PrivateUserEventsService {
         if (request.getRequestModeration() != null) {
             entity.setRequestModeration(request.getRequestModeration());
         }
-        if (request.getState() != null) {
-            entity.setState((request.getState()));
+        if (request.getStateAction() != null) {
+            entity.setState((request.getStateAction()));
         }
         if (request.getCategory() != null) {
             CategoryEntity category = categoryService.getCategoryEntity(

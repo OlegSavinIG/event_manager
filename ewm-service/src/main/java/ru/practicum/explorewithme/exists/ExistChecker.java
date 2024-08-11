@@ -101,6 +101,7 @@ public class ExistChecker {
             throw new NotExistException("Request not exists");
         }
     }
+
     /**
      * Checks if a category exists.
      *
@@ -113,6 +114,7 @@ public class ExistChecker {
             throw new AlreadyExistException("Category already exist");
         }
     }
+
     /**
      * Checks if a user exists.
      *
@@ -123,6 +125,27 @@ public class ExistChecker {
         boolean existsByEmail = adminUserRepository.existsByEmail(email);
         if (existsByEmail) {
             throw new AlreadyExistException("Email already exists");
+        }
+    }
+
+    /**
+     * Checks if a request exists for the initiator of an event.
+     *
+     * @param userId  the ID of the user (initiator)
+     * @param eventId the ID of the event
+     * @throws AlreadyExistException if such a request exists
+     */
+    public void isRequestExistsForInitiator(final Long userId, final Long eventId) {
+        boolean exists = requestRepository.existsByRequesterIdAndEventId(userId, eventId);
+        if (exists) {
+            throw new AlreadyExistException("User already has a request for this event");
+        }
+    }
+
+    public void isThisInitiatorOfEvent(final Long userId, final Long eventId) {
+        boolean exists = eventRepository.existsByIdAndInitiatorId(eventId, userId);
+        if (exists) {
+            throw new AlreadyExistException("This your event");
         }
     }
 }

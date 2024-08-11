@@ -13,17 +13,17 @@ CREATE TABLE IF NOT EXISTS categories (
 
 -- Schema for EventEntity
 CREATE TABLE IF NOT EXISTS events (
-    id SERIAL PRIMARY KEY,main
+    id SERIAL PRIMARY KEY,
     title TEXT NOT NULL,
     annotation TEXT,
     description TEXT,
     created_on TIMESTAMP NOT NULL,
     event_date TIMESTAMP NOT NULL,
     published_on TIMESTAMP,
-    paid BOOLEAN NOT NULL,
-    views INT NOT NULL,
-    confirmed_requests INT NOT NULL,
-    participant_limit INT NOT NULL,
+    paid BOOLEAN,
+    views INT,
+    confirmed_requests INT,
+    participant_limit INT,
     request_moderation BOOLEAN,
     state VARCHAR(50),
     category_id INT,

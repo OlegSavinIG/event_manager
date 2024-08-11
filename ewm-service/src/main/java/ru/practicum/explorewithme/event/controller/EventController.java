@@ -49,8 +49,10 @@ public class EventController {
             final Integer size,
             final HttpServletRequest servletRequest
     ) {
+        List<EventResponseShort> responseShorts =
+                service.getEvents(criteria, from, size);
         service.saveStatistic(servletRequest);
-        return ResponseEntity.ok(service.getEvents(criteria, from, size));
+        return ResponseEntity.ok(responseShorts);
     }
 
     /**
@@ -65,7 +67,8 @@ public class EventController {
             @PathVariable final Long id,
             final HttpServletRequest servletRequest
     ) {
+        EventResponse response = service.getEvent(id);
         service.saveStatistic(servletRequest);
-        return ResponseEntity.ok(service.getEvent(id));
+        return ResponseEntity.ok(response);
     }
 }

@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.practicum.explorewithme.event.model.EventEntity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -44,7 +45,8 @@ public class CompilationEntity {
     /**
      * Indicates if the compilation is pinned.
      */
-    private Boolean pinned;
+
+    private Boolean pinned = false;
 
     /**
      * The list of events in the compilation.

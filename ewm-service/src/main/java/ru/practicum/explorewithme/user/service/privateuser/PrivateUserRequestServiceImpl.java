@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
 
 /**
@@ -164,25 +163,15 @@ public class PrivateUserRequestServiceImpl
                                              final Long eventId) {
         log.info("Creating request for event ID: {} by user ID: {}", eventId,
                 userId);
-        boolean existed = repository.existsByRequesterIdAndEventId(userId,
-                eventId);
-        boolean isInitiator = repository.existsByInitiatorIdAndEventId(userId,
-                eventId);
-        if (existed) {
-            throw new AlreadyExistException(
-                    "User already has a request for this event");
-        }
-        if (isInitiator) {
-            throw new AlreadyExistException(
-                    "This your event");
-        }
+       checker.isRequestExistsForInitiator(userId, eventId);
+       checker.isThisInitiatorOfEvent(userId, eventId);
         EventEntity entity = eventService.getEventEntity(eventId);
         if (entity.getState().equals(EventStatus.PENDING)) {
             throw new AlreadyExistException("This event not published");
         }
         if (Objects.equals(entity.getParticipantLimit(),
                 entity.getConfirmedRequests())){
-            throw new AlreadyExistException("Participants list are full");
+            throw new AlreadyExistException("Participant list are full");
         }
         UserEntity userEntity = adminUserService.findUserEntity(userId);
         UserEventRequestEntity eventRequestEntity =
