@@ -35,7 +35,7 @@ public class EventSpecification {
      * @return the specification
      */
     public static Specification<EventEntity> hasStates(
-            final List<String> states) {
+            final List<EventStatus> states) {
         return (root, query, criteriaBuilder) ->
                 root.get("state").in(states);
     }
@@ -145,5 +145,6 @@ public class EventSpecification {
             }
             return criteriaBuilder.not(inClause);
         };
+
     }
 }

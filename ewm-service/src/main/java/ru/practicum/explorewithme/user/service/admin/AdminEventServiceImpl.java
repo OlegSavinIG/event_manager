@@ -68,7 +68,8 @@ public class AdminEventServiceImpl implements AdminEventService {
         Specification<EventEntity> spec = Specification.where(null);
 
         if (criteria.getUsers() != null && !criteria.getUsers().isEmpty()) {
-            spec = spec.and(EventSpecification.hasUsers(criteria.getUsers()));
+            spec = spec.and(EventSpecification.hasUsers(criteria.getUsers().stream().map(Integer::longValue)
+                    .collect(Collectors.toList())));
         }
 
         if (criteria.getStates() != null && !criteria.getStates().isEmpty()) {

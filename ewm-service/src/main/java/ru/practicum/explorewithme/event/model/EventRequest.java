@@ -56,7 +56,7 @@ public class EventRequest {
     /**
      * Indicates if the event is paid.
      */
-    private Boolean paid;
+    private Boolean paid = false;
 
     /**
      * The participant limit for the event.

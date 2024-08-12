@@ -10,6 +10,8 @@ import ru.practicum.explorewithme.event.model.EventEntity;
 import ru.practicum.explorewithme.user.model.UserEntity;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -60,5 +62,6 @@ public class UserEventRequestEntity {
     /**
      * Status of the request.
      */
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private RequestStatus status;
 }

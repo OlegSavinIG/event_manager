@@ -98,12 +98,12 @@ public class EventEntity {
      * The participant limit for the event.
      */
     @Column(nullable = true)
-    private Integer participantLimit;
+    private Integer participantLimit = 0;
 
     /**
      * Indicates if the event requires request moderation.
      */
-    private Boolean requestModeration;
+    private Boolean requestModeration = true;
 
     /**
      * The status of the event.

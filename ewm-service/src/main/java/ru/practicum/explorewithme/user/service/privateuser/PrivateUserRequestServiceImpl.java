@@ -16,6 +16,7 @@ import ru.practicum.explorewithme.user.model.UserEntity;
 import ru.practicum.explorewithme.user.repository.RequestRepository;
 import ru.practicum.explorewithme.user.request.model.ApproveRequestCriteria;
 import ru.practicum.explorewithme.user.request.model.EventRequestStatusUpdateResult;
+import ru.practicum.explorewithme.user.request.model.RequestStatus;
 import ru.practicum.explorewithme.user.request.model.UserEvenRequestMapper;
 import ru.practicum.explorewithme.user.request.model.UserEventRequestDto;
 import ru.practicum.explorewithme.user.request.model.UserEventRequestEntity;
@@ -93,11 +94,16 @@ public class PrivateUserRequestServiceImpl
             final Long userId, final Long eventId,
             final ApproveRequestCriteria criteria) {
         log.info("Approving requests for event ID:"
-                + " {} by user ID: {}", eventId, userId);
+                + " {} by user ID: {} with criteria: {}",
+                eventId, userId, criteria);
         checker.isUserExist(userId);
         checker.isEventExists(eventId);
         EventEntity event = eventService.getEventEntity(eventId);
-        if (event.getParticipantLimit().equals(event.getConfirmedRequests())){
+        log.info("Approving requests with participant limit:"
+                + " {} confirmed requests: {} request moderation: {}",
+                event.getParticipantLimit() , event.getConfirmedRequests(),
+                event.getRequestModeration());
+        if (event.getParticipantLimit() <= event.getConfirmedRequests()){
             throw new AlreadyExistException("Participants limit");
         }
         if (event.getRequestModeration().equals(Boolean.FALSE)) {
@@ -106,7 +112,8 @@ public class PrivateUserRequestServiceImpl
         if (!event.getInitiator().getId().equals(userId)) {
             throw new IllegalArgumentException("Wrong userId or eventId");
         }
-        List<Long> ids = criteria.getIds();
+        List<Long> ids = criteria.getIds().stream().map(Integer::longValue)
+                .collect(Collectors.toList());
         String status = criteria.getStatus();
         List<UserEventRequestEntity> requests = repository.findAllById(ids);
 
@@ -142,10 +149,7 @@ public class PrivateUserRequestServiceImpl
     @Override
     public List<UserEventRequestDto> getUserRequests(final Long userId) {
         log.info("Fetching user requests for user ID: {}", userId);
-        boolean existsById = repository.existsById(userId);
-        if (!existsById) {
-            throw new NotExistException("User not exist");
-        }
+        checker.isUserExist(userId);
         List<UserEventRequestEntity> eventRequestEntities =
                 repository.findAllByRequesterId(userId);
         List<UserEventRequestDto> requests = eventRequestEntities.stream()
@@ -169,14 +173,13 @@ public class PrivateUserRequestServiceImpl
         if (entity.getState().equals(EventStatus.PENDING)) {
             throw new AlreadyExistException("This event not published");
         }
-        if (Objects.equals(entity.getParticipantLimit(),
-                entity.getConfirmedRequests())){
-            throw new AlreadyExistException("Participant list are full");
+        if (entity.getParticipantLimit() <= entity.getConfirmedRequests()){
+            throw new AlreadyExistException("Participants limit");
         }
         UserEntity userEntity = adminUserService.findUserEntity(userId);
         UserEventRequestEntity eventRequestEntity =
                 UserEventRequestEntity.builder()
-                        .status("PENDING")
+                        .status(RequestStatus.PENDING)
                         .created(LocalDateTime.now())
                         .requester(userEntity)
                         .event(entity)
@@ -200,7 +203,10 @@ public class PrivateUserRequestServiceImpl
                 repository.findByIdAndRequesterId(requestId, userId)
                         .orElseThrow(() ->
                                 new NotExistException("Request not found"));
-        entity.setStatus("CANCELED");
+        if (entity.getStatus().equals(RequestStatus.CONFIRMED)) {
+            throw new IllegalArgumentException("Request already confirmed");
+        }
+        entity.setStatus(RequestStatus.REJECTED);
         repository.delete(entity);
         log.info("Request ID: {} cancelled by user ID: {}", requestId, userId);
         return UserEvenRequestMapper.toDto(entity);
@@ -214,7 +220,10 @@ public class PrivateUserRequestServiceImpl
      */
     private void updateRequestStatus(final UserEventRequestEntity entity,
                                      final String status) {
-        entity.setStatus(status);
+        switch (status){
+            case "REJECTED": entity.setStatus(RequestStatus.REJECTED);
+            case "CONFIRMED": entity.setStatus(RequestStatus.CONFIRMED);
+        }
         repository.save(entity);
     }
 }

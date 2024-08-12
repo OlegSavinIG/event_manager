@@ -206,8 +206,9 @@ public class EventServiceImpl implements EventService {
         if (criteria.getPaid() != null) {
             spec = spec.and(EventSpecification.isPaid(criteria.getPaid()));
         }
-        spec = spec.and(EventSpecification.excludeStatuses(
-                EventStatus.WAITING, EventStatus.REJECTED));
+        spec = spec.and(EventSpecification.hasStates(List.of(EventStatus.PUBLISHED)));
+//        spec = spec.and(EventSpecification.excludeStatuses(
+//                EventStatus.WAITING, EventStatus.REJECTED));
         return spec;
     }
 

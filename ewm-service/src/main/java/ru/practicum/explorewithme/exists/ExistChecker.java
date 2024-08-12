@@ -145,7 +145,14 @@ public class ExistChecker {
     public void isThisInitiatorOfEvent(final Long userId, final Long eventId) {
         boolean exists = eventRepository.existsByIdAndInitiatorId(eventId, userId);
         if (exists) {
-            throw new AlreadyExistException("This your event");
+            throw new AlreadyExistException("This is your event");
+        }
+    }
+    public void isEventsContainsCategory(final Integer catId){
+        boolean exist = eventRepository.existsByCategoryId(catId);
+        if (exist) {
+            throw new AlreadyExistException(
+                    "Category is associated with an event");
         }
     }
 }

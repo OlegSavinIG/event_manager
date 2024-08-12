@@ -37,6 +37,7 @@ public class AdminCategoryServiceImpl implements AdminCategoryService {
     public void deleteCategory(final Integer catId) {
         log.info("Deleting category with id: {}", catId);
         checker.isCategoryExists(catId);
+        checker.isEventsContainsCategory(catId);
         repository.deleteById(catId);
         log.info("Deleted category with id: {}", catId);
 

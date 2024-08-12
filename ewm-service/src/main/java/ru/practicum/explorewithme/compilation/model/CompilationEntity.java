@@ -45,7 +45,7 @@ public class CompilationEntity {
     /**
      * Indicates if the compilation is pinned.
      */
-
+    @Column(columnDefinition = "boolean default false")
     private Boolean pinned = false;
 
     /**

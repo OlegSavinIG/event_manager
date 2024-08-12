@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.practicum.explorewithme.annotation.DefaultValidation;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -27,8 +28,8 @@ public class CompilationRequest {
     /**
      * The title of the compilation.
      */
-    @NotNull
-    @NotBlank
+    @NotNull(groups = DefaultValidation.class)
+    @NotBlank(groups = DefaultValidation.class)
     @Size(max = MAX_TITLE_LENGTH)
     private String title;
 
@@ -36,7 +37,7 @@ public class CompilationRequest {
      * Indicates if the compilation is pinned.
      */
 //    @NotBlank
-    private Boolean pinned;
+    private Boolean pinned = false;
 
     /**
      * The list of event IDs in the compilation.

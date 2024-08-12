@@ -23,7 +23,7 @@ public class UserEvenRequestMapper {
                 .requester(entity.getRequester().getId())
                 .created(entity.getCreated())
                 .event(entity.getEvent().getId())
-                .status(entity.getStatus())
+                .status(entity.getStatus().name())
                 .build();
     }
 }

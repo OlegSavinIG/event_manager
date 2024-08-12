@@ -20,7 +20,7 @@ public class ApproveRequestCriteria {
      */
     @NotNull
     @NotEmpty
-    private List<Long> ids;
+    private List<Integer> ids;
 
     /**
      * Status to set for the approved requests.
