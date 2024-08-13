@@ -1,15 +1,19 @@
 package ru.practicum.explorewithme.user.request.model;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 /**
  * Result object representing the outcome of updating event request statuses.
  */
-@Getter
-@Setter
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class EventRequestStatusUpdateResult {
 
     /**

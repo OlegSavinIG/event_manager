@@ -46,9 +46,11 @@ public class AdminCompilationController {
      * Deletes a compilation by its ID.
      *
      * @param compId the ID of the compilation to delete
+     * @return Void
      */
     @DeleteMapping("/compilations/{compId}")
-    public ResponseEntity<Void> deleteCompilationById(@PathVariable final Integer compId) {
+    public ResponseEntity<Void> deleteCompilationById(
+            @PathVariable final Integer compId) {
         service.deleteCompilationById(compId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

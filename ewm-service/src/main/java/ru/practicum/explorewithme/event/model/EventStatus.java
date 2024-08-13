@@ -25,12 +25,20 @@ public enum EventStatus {
     REJECT_EVENT,
 
     /**
-     * The event is waiting for approval or further action.
+     * The event is waiting for cancel moderation.
      */
-    WAITING,
+    CANCEL_REVIEW,
+    /**
+     * The event is waiting for cancel moderation.
+     */
+    SEND_TO_REVIEW,
 
     /**
      * The event is pending approval or further action.
      */
-    PENDING
+    PENDING,
+    /**
+     * The event is canceled.
+     */
+    CANCELED
 }

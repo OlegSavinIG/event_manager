@@ -68,7 +68,8 @@ public class AdminEventServiceImpl implements AdminEventService {
         Specification<EventEntity> spec = Specification.where(null);
 
         if (criteria.getUsers() != null && !criteria.getUsers().isEmpty()) {
-            spec = spec.and(EventSpecification.hasUsers(criteria.getUsers().stream().map(Integer::longValue)
+            spec = spec.and(EventSpecification.hasUsers(
+                    criteria.getUsers().stream().map(Integer::longValue)
                     .collect(Collectors.toList())));
         }
 
@@ -150,7 +151,8 @@ public class AdminEventServiceImpl implements AdminEventService {
                 &&
                 (request.getStateAction().name().equals("PUBLISH_EVENT")
                         ||
-                        request.getStateAction().name().equals("REJECT_EVENT"))) {
+                        request.getStateAction().name().equals(
+                                "REJECT_EVENT"))) {
             handleStateAction(request.getStateAction(), event);
         }
 

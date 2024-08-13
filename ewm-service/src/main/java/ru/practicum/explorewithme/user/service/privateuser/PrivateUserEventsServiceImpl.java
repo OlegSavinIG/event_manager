@@ -98,14 +98,16 @@ public class PrivateUserEventsServiceImpl implements PrivateUserEventsService {
     @Transactional
     public EventResponse createEvent(final EventRequest request,
                                      final Long userId) {
-        log.info("Creating event for user ID: {} with request annotation: {}", userId,
+        log.info("Creating event for user ID:"
+                        + " {} with request annotation: {}", userId,
                 request.getAnnotation());
         checker.isUserExist(userId);
         UserEntity userEntity = adminUserService.findUserEntity(userId);
         CategoryResponse category = categoryService.getCategory(
                 request.getCategory());
 
-        log.info("Mapping event from request title: {}  user: {} and category: {}",
+        log.info("Mapping event from request title:"
+                        + " {}  user: {} and category: {}",
                 request.getTitle(), userEntity, category);
         EventEntity entity = EventMapper.toEntity(request,
                 CategoryMapper.toEntity(category), userEntity);
@@ -167,9 +169,17 @@ public class PrivateUserEventsServiceImpl implements PrivateUserEventsService {
                     request.getCategory());
             entity.setCategory(category);
         }
-
+        if (request.getStateAction() != null) {
+            if (request.getStateAction().equals(EventStatus.SEND_TO_REVIEW)) {
+                entity.setState(EventStatus.PENDING);
+            }
+            if (request.getStateAction().equals(EventStatus.CANCEL_REVIEW)) {
+                entity.setState(EventStatus.CANCELED);
+            }
+        }
         EventEntity saved = repository.save(entity);
         log.info("Event ID: {} for user ID: {} updated", eventId, userId);
         return EventMapper.toResponse(saved);
     }
+
 }

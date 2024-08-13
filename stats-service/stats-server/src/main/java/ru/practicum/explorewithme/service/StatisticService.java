@@ -1,6 +1,5 @@
 package ru.practicum.explorewithme.service;
 
-import org.springframework.http.ResponseEntity;
 import ru.practicum.explorewithme.StatisticRequest;
 import ru.practicum.explorewithme.StatisticResponse;
 
@@ -32,6 +31,11 @@ public interface StatisticService {
     List<StatisticResponse> getStatistic(
             LocalDateTime start,
             LocalDateTime end, List<String> uris, boolean unique);
-
+/**
+ * Retrieves statistics.
+ *
+ * @param uris  uris
+ * @return  Map<Long, Long> event views
+ */
     Map<Long, Long> getEventViews(List<String> uris);
 }

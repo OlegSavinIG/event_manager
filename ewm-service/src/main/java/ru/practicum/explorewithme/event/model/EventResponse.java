@@ -79,7 +79,7 @@ public class EventResponse {
     /**
      * The location of the event.
      */
-    private String location;
+    private String location = "In work";
 
     /**
      * The number of views of the event.

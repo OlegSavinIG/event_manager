@@ -65,17 +65,16 @@ public class EventServiceImpl implements EventService {
         Page<EventEntity> eventEntities = repository.findAll(spec, pageable);
 
         if (eventEntities.isEmpty()) {
-            log.info("No events found with criteria:"
-                    + " {}, from: {}, size: {}", criteria, from, size);
+            log.info("No events found with criteria:");
             return Collections.emptyList();
         }
 
-        List<EventEntity> entities = setEventsViews(eventEntities);
+        setEventsViews(eventEntities);
 
-        log.info("Found {} events with criteria: {}",
-                entities.size(), criteria);
+        log.info("Found {} events",
+                eventEntities.getTotalElements());
 
-        return entities.stream()
+        return eventEntities.stream()
                 .map(EventMapper::toResponseShort)
                 .collect(Collectors.toList());
     }
@@ -87,7 +86,8 @@ public class EventServiceImpl implements EventService {
     @Transactional(readOnly = true)
     public EventResponse getEvent(final Long id) {
         log.info("Fetching event with ID: {}", id);
-        EventEntity eventEntity = repository.findByIdAndState(id, EventStatus.PUBLISHED)
+        EventEntity eventEntity = repository.findByIdAndState(
+                id, EventStatus.PUBLISHED)
                 .orElseThrow(() -> new NotExistException(
                         "This event does not exist"));
         log.info("Found event with ID: {}", id);
@@ -146,10 +146,13 @@ public class EventServiceImpl implements EventService {
                 ids);
         return eventEntities;
     }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void saveStatistic(HttpServletRequest servletRequest) {
-        log.info("Saving statistic with uri: {}", servletRequest.getRequestURI());
+    public void saveStatistic(final HttpServletRequest servletRequest) {
+        log.info("Saving statistic with uri: {}",
+                servletRequest.getRequestURI());
         StatisticRequest statisticRequest = StatisticRequest.builder()
                 .app("ewm-main-service")
                 .ip(servletRequest.getRemoteAddr())
@@ -162,15 +165,14 @@ public class EventServiceImpl implements EventService {
      * Sets the views for a list of event entities asynchronously.
      *
      * @param eventEntities the list of event entities
-     * @return a list of CompletableFutures for the event entities
      */
-    private List<EventEntity> setEventsViews(
-            final Page<EventEntity> eventEntities) {
-        Map<Long, Integer> eventViews =
-                client.getEventViews(createEventsUri(eventEntities.toList())).block();
-        return eventEntities.stream()
-                .peek(entity -> entity.setViews(eventViews.get(entity.getId())))
-                .collect(Collectors.toList());
+    private void setEventsViews(final Page<EventEntity> eventEntities) {
+        client.getEventViews(createEventsUri(eventEntities.toList()))
+                .subscribe(eventViews -> {
+                    eventEntities.forEach(entity ->
+                            entity.setViews(eventViews.getOrDefault(
+                                    entity.getId(), 0)));
+                });
     }
 
     /**
@@ -206,9 +208,8 @@ public class EventServiceImpl implements EventService {
         if (criteria.getPaid() != null) {
             spec = spec.and(EventSpecification.isPaid(criteria.getPaid()));
         }
-        spec = spec.and(EventSpecification.hasStates(List.of(EventStatus.PUBLISHED)));
-//        spec = spec.and(EventSpecification.excludeStatuses(
-//                EventStatus.WAITING, EventStatus.REJECTED));
+        spec = spec.and(EventSpecification.hasStates(
+                List.of(EventStatus.PUBLISHED)));
         return spec;
     }
 
@@ -228,10 +229,10 @@ public class EventServiceImpl implements EventService {
         } else if ("VIEWS".equalsIgnoreCase(criteria.getSort())) {
             sort = Sort.by(Sort.Direction.DESC, "views");
         }
-        return PageRequest.of(from / size, size, sort);
+        return PageRequest.of(Math.floorDiv(from, size), size, sort);
     }
 
-    private List<String> createEventsUri(List<EventEntity> eventEntity) {
+    private List<String> createEventsUri(final List<EventEntity> eventEntity) {
         return eventEntity.stream()
                 .map(entity -> String.format("/events/" + entity.getId()))
                 .collect(Collectors.toList());

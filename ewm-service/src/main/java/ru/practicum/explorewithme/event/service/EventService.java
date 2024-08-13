@@ -55,6 +55,10 @@ public interface EventService {
      * @return the list of event entities
      */
     List<EventEntity> getEventEntities(List<Long> ids);
-
+    /**
+     * Retrieves event entities by their IDs.
+     *
+     * @param servletRequest servletRequest
+     */
     void saveStatistic(HttpServletRequest servletRequest);
 }

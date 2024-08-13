@@ -1,7 +1,9 @@
 package ru.practicum.explorewithme.event.model;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
@@ -10,8 +12,10 @@ import java.util.List;
 /**
  * DTO for event search criteria.
  */
-@Getter
-@Setter
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class EventSearchCriteria {
 
     /**

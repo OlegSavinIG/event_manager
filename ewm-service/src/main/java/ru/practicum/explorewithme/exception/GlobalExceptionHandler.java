@@ -110,4 +110,22 @@ public class GlobalExceptionHandler {
         body.put("timestamp", LocalDateTime.now());
         return new ResponseEntity<>(body, HttpStatus.CONFLICT);
     }
+    /**
+     * Handles already exist exceptions.
+     *
+     * @param ex      the ConflictException
+     * @param request the WebRequest
+     * @return a response entity with error details
+     */
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<Object> handleConflictException(
+            final AlreadyExistException ex,
+            final WebRequest request) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("status", HttpStatus.CONFLICT);
+        body.put("reason", "Conflict in arguments.");
+        body.put("message", ex.getMessage());
+        body.put("timestamp", LocalDateTime.now());
+        return new ResponseEntity<>(body, HttpStatus.CONFLICT);
+    }
 }

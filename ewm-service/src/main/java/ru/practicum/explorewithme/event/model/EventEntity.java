@@ -82,7 +82,7 @@ public class EventEntity {
      * Indicates if the event is paid.
      */
     @Column(columnDefinition = "boolean default false")
-    private Boolean paid = false;
+    private Boolean paid;
 
     /**
      * The number of views of the event.
@@ -98,12 +98,12 @@ public class EventEntity {
      * The participant limit for the event.
      */
     @Column(nullable = true)
-    private Integer participantLimit = 0;
+    private Integer participantLimit;
 
     /**
      * Indicates if the event requires request moderation.
      */
-    private Boolean requestModeration = true;
+    private Boolean requestModeration;
 
     /**
      * The status of the event.

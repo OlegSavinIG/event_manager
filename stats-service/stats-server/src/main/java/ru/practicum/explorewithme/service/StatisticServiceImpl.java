@@ -75,9 +75,11 @@ public class StatisticServiceImpl implements StatisticService {
         }
         return statistics;
     }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Map<Long, Long> getEventViews(List<String> uris) {
+    public Map<Long, Long> getEventViews(final List<String> uris) {
         log.info("Fetching statistics records by uris: {}", uris);
         List<StatisticResponse> stats = repository.findStatisticByUriIn(uris);
         log.info("Stats found: {}", stats);
@@ -92,8 +94,12 @@ public class StatisticServiceImpl implements StatisticService {
         log.info("Views found: {}", eventsViews);
         return eventsViews;
     }
-
-    private Long eventIdExtractor(String uri) {
+    /**
+     * Event extractor.
+     * @param uri event uris
+     * @return Long id
+     */
+    private Long eventIdExtractor(final String uri) {
         String[] parts = uri.split("/");
         String idString = parts[parts.length - 1];
         try {

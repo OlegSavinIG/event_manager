@@ -73,9 +73,15 @@ public class StatisticController {
         }
         return service.getStatistic(start, end, uris, unique);
     }
+/**
+ * Retrieves statistics based on query parameters.
+ *
+ * @param uris   the list of URIs to filter the statistics
+ * @return map event views
+ */
     @GetMapping("/views")
     public Map<Long, Long> getEventViews(
-            @NotNull @RequestParam("uris") List<String> uris
+            @NotNull @RequestParam("uris")final List<String> uris
     ) {
        return service.getEventViews(uris);
     }

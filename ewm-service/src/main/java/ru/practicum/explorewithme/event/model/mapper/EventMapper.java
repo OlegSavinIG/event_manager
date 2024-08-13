@@ -6,7 +6,6 @@ import ru.practicum.explorewithme.event.model.EventEntity;
 import ru.practicum.explorewithme.event.model.EventRequest;
 import ru.practicum.explorewithme.event.model.EventResponse;
 import ru.practicum.explorewithme.event.model.EventResponseShort;
-import ru.practicum.explorewithme.event.model.EventStatus;
 import ru.practicum.explorewithme.user.model.UserEntity;
 import ru.practicum.explorewithme.user.model.mapper.UserMapper;
 
@@ -54,7 +53,7 @@ public class EventMapper {
         return EventResponseShort.builder()
                 .id(entity.getId())
                 .annotation(entity.getAnnotation())
-                .category(entity.getCategory())
+                .category(CategoryMapper.toResponse(entity.getCategory()))
                 .eventDate(entity.getEventDate())
                 .confirmedRequests(entity.getConfirmedRequests())
                 .title(entity.getTitle())

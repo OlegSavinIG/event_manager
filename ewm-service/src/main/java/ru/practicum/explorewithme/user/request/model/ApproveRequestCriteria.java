@@ -1,7 +1,9 @@
 package ru.practicum.explorewithme.user.request.model;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
@@ -11,8 +13,10 @@ import java.util.List;
 /**
  * Criteria object for approving requests.
  */
-@Getter
-@Setter
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class ApproveRequestCriteria {
 
     /**
@@ -20,7 +24,7 @@ public class ApproveRequestCriteria {
      */
     @NotNull
     @NotEmpty
-    private List<Integer> ids;
+    private List<Integer> requestIds;
 
     /**
      * Status to set for the approved requests.

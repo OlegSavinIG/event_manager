@@ -135,20 +135,36 @@ public class ExistChecker {
      * @param eventId the ID of the event
      * @throws AlreadyExistException if such a request exists
      */
-    public void isRequestExistsForInitiator(final Long userId, final Long eventId) {
-        boolean exists = requestRepository.existsByRequesterIdAndEventId(userId, eventId);
+    public void isRequestExistsForInitiator(
+            final Long userId, final Long eventId) {
+        boolean exists = requestRepository.existsByRequesterIdAndEventId(
+                userId, eventId);
         if (exists) {
-            throw new AlreadyExistException("User already has a request for this event");
+            throw new AlreadyExistException(
+                    "User already has a request for this event");
         }
     }
-
+    /**
+     * Checks if a request exists for the initiator of an event.
+     *
+     * @param userId  the ID of the user (initiator)
+     * @param eventId the ID of the event
+     * @throws AlreadyExistException if such a request exists
+     */
     public void isThisInitiatorOfEvent(final Long userId, final Long eventId) {
-        boolean exists = eventRepository.existsByIdAndInitiatorId(eventId, userId);
+        boolean exists = eventRepository.existsByIdAndInitiatorId(
+                eventId, userId);
         if (exists) {
             throw new AlreadyExistException("This is your event");
         }
     }
-    public void isEventsContainsCategory(final Integer catId){
+    /**
+     * Checks if a request exists for the initiator of an event.
+     *
+     * @param catId  cat id
+     * @throws AlreadyExistException if such a request exists
+     */
+    public void isEventsContainsCategory(final Integer catId) {
         boolean exist = eventRepository.existsByCategoryId(catId);
         if (exist) {
             throw new AlreadyExistException(
