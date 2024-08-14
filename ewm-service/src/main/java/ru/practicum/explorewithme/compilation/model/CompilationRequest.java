@@ -31,6 +31,7 @@ public class CompilationRequest {
     @NotNull(groups = DefaultValidation.class)
     @NotBlank(groups = DefaultValidation.class)
     @Size(max = MAX_TITLE_LENGTH)
+    @Size(max = MAX_TITLE_LENGTH, groups = DefaultValidation.class)
     private String title;
 
     /**

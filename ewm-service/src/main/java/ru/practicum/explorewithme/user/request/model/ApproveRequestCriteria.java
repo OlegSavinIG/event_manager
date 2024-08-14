@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -16,11 +15,10 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ApproveRequestCriteria {
-
     /**
      * List of IDs of requests to approve.
      */
-    private List<Integer> requestIds = new ArrayList<>();
+    private List<Integer> requestIds;
 
     /**
      * Status to set for the approved requests.

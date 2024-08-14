@@ -80,7 +80,7 @@ public class PrivateUserEventsController {
     public ResponseEntity<EventResponse> createEvent(
             @PathVariable final Long userId,
             @Validated(DefaultValidation.class)
-            @Valid @RequestBody final EventRequest request) {
+            @RequestBody final EventRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service
                 .createEvent(request, userId));
     }

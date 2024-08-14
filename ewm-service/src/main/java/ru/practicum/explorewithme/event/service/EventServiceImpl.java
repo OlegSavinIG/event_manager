@@ -21,6 +21,7 @@ import ru.practicum.explorewithme.event.model.EventStatus;
 import ru.practicum.explorewithme.event.model.mapper.EventMapper;
 import ru.practicum.explorewithme.event.repository.EventRepository;
 import ru.practicum.explorewithme.event.specification.EventSpecification;
+import ru.practicum.explorewithme.exception.BadRequestException;
 import ru.practicum.explorewithme.exception.NotExistException;
 
 import java.util.Collections;
@@ -60,8 +61,7 @@ public class EventServiceImpl implements EventService {
         Page<EventEntity> eventEntities = repository.findAll(spec, pageable);
 
         if (eventEntities.isEmpty()) {
-            log.info("No events found with criteria:");
-            return Collections.emptyList();
+            throw new BadRequestException("Events not found");
         }
 
         setEventsViews(eventEntities);

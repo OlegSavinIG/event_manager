@@ -9,6 +9,8 @@ import ru.practicum.explorewithme.event.model.EventResponseShort;
 import ru.practicum.explorewithme.user.model.UserEntity;
 import ru.practicum.explorewithme.user.model.mapper.UserMapper;
 
+import java.util.Optional;
+
 /**
  * Mapper class for converting between EventEntity and DTOs.
  */
@@ -34,12 +36,11 @@ public class EventMapper {
                 .state(entity.getState())
                 .title(entity.getTitle())
                 .views(entity.getViews())
-                .paid(entity.getPaid())
-                .initiator(UserMapper
-                        .toResponseWithEvent(entity.getInitiator()))
-                .participantLimit(entity.getParticipantLimit())
+                .paid(Optional.ofNullable(entity.getPaid()).orElse(false))
+                .initiator(UserMapper.toResponseWithEvent(entity.getInitiator()))
+                .participantLimit(Optional.ofNullable(entity.getParticipantLimit()).orElse(0))
                 .publishedOn(entity.getPublishedOn())
-                .requestModeration(entity.getRequestModeration())
+                .requestModeration(Optional.ofNullable(entity.getRequestModeration()).orElse(true))
                 .build();
     }
 
@@ -58,9 +59,8 @@ public class EventMapper {
                 .confirmedRequests(entity.getConfirmedRequests())
                 .title(entity.getTitle())
                 .views(entity.getViews())
-                .paid(entity.getPaid())
-                .initiator(UserMapper
-                        .toResponseWithEvent(entity.getInitiator()))
+                .paid(Optional.ofNullable(entity.getPaid()).orElse(false))
+                .initiator(UserMapper.toResponseWithEvent(entity.getInitiator()))
                 .build();
     }
 

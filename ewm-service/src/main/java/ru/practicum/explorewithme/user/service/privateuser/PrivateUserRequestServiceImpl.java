@@ -187,7 +187,7 @@ public class PrivateUserRequestServiceImpl
                     "Request already confirmed and cannot be cancelled");
         }
 
-        entity.setStatus(RequestStatus.REJECTED);
+        entity.setStatus(RequestStatus.CANCELED);
         repository.save(entity);
 
         log.info("Request ID: {} cancelled by user ID: {}", requestId, userId);
@@ -204,12 +204,9 @@ public class PrivateUserRequestServiceImpl
     private void updateRequestStatus(final UserEventRequestEntity entity,
                                      final String status) {
         switch (status) {
-            case "REJECTED": entity.setStatus(RequestStatus.REJECTED);
-            break;
-            case "CONFIRMED": entity.setStatus(RequestStatus.CONFIRMED);
-            break;
-            default:
-                throw new IllegalArgumentException("Unknown status: " + status);
+            case "REJECTED" -> entity.setStatus(RequestStatus.REJECTED);
+            case "CONFIRMED" -> entity.setStatus(RequestStatus.CONFIRMED);
+            default -> throw new IllegalArgumentException("Unknown status: " + status);
         }
         repository.save(entity);
     }
@@ -247,10 +244,15 @@ public class PrivateUserRequestServiceImpl
      * @param event event
      */
     private void validateEventForRequestCreation(final EventEntity event) {
+        log.info("Creating requests with participant limit:"
+                        + " {} confirmed requests: {} request moderation: {}",
+                event.getParticipantLimit(), event.getConfirmedRequests(),
+                event.getRequestModeration());
         if (event.getState().equals(EventStatus.PENDING)) {
             throw new AlreadyExistException("This event is not published");
         }
-        if (event.getParticipantLimit() <= event.getConfirmedRequests()) {
+        if (event.getParticipantLimit() != 0 &&
+                event.getParticipantLimit() <= event.getConfirmedRequests()) {
             throw new AlreadyExistException("Participants limit reached");
         }
     }

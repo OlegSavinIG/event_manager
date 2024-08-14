@@ -12,6 +12,7 @@ public enum RequestStatus {
      * The request is rejected.
      */
     REJECTED,
+    CANCELED,
     /**
      * The request is confirmed.
      */

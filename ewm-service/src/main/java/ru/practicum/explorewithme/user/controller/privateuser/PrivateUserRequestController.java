@@ -1,5 +1,6 @@
 package ru.practicum.explorewithme.user.controller.privateuser;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -57,9 +58,9 @@ public class PrivateUserRequestController {
      */
     @PatchMapping("/{userId}/events/{eventId}/requests")
     public ResponseEntity<EventRequestStatusUpdateResult> approveRequests(
+            @Valid @RequestBody  final ApproveRequestCriteria criteria,
             @PathVariable final Long userId,
-            @PathVariable final Long eventId,
-            @RequestBody  final ApproveRequestCriteria criteria) {
+            @PathVariable final Long eventId) {
         log.info("Received request with body: {}", criteria);
         return ResponseEntity.ok(service
                 .approveRequests(userId, eventId, criteria));

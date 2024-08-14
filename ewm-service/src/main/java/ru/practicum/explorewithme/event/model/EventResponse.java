@@ -55,7 +55,8 @@ public class EventResponse {
     /**
      * Indicates if the event is paid.
      */
-    private Boolean paid;
+    @Builder.Default
+    private Boolean paid = false;
 
     /**
      * The number of confirmed requests for the event.

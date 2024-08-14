@@ -46,6 +46,7 @@ public class CompilationEntity {
      * Indicates if the compilation is pinned.
      */
     @Column(columnDefinition = "boolean default false")
+    @Builder.Default
     private Boolean pinned = false;
 
     /**

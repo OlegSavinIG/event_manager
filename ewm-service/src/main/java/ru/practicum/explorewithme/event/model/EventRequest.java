@@ -2,6 +2,7 @@ package ru.practicum.explorewithme.event.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -47,6 +48,8 @@ public class EventRequest {
      */
     @NotNull(groups = DefaultValidation.class)
     @NotBlank(groups = DefaultValidation.class)
+    @Size(min = MIN_LENGTH, max = MAX_ANNOTATION_LENGTH,
+            groups = DefaultValidation.class)
     @Size(min = MIN_LENGTH, max = MAX_ANNOTATION_LENGTH)
     private String annotation;
 
@@ -55,6 +58,8 @@ public class EventRequest {
      */
     @NotNull(groups = DefaultValidation.class)
     @NotBlank(groups = DefaultValidation.class)
+    @Size(min = MIN_LENGTH, max = MAX_DESCRIPTION_LENGTH,
+            groups = DefaultValidation.class)
     @Size(min = MIN_LENGTH, max = MAX_DESCRIPTION_LENGTH)
     private String description;
 
@@ -63,12 +68,15 @@ public class EventRequest {
      */
     @NotNull(groups = DefaultValidation.class)
     @NotBlank(groups = DefaultValidation.class)
+    @Size(min = MIN_TITLE_LENGTH, max = MAX_TITLE_LENGTH,
+            groups = DefaultValidation.class)
     @Size(min = MIN_TITLE_LENGTH, max = MAX_TITLE_LENGTH)
     private String title;
 
     /**
      * The date and time when the event will take place.
      */
+    @FutureOrPresent(groups = DefaultValidation.class)
     @FutureOrPresent
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime eventDate;
@@ -76,12 +84,13 @@ public class EventRequest {
     /**
      * Indicates if the event is paid.
      */
-    @Builder.Default
-    private Boolean paid = false;
+    private Boolean paid;
 
     /**
      * The participant limit for the event.
      */
+    @PositiveOrZero(groups = DefaultValidation.class)
+    @PositiveOrZero
     private Integer participantLimit;
 
     /**
