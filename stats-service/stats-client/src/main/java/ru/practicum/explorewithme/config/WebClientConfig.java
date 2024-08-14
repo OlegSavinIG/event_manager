@@ -31,6 +31,7 @@ public class WebClientConfig {
      *
      * @return a WebClient.Builder instance with custom configuration.
      */
+
     @Bean
     public WebClient.Builder webClientBuilder() {
         return WebClient.builder()

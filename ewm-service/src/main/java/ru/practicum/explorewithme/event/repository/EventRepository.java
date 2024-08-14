@@ -51,6 +51,7 @@ public interface EventRepository extends JpaRepository<EventEntity, Long>,
      * @return true if the request exists, false otherwise
      */
     boolean existsByIdAndInitiatorId(Long userId, Long eventId);
+
     /**
      * Checks if a user event request exists for a specific user and event.
      *

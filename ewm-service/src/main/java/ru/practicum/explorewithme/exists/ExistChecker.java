@@ -144,6 +144,7 @@ public class ExistChecker {
                     "User already has a request for this event");
         }
     }
+
     /**
      * Checks if a request exists for the initiator of an event.
      *
@@ -158,6 +159,7 @@ public class ExistChecker {
             throw new AlreadyExistException("This is your event");
         }
     }
+
     /**
      * Checks if a request exists for the initiator of an event.
      *

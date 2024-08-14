@@ -82,13 +82,11 @@ public class EventRequest {
     /**
      * The participant limit for the event.
      */
-    @Builder.Default
     private Integer participantLimit;
 
     /**
      * Indicates if the event requires request moderation.
      */
-    @Builder.Default
     private Boolean requestModeration;
 
     /**

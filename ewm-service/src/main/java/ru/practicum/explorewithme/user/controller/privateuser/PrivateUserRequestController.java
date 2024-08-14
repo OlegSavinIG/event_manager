@@ -1,6 +1,7 @@
 package ru.practicum.explorewithme.user.controller.privateuser;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,8 +25,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
+@Slf4j
 public class PrivateUserRequestController {
-
     /**
      * Service for handling private user request operations.
      */
@@ -58,7 +59,8 @@ public class PrivateUserRequestController {
     public ResponseEntity<EventRequestStatusUpdateResult> approveRequests(
             @PathVariable final Long userId,
             @PathVariable final Long eventId,
-            @RequestBody final ApproveRequestCriteria criteria) {
+            @RequestBody  final ApproveRequestCriteria criteria) {
+        log.info("Received request with body: {}", criteria);
         return ResponseEntity.ok(service
                 .approveRequests(userId, eventId, criteria));
     }

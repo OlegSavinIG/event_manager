@@ -61,10 +61,10 @@ public class StatisticServiceImpl implements StatisticService {
 
         if (unique) {
             statistics = (uris != null && !uris.isEmpty())
-                    ? repository.
-                    findStatisticsWithUniqueIpAndUriIn(uris, start, end)
-                    : repository.
-                    findStatisticsWithUniqueIp(start, end);
+                    ? repository
+                    .findStatisticsWithUniqueIpAndUriIn(uris, start, end)
+                    : repository
+                    .findStatisticsWithUniqueIp(start, end);
             log.info("Fetched {} unique statistics records",
                     statistics.size());
         } else {
@@ -75,6 +75,7 @@ public class StatisticServiceImpl implements StatisticService {
         }
         return statistics;
     }
+
     /**
      * {@inheritDoc}
      */
@@ -94,6 +95,7 @@ public class StatisticServiceImpl implements StatisticService {
         log.info("Views found: {}", eventsViews);
         return eventsViews;
     }
+
     /**
      * Event extractor.
      * @param uri event uris

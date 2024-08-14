@@ -213,6 +213,7 @@ public class PrivateUserRequestServiceImpl
         }
         repository.save(entity);
     }
+
     /**
      * Updates the status of a user event request.
      *
@@ -240,6 +241,7 @@ public class PrivateUserRequestServiceImpl
         }
         return event;
     }
+
     /**
      * Validates event for request creation.
      * @param event event

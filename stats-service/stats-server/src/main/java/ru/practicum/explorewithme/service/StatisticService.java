@@ -31,6 +31,7 @@ public interface StatisticService {
     List<StatisticResponse> getStatistic(
             LocalDateTime start,
             LocalDateTime end, List<String> uris, boolean unique);
+
 /**
  * Retrieves statistics.
  *

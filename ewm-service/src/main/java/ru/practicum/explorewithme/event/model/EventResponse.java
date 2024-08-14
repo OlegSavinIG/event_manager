@@ -65,11 +65,13 @@ public class EventResponse {
     /**
      * The participant limit for the event.
      */
+    @Builder.Default
     private Integer participantLimit = 0;
 
     /**
      * Indicates if the event requires request moderation.
      */
+    @Builder.Default
     private Boolean requestModeration = true;
 
     /**

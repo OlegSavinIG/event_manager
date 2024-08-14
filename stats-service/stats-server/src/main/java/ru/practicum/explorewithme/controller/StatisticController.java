@@ -73,6 +73,7 @@ public class StatisticController {
         }
         return service.getStatistic(start, end, uris, unique);
     }
+
 /**
  * Retrieves statistics based on query parameters.
  *

@@ -74,6 +74,7 @@ public interface StatisticRepository
             @Param("uris")  List<String> uris,
             @Param("start")  LocalDateTime start,
             @Param("end")  LocalDateTime end);
+
     /**
      * Retrieves statistics for specified URIs within a date range.
      *

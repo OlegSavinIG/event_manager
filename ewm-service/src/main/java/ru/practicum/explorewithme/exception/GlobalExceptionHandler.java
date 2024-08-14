@@ -110,6 +110,7 @@ public class GlobalExceptionHandler {
         body.put("timestamp", LocalDateTime.now());
         return new ResponseEntity<>(body, HttpStatus.CONFLICT);
     }
+
     /**
      * Handles already exist exceptions.
      *
