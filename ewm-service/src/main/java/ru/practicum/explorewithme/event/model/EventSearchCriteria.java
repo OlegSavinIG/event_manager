@@ -48,6 +48,7 @@ public class EventSearchCriteria {
     /**
      * Indicates if only available events should be included.
      */
+    @Builder.Default
     private Boolean onlyAvailable = false;
 
     /**

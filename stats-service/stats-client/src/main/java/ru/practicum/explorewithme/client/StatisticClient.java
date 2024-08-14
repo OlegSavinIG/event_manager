@@ -3,6 +3,7 @@ package ru.practicum.explorewithme.client;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -46,7 +47,7 @@ public class StatisticClient {
                 .uri("/hit")
                 .bodyValue(stats)
                 .retrieve()
-                .onStatus(HttpStatus::isError, clientResponse -> {
+                .onStatus(HttpStatusCode::isError, clientResponse -> {
                     log.info("Error sending stats: {}", clientResponse
                             .statusCode());
                     return Mono.error(new RuntimeException("Failed to send "

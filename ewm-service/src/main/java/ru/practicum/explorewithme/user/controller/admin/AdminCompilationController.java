@@ -1,5 +1,6 @@
 package ru.practicum.explorewithme.user.controller.admin;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +15,6 @@ import ru.practicum.explorewithme.compilation.model.CompilationRequest;
 import ru.practicum.explorewithme.compilation.model.CompilationResponse;
 import ru.practicum.explorewithme.user.service.admin.AdminCompilationService;
 
-import javax.validation.Valid;
 
 /**
  * REST controller for managing compilations by admin.

@@ -3,7 +3,7 @@ version: '3.8'
 services:
   postgres-main:
     container_name: db-main
-    image: postgres:13
+    image: postgres:16.1
     environment:
       POSTGRES_DB: main_db
       POSTGRES_USER: user
@@ -15,7 +15,7 @@ services:
 
   postgres-stat:
     container_name: db-stats
-    image: postgres:13
+    image: postgres:16.1
     environment:
       POSTGRES_DB: stat_db
       POSTGRES_USER: user

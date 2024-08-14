@@ -1,14 +1,14 @@
 package ru.practicum.explorewithme.compilation.model;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.practicum.explorewithme.annotation.DefaultValidation;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,7 +36,7 @@ public class CompilationRequest {
     /**
      * Indicates if the compilation is pinned.
      */
-//    @NotBlank
+    @Builder.Default
     private Boolean pinned = false;
 
     /**

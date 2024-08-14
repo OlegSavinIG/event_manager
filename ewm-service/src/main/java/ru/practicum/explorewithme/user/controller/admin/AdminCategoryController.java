@@ -1,5 +1,6 @@
 package ru.practicum.explorewithme.user.controller.admin;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +15,6 @@ import ru.practicum.explorewithme.category.model.CategoryRequest;
 import ru.practicum.explorewithme.category.model.CategoryResponse;
 import ru.practicum.explorewithme.user.service.admin.AdminCategoryService;
 
-import javax.validation.Valid;
 
 /**
  * REST controller for managing categories by admin.

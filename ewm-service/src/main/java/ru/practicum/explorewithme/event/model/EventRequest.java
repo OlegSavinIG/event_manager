@@ -1,16 +1,16 @@
 package ru.practicum.explorewithme.event.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.FutureOrPresent;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.practicum.explorewithme.annotation.DefaultValidation;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
-import javax.validation.constraints.FutureOrPresent;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 /**
@@ -76,17 +76,20 @@ public class EventRequest {
     /**
      * Indicates if the event is paid.
      */
+    @Builder.Default
     private Boolean paid = false;
 
     /**
      * The participant limit for the event.
      */
-    private Integer participantLimit = 0;
+    @Builder.Default
+    private Integer participantLimit;
 
     /**
      * Indicates if the event requires request moderation.
      */
-    private Boolean requestModeration = true;
+    @Builder.Default
+    private Boolean requestModeration;
 
     /**
      * The ID of the category for the event.

@@ -1,5 +1,6 @@
 package ru.practicum.explorewithme.event.service;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -22,7 +23,6 @@ import ru.practicum.explorewithme.event.repository.EventRepository;
 import ru.practicum.explorewithme.event.specification.EventSpecification;
 import ru.practicum.explorewithme.exception.NotExistException;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -44,10 +44,6 @@ public class EventServiceImpl implements EventService {
      * REST client for managing compilations.
      */
     private final StatisticClient client;
-    /**
-     * Service for managing event views.
-     */
-    private final ExecutorService executorService;
 
     /**
      * {@inheritDoc}

@@ -1,5 +1,7 @@
 package ru.practicum.explorewithme.compilation.controller;
 
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -11,8 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.explorewithme.compilation.model.CompilationResponse;
 import ru.practicum.explorewithme.compilation.service.CompilationService;
 
-import javax.validation.constraints.Positive;
-import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 /**

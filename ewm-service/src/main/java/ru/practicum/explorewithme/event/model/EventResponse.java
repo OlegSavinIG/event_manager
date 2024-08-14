@@ -65,12 +65,12 @@ public class EventResponse {
     /**
      * The participant limit for the event.
      */
-    private Integer participantLimit;
+    private Integer participantLimit = 0;
 
     /**
      * Indicates if the event requires request moderation.
      */
-    private Boolean requestModeration;
+    private Boolean requestModeration = true;
 
     /**
      * The title of the event.
@@ -79,6 +79,7 @@ public class EventResponse {
     /**
      * The location of the event.
      */
+    @Builder.Default
     private String location = "In work";
 
     /**

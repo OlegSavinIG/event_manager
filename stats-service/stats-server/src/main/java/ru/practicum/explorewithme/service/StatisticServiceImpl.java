@@ -1,5 +1,6 @@
 package ru.practicum.explorewithme.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -10,7 +11,6 @@ import ru.practicum.explorewithme.model.StatisticEntity;
 import ru.practicum.explorewithme.model.StatisticMapper;
 import ru.practicum.explorewithme.repository.StatisticRepository;
 
-import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;

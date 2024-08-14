@@ -1,11 +1,11 @@
 package ru.practicum.explorewithme.event.service;
 
+import jakarta.servlet.http.HttpServletRequest;
 import ru.practicum.explorewithme.event.model.EventEntity;
 import ru.practicum.explorewithme.event.model.EventResponse;
 import ru.practicum.explorewithme.event.model.EventResponseShort;
 import ru.practicum.explorewithme.event.model.EventSearchCriteria;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
