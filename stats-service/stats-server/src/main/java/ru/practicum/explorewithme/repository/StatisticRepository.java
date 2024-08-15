@@ -25,7 +25,7 @@ public interface StatisticRepository
      * @return list of StatisticResponse
      */
     @Query("SELECT new ru.practicum.explorewithme"
-            + ".StatisticResponse(s.app, s.uri, COUNT(DISTINCT s.ip) AS hits) "
+            + ".StatisticResponse(s.app, s.uri, COUNT(DISTINCT s.uri) AS hits) "
             + "FROM StatisticEntity s "
             + "WHERE s.creationTime BETWEEN :start AND :end "
             + "AND s.uri IN :uris "
@@ -98,7 +98,7 @@ public interface StatisticRepository
      * @return list of StatisticResponse
      */
     @Query("SELECT new ru.practicum.explorewithme"
-            + ".StatisticResponse(s.app, s.uri, COUNT(s.ip) AS hits) "
+            + ".StatisticResponse(s.app, s.uri, COUNT(s.uri) AS hits) "
             + "FROM StatisticEntity s "
             + "WHERE s.creationTime BETWEEN :start AND :end "
             + "GROUP BY s.app, s.uri "

@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,10 +20,12 @@ public class EventRequestStatusUpdateResult {
     /**
      * List of user event request DTOs for requests that were confirmed.
      */
-    private List<UserEventRequestDto> confirmedRequests;
+    @Builder.Default
+    private List<UserEventRequestDto> confirmedRequests = new ArrayList<>();
 
     /**
      * List of user event request DTOs for requests that were rejected.
      */
-    private List<UserEventRequestDto> rejectedRequests;
+    @Builder.Default
+    private List<UserEventRequestDto> rejectedRequests = new ArrayList<>();
 }
