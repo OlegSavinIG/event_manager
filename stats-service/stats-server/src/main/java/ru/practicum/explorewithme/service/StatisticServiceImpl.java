@@ -40,7 +40,7 @@ public class StatisticServiceImpl implements StatisticService {
     public void saveStatistic(final StatisticRequest request) {
         log.info("Attempting to save statistic for URI: {}", request.getUri());
         boolean exist = repository.existsByIpAndUri(request.getIp(), request.getUri());
-        if (exist){
+        if (exist) {
             log.info("Statistic already saved for uri {} and ip {}",
                     request.getUri(), request.getIp());
             return;
