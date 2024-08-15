@@ -111,11 +111,8 @@ public class PrivateUserRequestServiceImpl
             } else if (RequestStatus.REJECTED.equals(
                     dto.getStatus())) {
                 rejectedRequests.add(dto);
-                event.setConfirmedRequests(event.getConfirmedRequests() - 1);
             }
         }
-
-        eventRepository.save(event);
 
         return EventRequestStatusUpdateResult.builder()
                 .confirmedRequests(confirmedRequests)
@@ -152,18 +149,21 @@ public class PrivateUserRequestServiceImpl
         UserEntity userEntity = adminUserService.findUserEntity(userId);
         UserEventRequestEntity eventRequestEntity =
                 UserEventRequestEntity.builder()
-                        .status(RequestStatus.PENDING)
                         .created(LocalDateTime.now())
                         .requester(userEntity)
                         .event(event)
                         .build();
+        if (!event.getRequestModeration()) {
+            eventRequestEntity.setStatus(RequestStatus.CONFIRMED);
+        }
+            eventRequestEntity.setStatus(RequestStatus.PENDING);
 
         event.setConfirmedRequests(event.getConfirmedRequests() + 1);
         eventRepository.save(event);
 
         UserEventRequestEntity saved = repository.save(eventRequestEntity);
-        log.info("Request created with ID: {} for event ID: {} by user ID: {}",
-                saved.getId(), eventId, userId);
+        log.info("Request created with ID: {} status : {} request moderation: {}",
+                saved.getId(), saved.getStatus(), event.getRequestModeration());
         return UserEvenRequestMapper.toDto(saved);
     }
 

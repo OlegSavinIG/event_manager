@@ -107,4 +107,5 @@ public class EventRequest {
      * The state action for the event.
      */
     private EventStatus stateAction;
+    private EventLocation location;
 }

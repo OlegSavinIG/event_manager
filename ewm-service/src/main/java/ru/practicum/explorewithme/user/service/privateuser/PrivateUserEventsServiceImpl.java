@@ -119,7 +119,9 @@ public class PrivateUserEventsServiceImpl implements PrivateUserEventsService {
         log.info("Event created with ID: {} for user ID: {}",
                 eventEntity.getId(),
                 userId);
-        return EventMapper.toResponse(eventEntity);
+        EventResponse response = EventMapper.toResponse(eventEntity);
+        response.setLocation(request.getLocation());
+        return response;
     }
 
     /**
