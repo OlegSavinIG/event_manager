@@ -99,8 +99,8 @@ public class PrivateUserEventsServiceImpl implements PrivateUserEventsService {
     public EventResponse createEvent(final EventRequest request,
                                      final Long userId) {
         log.info("Creating event for user ID:"
-                        + " {} with request annotation: {}", userId,
-                request.getAnnotation());
+                        + " {} with request : {}", userId,
+                request);
         checker.isUserExist(userId);
         UserEntity userEntity = adminUserService.findUserEntity(userId);
         CategoryResponse category = categoryService.getCategory(

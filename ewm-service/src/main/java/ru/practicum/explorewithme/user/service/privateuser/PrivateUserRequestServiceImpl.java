@@ -153,10 +153,13 @@ public class PrivateUserRequestServiceImpl
                         .requester(userEntity)
                         .event(event)
                         .build();
-        if (!event.getRequestModeration()) {
+        if (!event.getRequestModeration() ||
+                event.getParticipantLimit() == 0) {
             eventRequestEntity.setStatus(RequestStatus.CONFIRMED);
-        }
+        } else  {
             eventRequestEntity.setStatus(RequestStatus.PENDING);
+        }
+
 
         event.setConfirmedRequests(event.getConfirmedRequests() + 1);
         eventRepository.save(event);
