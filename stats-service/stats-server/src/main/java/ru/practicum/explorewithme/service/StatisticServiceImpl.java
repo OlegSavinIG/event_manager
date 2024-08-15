@@ -39,6 +39,12 @@ public class StatisticServiceImpl implements StatisticService {
     @Override
     public void saveStatistic(final StatisticRequest request) {
         log.info("Attempting to save statistic for URI: {}", request.getUri());
+        boolean exist = repository.existsByIpAndUri(request.getIp(), request.getUri());
+        if (exist){
+            log.info("Statistic already saved for uri {} and ip {}",
+                    request.getUri(), request.getIp());
+            return;
+        }
         StatisticEntity newEntity = StatisticMapper.toEntity(request);
         newEntity.setCreationTime(LocalDateTime.now());
         repository.save(newEntity);

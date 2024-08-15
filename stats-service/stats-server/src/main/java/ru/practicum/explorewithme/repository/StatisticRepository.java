@@ -106,4 +106,13 @@ public interface StatisticRepository
     List<StatisticResponse> findAllByCreationTimeBetween(
             @Param("start")  LocalDateTime start,
             @Param("end")  LocalDateTime end);
+
+    /**
+     * Retrieves all statistics within a date range.
+     *
+     * @param ip the start datetime
+     * @param uri   the end datetime
+     * @return true or false
+     */
+    boolean existsByIpAndUri(String ip, String uri);
 }

@@ -55,8 +55,7 @@ public class EventResponse {
     /**
      * Indicates if the event is paid.
      */
-    @Builder.Default
-    private Boolean paid = false;
+    private Boolean paid;
 
     /**
      * The number of confirmed requests for the event.
@@ -66,14 +65,12 @@ public class EventResponse {
     /**
      * The participant limit for the event.
      */
-    @Builder.Default
-    private Integer participantLimit = 0;
+    private Integer participantLimit;
 
     /**
      * Indicates if the event requires request moderation.
      */
-    @Builder.Default
-    private Boolean requestModeration = true;
+    private Boolean requestModeration;
 
     /**
      * The title of the event.
@@ -82,8 +79,7 @@ public class EventResponse {
     /**
      * The location of the event.
      */
-    @Builder.Default
-    private String location = "In work";
+    private String location;
 
     /**
      * The number of views of the event.

@@ -104,13 +104,14 @@ public class PrivateUserRequestServiceImpl
         for (UserEventRequestEntity request : requests) {
             updateRequestStatus(request, criteria.getStatus());
             UserEventRequestDto dto = UserEvenRequestMapper.toDto(request);
-            if (RequestStatus.CONFIRMED.name().equalsIgnoreCase(
+            if (RequestStatus.CONFIRMED.equals(
                     dto.getStatus())) {
                 confirmedRequests.add(dto);
-                event.setConfirmedRequests(event.getConfirmedRequests() + 1);
-            } else if (RequestStatus.REJECTED.name().equalsIgnoreCase(
+
+            } else if (RequestStatus.REJECTED.equals(
                     dto.getStatus())) {
                 rejectedRequests.add(dto);
+                event.setConfirmedRequests(event.getConfirmedRequests() - 1);
             }
         }
 
@@ -156,6 +157,9 @@ public class PrivateUserRequestServiceImpl
                         .requester(userEntity)
                         .event(event)
                         .build();
+
+        event.setConfirmedRequests(event.getConfirmedRequests() + 1);
+        eventRepository.save(event);
 
         UserEventRequestEntity saved = repository.save(eventRequestEntity);
         log.info("Request created with ID: {} for event ID: {} by user ID: {}",

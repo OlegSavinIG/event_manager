@@ -40,5 +40,5 @@ public class UserEventRequestDto {
     /**
      * Status of the request.
      */
-    private String status;
+    private RequestStatus status;
 }
