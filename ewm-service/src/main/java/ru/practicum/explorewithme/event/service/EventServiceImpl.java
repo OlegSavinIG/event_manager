@@ -94,6 +94,8 @@ public class EventServiceImpl implements EventService {
 
         EventResponse response = EventMapper.toResponse(eventEntity);
         response.setViews(views);
+        log.info("Found event response: {} with views: {}",
+                response, response.getViews());
         return response;
     }
 

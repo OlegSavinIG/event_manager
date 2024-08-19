@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.explorewithme.StatisticRequest;
 import ru.practicum.explorewithme.StatisticResponse;
-import ru.practicum.explorewithme.client.StatisticClient;
 import ru.practicum.explorewithme.model.StatisticEntity;
 import ru.practicum.explorewithme.model.StatisticMapper;
 import ru.practicum.explorewithme.repository.StatisticRepository;
@@ -28,10 +27,6 @@ public class StatisticServiceImpl implements StatisticService {
      * Repository.
      */
     private final StatisticRepository repository;
-    /**
-     * Client.
-     */
-    private final StatisticClient client;
 
     /**
      * {@inheritDoc}
@@ -39,12 +34,6 @@ public class StatisticServiceImpl implements StatisticService {
     @Override
     public void saveStatistic(final StatisticRequest request) {
         log.info("Attempting to save statistic for URI: {}", request.getUri());
-//        boolean exist = repository.existsByIpAndUri(request.getIp(), request.getUri());
-//        if (exist) {
-//            log.info("Statistic already saved for uri {} and ip {}",
-//                    request.getUri(), request.getIp());
-//            return;
-//        }
         StatisticEntity newEntity = StatisticMapper.toEntity(request);
         newEntity.setCreationTime(LocalDateTime.now());
         repository.save(newEntity);
