@@ -129,10 +129,10 @@ public class PrivateUserRequestServiceImpl
         if (Boolean.FALSE.equals(event.getRequestModeration()) ||
         event.getParticipantLimit() == 0) {
             eventRequestEntity.setStatus(RequestStatus.CONFIRMED);
-        }
-        else {
+        } else {
             eventRequestEntity.setStatus(RequestStatus.PENDING);
         }
+
         UserEventRequestEntity saved = repository.save(eventRequestEntity);
 
         event.getConfirmedRequests().add(saved);
