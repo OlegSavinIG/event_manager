@@ -135,7 +135,7 @@ public class ExistChecker {
      * @param eventId the ID of the event
      * @throws AlreadyExistException if such a request exists
      */
-    public void isRequestExistsForInitiator(
+    public void isRequestAlreadyExist(
             final Long userId, final Long eventId) {
         boolean exists = requestRepository.existsByRequesterIdAndEventId(
                 userId, eventId);

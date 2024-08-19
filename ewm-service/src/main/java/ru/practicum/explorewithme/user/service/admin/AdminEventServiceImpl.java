@@ -8,9 +8,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.UriComponentsBuilder;
-import reactor.core.publisher.Mono;
 import ru.practicum.explorewithme.StatisticRequest;
 import ru.practicum.explorewithme.category.model.CategoryEntity;
 import ru.practicum.explorewithme.category.repository.CategoryRepository;
@@ -55,10 +55,6 @@ public class AdminEventServiceImpl implements AdminEventService {
      */
     private final CategoryRepository categoryRepository;
 
-    /**
-     * REST client for managing statistics.
-     */
-    private final StatisticClient client;
 
     /**
      * Retrieves a list of events based on the provided criteria.
@@ -81,10 +77,6 @@ public class AdminEventServiceImpl implements AdminEventService {
             Specification<EventEntity> spec = buildSpecification(criteria);
 
             Page<EventEntity> eventEntities = repository.findAll(spec, pageable);
-            setEventsViews(eventEntities).subscribe();
-            for (EventEntity eventEntity : eventEntities) {
-                log.info("Admin confirmed requests: {}", eventEntity.getConfirmedRequests());
-            }
             return eventEntities.stream()
                     .map(EventMapper::toResponse)
                     .collect(Collectors.toList());
@@ -203,42 +195,42 @@ public class AdminEventServiceImpl implements AdminEventService {
         }
     }
 
-    /**
-     * Saves the statistic data for the list of event entities.
-     *
-     * @param servletRequest the HTTP request containing client details
-     * @param entities       the list of event entities
-     */
-    private void saveStatistic(
-            final HttpServletRequest servletRequest,
-            final List<EventEntity> entities) {
-        List<String> eventsUri = createEventsUri(entities);
-        for (String uri : eventsUri) {
-            log.info("Saving statistic with uri: {}", uri);
-            StatisticRequest statisticRequest = StatisticRequest.builder()
-                    .app("ewm-main-service")
-                    .ip(servletRequest.getRemoteAddr())
-                    .uri(uri)
-                    .build();
-            client.sendStats(statisticRequest).block();
-        }
-    }
+//    /**
+//     * Saves the statistic data for the list of event entities.
+//     *
+//     * @param servletRequest the HTTP request containing client details
+//     * @param entities       the list of event entities
+//     */
+//    private void saveStatistic(
+//            final HttpServletRequest servletRequest,
+//            final List<EventEntity> entities) {
+//        List<String> eventsUri = createEventsUri(entities);
+//        for (String uri : eventsUri) {
+//            log.info("Saving statistic with uri: {}", uri);
+//            StatisticRequest statisticRequest = StatisticRequest.builder()
+//                    .app("ewm-main-service")
+//                    .ip(servletRequest.getRemoteAddr())
+//                    .uri(uri)
+//                    .build();
+//            client.sendStats(statisticRequest).block();
+//        }
+//    }
 
-    /**
-     * Sets the views for a list of event entities asynchronously.
-     *
-     * @param eventEntities the list of event entities
-     */
-    private Mono<Void> setEventsViews(final Page<EventEntity> eventEntities) {
-        return client.getEventViews(createEventsUri(eventEntities.toList()))
-                .doOnError(error -> log.error("Error fetching event views", error))
-                .doOnSuccess(eventViews -> {
-                    eventEntities.forEach(entity -> {
-                        entity.setViews(eventViews.getOrDefault(entity.getId(), 0));
-                    });
-                })
-                .then();
-    }
+//    /**
+//     * Sets the views for a list of event entities asynchronously.
+//     *
+//     * @param eventEntities the list of event entities
+//     */
+//    private void setEventsViews(final Page<EventEntity> eventEntities) {
+//        client.getEventViews(createEventsUri(eventEntities.toList()))
+//                .doOnError(error -> log.error("Error fetching event views", error))
+//                .doOnSuccess(eventViews -> {
+//                    eventEntities.forEach(entity -> {
+//                        entity.setViews(eventViews.getOrDefault(entity.getId(), 0));
+//                    });
+//                });
+//
+//    }
 
     /**
      * Builds the specification for filtering events based on the search criteria.
@@ -273,16 +265,16 @@ public class AdminEventServiceImpl implements AdminEventService {
         return spec;
     }
 
-    /**
-     * Creates a list of event URIs from a list of event entities.
-     *
-     * @param eventEntities the list of event entities
-     * @return the list of URIs
-     */
-    private List<String> createEventsUri(final List<EventEntity> eventEntities) {
-        return eventEntities.stream()
-                .map(entity -> UriComponentsBuilder.fromPath("/events/{id}")
-                        .buildAndExpand(entity.getId()).toUriString())
-                .collect(Collectors.toList());
-    }
+//    /**
+//     * Creates a list of event URIs from a list of event entities.
+//     *
+//     * @param eventEntities the list of event entities
+//     * @return the list of URIs
+//     */
+//    private List<String> createEventsUri(final List<EventEntity> eventEntities) {
+//        return eventEntities.stream()
+//                .map(entity -> UriComponentsBuilder.fromPath("/events/{id}")
+//                        .buildAndExpand(entity.getId()).toUriString())
+//                .collect(Collectors.toList());
+//    }
 }

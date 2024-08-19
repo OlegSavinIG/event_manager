@@ -3,6 +3,7 @@ package ru.practicum.explorewithme.user.service.privateuser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.explorewithme.event.model.EventEntity;
 import ru.practicum.explorewithme.event.model.EventResponse;
@@ -26,8 +27,6 @@ import ru.practicum.explorewithme.user.service.admin.AdminUserService;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 /**
@@ -45,7 +44,6 @@ public class PrivateUserRequestServiceImpl
     private final EventRepository eventRepository;
     private final AdminUserService adminUserService;
     private final ExistChecker checker;
-    private final Lock lock = new ReentrantLock();
 
     @Override
     public List<UserEventRequestDto> getEventRequests(
@@ -112,16 +110,18 @@ public class PrivateUserRequestServiceImpl
     }
 
     @Override
-//    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public UserEventRequestDto createRequest(final Long userId,
                                              final Long eventId) {
         log.info("Creating request for event ID: {} by user ID: {}",
                 eventId, userId);
-        checker.isRequestExistsForInitiator(userId, eventId);
-        checker.isThisInitiatorOfEvent(userId, eventId);
+        checker.isRequestAlreadyExist(userId, eventId);
+//        checker.isThisInitiatorOfEvent(userId, eventId);
 
         EventEntity event = eventService.getEventEntity(eventId);
-        log.info("Confirmed requests: {}", event.getConfirmedRequests());
+        if (event.getInitiator().getId().equals(userId)) {
+            throw new AlreadyExistException("This is your event");
+        }
         validateEventForRequestCreation(event);
 
         UserEntity userEntity = adminUserService.findUserEntity(userId);
@@ -137,9 +137,7 @@ public class PrivateUserRequestServiceImpl
         } else {
             eventRequestEntity.setStatus(RequestStatus.PENDING);
         }
-        log.info("Saving request: {}", eventRequestEntity);
         UserEventRequestEntity saved = repository.save(eventRequestEntity);
-        log.info("Saved request: {}", saved);
         if (RequestStatus.CONFIRMED.equals(saved.getStatus())) {
             event.getConfirmedRequests().add(saved);
         }
