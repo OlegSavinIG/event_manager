@@ -127,16 +127,16 @@ public class PrivateUserRequestServiceImpl
                         .event(event)
                         .build();
         if (Boolean.FALSE.equals(event.getRequestModeration()) ||
-        event.getParticipantLimit() == 0) {
+                event.getParticipantLimit() == 0) {
             eventRequestEntity.setStatus(RequestStatus.CONFIRMED);
         } else {
             eventRequestEntity.setStatus(RequestStatus.PENDING);
         }
 
         UserEventRequestEntity saved = repository.save(eventRequestEntity);
-
-        event.getConfirmedRequests().add(saved);
-
+        if (RequestStatus.CONFIRMED.equals(saved.getStatus())) {
+            event.getConfirmedRequests().add(saved);
+        }
         eventRepository.save(event);
 
         log.info("Request created with ID: {} for event ID: {} by user ID: {}",

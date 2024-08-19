@@ -82,7 +82,7 @@ public class AdminEventServiceImpl implements AdminEventService {
 
         Page<EventEntity> eventEntities = repository.findAll(spec, pageable);
         setEventsViews(eventEntities).block();
-        saveStatistic(servletRequest, eventEntities.toList());
+//        saveStatistic(servletRequest, eventEntities.toList());
 
         return eventEntities.stream()
                 .map(EventMapper::toResponse)
