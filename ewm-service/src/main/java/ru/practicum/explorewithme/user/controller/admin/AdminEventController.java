@@ -1,6 +1,5 @@
 package ru.practicum.explorewithme.user.controller.admin;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;

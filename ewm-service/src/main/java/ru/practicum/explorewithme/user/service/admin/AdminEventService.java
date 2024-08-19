@@ -1,6 +1,5 @@
 package ru.practicum.explorewithme.user.service.admin;
 
-import jakarta.servlet.http.HttpServletRequest;
 import ru.practicum.explorewithme.event.model.EventRequest;
 import ru.practicum.explorewithme.event.model.EventResponse;
 import ru.practicum.explorewithme.user.model.EventSearchCriteriaForAdmin;
