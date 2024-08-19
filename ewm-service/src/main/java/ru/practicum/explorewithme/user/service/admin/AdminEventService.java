@@ -1,5 +1,6 @@
 package ru.practicum.explorewithme.user.service.admin;
 
+import jakarta.servlet.http.HttpServletRequest;
 import ru.practicum.explorewithme.event.model.EventRequest;
 import ru.practicum.explorewithme.event.model.EventResponse;
 import ru.practicum.explorewithme.user.model.EventSearchCriteriaForAdmin;
@@ -20,7 +21,8 @@ public interface AdminEventService {
      * @return the list of event responses
      */
     List<EventResponse> getEvents(
-            EventSearchCriteriaForAdmin criteria, Integer from, Integer size);
+            EventSearchCriteriaForAdmin criteria, Integer from, Integer size,
+            HttpServletRequest servletRequest);
 
     /**
      * Approves an event.
@@ -30,4 +32,5 @@ public interface AdminEventService {
      * @return the approved event response
      */
     EventResponse approveEvent(EventRequest request, Long eventId);
+
 }

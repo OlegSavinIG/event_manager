@@ -1,5 +1,6 @@
 package ru.practicum.explorewithme.user.controller.admin;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -46,8 +47,11 @@ public class AdminEventController {
             @PositiveOrZero @RequestParam(defaultValue = "0")
             final Integer from,
             @Positive @RequestParam(defaultValue = "10")
-            final Integer size) {
-        return ResponseEntity.ok(service.getEvents(criteria, from, size));
+            final Integer size,
+            final HttpServletRequest servletRequest) {
+        List<EventResponse> events = service.getEvents(
+                criteria, from, size, servletRequest);
+        return ResponseEntity.ok(events);
     }
 
     /**

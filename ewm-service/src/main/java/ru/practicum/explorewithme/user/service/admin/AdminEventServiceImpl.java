@@ -1,5 +1,6 @@
 package ru.practicum.explorewithme.user.service.admin;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -8,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.explorewithme.StatisticRequest;
 import ru.practicum.explorewithme.category.model.CategoryEntity;
 import ru.practicum.explorewithme.category.repository.CategoryRepository;
 import ru.practicum.explorewithme.client.StatisticClient;
@@ -63,7 +65,8 @@ public class AdminEventServiceImpl implements AdminEventService {
     public List<EventResponse> getEvents(
             final EventSearchCriteriaForAdmin criteria,
             final Integer from,
-            final Integer size) {
+            final Integer size,
+            final HttpServletRequest servletRequest) {
         log.info("Fetching events with criteria: {}", criteria);
         Pageable pageable = PageRequest.of(from / size, size);
         Specification<EventEntity> spec = Specification.where(null);
@@ -96,6 +99,7 @@ public class AdminEventServiceImpl implements AdminEventService {
 
         Page<EventEntity> eventEntities = repository.findAll(spec, pageable);
         setEventsViews(eventEntities);
+        saveStatistic(servletRequest, eventEntities.toList());
         return eventEntities.stream()
                 .map(EventMapper::toResponse)
                 .collect(Collectors.toList());
@@ -190,6 +194,21 @@ public class AdminEventServiceImpl implements AdminEventService {
                 break;
             default:
                 break;
+        }
+    }
+    private void saveStatistic(
+            final HttpServletRequest servletRequest,
+            final List<EventEntity> entities) {
+        List<String> eventsUri = createEventsUri(entities);
+        for (String uri : eventsUri) {
+            log.info("Saving statistic with uri: {}",
+                    servletRequest.getRequestURI());
+            StatisticRequest statisticRequest = StatisticRequest.builder()
+                    .app("ewm-main-service")
+                    .ip(servletRequest.getRemoteAddr())
+                    .uri(uri)
+                    .build();
+            client.sendStats(statisticRequest).block();
         }
     }
 
