@@ -47,11 +47,9 @@ public class AdminEventController {
             @PositiveOrZero @RequestParam(defaultValue = "0")
             final Integer from,
             @Positive @RequestParam(defaultValue = "10")
-            final Integer size,
-            final HttpServletRequest servletRequest) {
-        List<EventResponse> events = service.getEvents(
-                criteria, from, size, servletRequest);
-        return ResponseEntity.ok(events);
+            final Integer size) {
+        return ResponseEntity.ok(service.getEvents(
+                criteria, from, size));
     }
 
     /**

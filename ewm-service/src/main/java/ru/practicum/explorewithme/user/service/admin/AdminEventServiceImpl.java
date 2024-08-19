@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.explorewithme.category.model.CategoryEntity;
@@ -58,7 +59,6 @@ public class AdminEventServiceImpl implements AdminEventService {
      * @param criteria       the search criteria for filtering events
      * @param from           the offset for pagination
      * @param size           the size of the page
-     * @param servletRequest the HTTP request containing client details
      * @return a list of event responses matching the criteria
      */
     @Override
@@ -66,14 +66,13 @@ public class AdminEventServiceImpl implements AdminEventService {
     public List<EventResponse> getEvents(
             final EventSearchCriteriaForAdmin criteria,
             final Integer from,
-            final Integer size,
-            final HttpServletRequest servletRequest) {
+            final Integer size) {
             log.info("Fetching events with criteria: {}", criteria);
             Pageable pageable = PageRequest.of(from / size, size);
             Specification<EventEntity> spec = buildSpecification(criteria);
 
             Page<EventEntity> eventEntities = repository.findAll(spec, pageable);
-            return eventEntities.stream()
+            return eventEntities.stream().parallel()
                     .map(EventMapper::toResponse)
                     .collect(Collectors.toList());
     }
@@ -191,43 +190,6 @@ public class AdminEventServiceImpl implements AdminEventService {
         }
     }
 
-//    /**
-//     * Saves the statistic data for the list of event entities.
-//     *
-//     * @param servletRequest the HTTP request containing client details
-//     * @param entities       the list of event entities
-//     */
-//    private void saveStatistic(
-//            final HttpServletRequest servletRequest,
-//            final List<EventEntity> entities) {
-//        List<String> eventsUri = createEventsUri(entities);
-//        for (String uri : eventsUri) {
-//            log.info("Saving statistic with uri: {}", uri);
-//            StatisticRequest statisticRequest = StatisticRequest.builder()
-//                    .app("ewm-main-service")
-//                    .ip(servletRequest.getRemoteAddr())
-//                    .uri(uri)
-//                    .build();
-//            client.sendStats(statisticRequest).block();
-//        }
-//    }
-
-//    /**
-//     * Sets the views for a list of event entities asynchronously.
-//     *
-//     * @param eventEntities the list of event entities
-//     */
-//    private void setEventsViews(final Page<EventEntity> eventEntities) {
-//        client.getEventViews(createEventsUri(eventEntities.toList()))
-//                .doOnError(error -> log.error("Error fetching event views", error))
-//                .doOnSuccess(eventViews -> {
-//                    eventEntities.forEach(entity -> {
-//                        entity.setViews(eventViews.getOrDefault(entity.getId(), 0));
-//                    });
-//                });
-//
-//    }
-
     /**
      * Builds the specification for filtering events based on the search criteria.
      *
@@ -260,17 +222,4 @@ public class AdminEventServiceImpl implements AdminEventService {
         }
         return spec;
     }
-
-//    /**
-//     * Creates a list of event URIs from a list of event entities.
-//     *
-//     * @param eventEntities the list of event entities
-//     * @return the list of URIs
-//     */
-//    private List<String> createEventsUri(final List<EventEntity> eventEntities) {
-//        return eventEntities.stream()
-//                .map(entity -> UriComponentsBuilder.fromPath("/events/{id}")
-//                        .buildAndExpand(entity.getId()).toUriString())
-//                .collect(Collectors.toList());
-//    }
 }

@@ -21,8 +21,7 @@ public interface AdminEventService {
      * @return the list of event responses
      */
     List<EventResponse> getEvents(
-            EventSearchCriteriaForAdmin criteria, Integer from, Integer size,
-            HttpServletRequest servletRequest);
+            EventSearchCriteriaForAdmin criteria, Integer from, Integer size);
 
     /**
      * Approves an event.
