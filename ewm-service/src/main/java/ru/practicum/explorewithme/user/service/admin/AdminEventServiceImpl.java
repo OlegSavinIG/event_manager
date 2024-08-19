@@ -196,6 +196,7 @@ public class AdminEventServiceImpl implements AdminEventService {
                 break;
         }
     }
+
     private void saveStatistic(
             final HttpServletRequest servletRequest,
             final List<EventEntity> entities) {
