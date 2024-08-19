@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import reactor.core.publisher.Mono;
 import ru.practicum.explorewithme.StatisticRequest;
 import ru.practicum.explorewithme.category.model.CategoryEntity;
 import ru.practicum.explorewithme.category.repository.CategoryRepository;
@@ -32,17 +33,42 @@ import java.util.stream.Collectors;
 
 /**
  * Implementation of the {@link AdminEventService} interface.
+ * Provides methods for managing events by an admin.
  */
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class AdminEventServiceImpl implements AdminEventService {
 
+    /**
+     * Repository for admin event operations.
+     */
     private final AdminEventRepository repository;
+
+    /**
+     * Repository for event operations.
+     */
     private final EventRepository eventRepository;
+
+    /**
+     * Repository for category operations.
+     */
     private final CategoryRepository categoryRepository;
+
+    /**
+     * REST client for managing statistics.
+     */
     private final StatisticClient client;
 
+    /**
+     * Retrieves a list of events based on the provided criteria.
+     *
+     * @param criteria       the search criteria for filtering events
+     * @param from           the offset for pagination
+     * @param size           the size of the page
+     * @param servletRequest the HTTP request containing client details
+     * @return a list of event responses matching the criteria
+     */
     @Override
     @Transactional(readOnly = true)
     public List<EventResponse> getEvents(
@@ -55,7 +81,7 @@ public class AdminEventServiceImpl implements AdminEventService {
         Specification<EventEntity> spec = buildSpecification(criteria);
 
         Page<EventEntity> eventEntities = repository.findAll(spec, pageable);
-        setEventsViews(eventEntities);
+        setEventsViews(eventEntities).block();
         saveStatistic(servletRequest, eventEntities.toList());
 
         return eventEntities.stream()
@@ -63,6 +89,13 @@ public class AdminEventServiceImpl implements AdminEventService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Approves an event by updating its details and state.
+     *
+     * @param request the request containing updated event details
+     * @param eventId the ID of the event to approve
+     * @return the updated event response
+     */
     @Override
     @Transactional
     public EventResponse approveEvent(
@@ -73,7 +106,6 @@ public class AdminEventServiceImpl implements AdminEventService {
                         "Event with id=" + eventId + " was not found"));
 
         validateEventState(event);
-
         updateEventDetails(request, event);
         eventRepository.save(event);
 
@@ -82,6 +114,12 @@ public class AdminEventServiceImpl implements AdminEventService {
         return EventMapper.toResponse(event);
     }
 
+    /**
+     * Validates the current state of the event before proceeding with approval.
+     *
+     * @param event the event entity to validate
+     * @throws AlreadyExistException if the event is already published or rejected
+     */
     private void validateEventState(EventEntity event) {
         if (event.getState().equals(EventStatus.PUBLISHED)) {
             throw new AlreadyExistException("Event already approved");
@@ -91,6 +129,12 @@ public class AdminEventServiceImpl implements AdminEventService {
         }
     }
 
+    /**
+     * Updates the details of an event based on the provided request.
+     *
+     * @param request the request containing updated event details
+     * @param event   the event entity to update
+     */
     private void updateEventDetails(EventRequest request, EventEntity event) {
         if (request.getAnnotation() != null) {
             event.setAnnotation(request.getAnnotation());
@@ -125,10 +169,17 @@ public class AdminEventServiceImpl implements AdminEventService {
         }
     }
 
+    /**
+     * Handles the state action for an event, such as publishing or rejecting it.
+     *
+     * @param stateAction the state action to perform
+     * @param event       the event entity to update
+     * @throws IllegalArgumentException if the state action is invalid for the current state
+     */
     private void handleStateAction(
             final EventStatus stateAction, final EventEntity event) {
         switch (stateAction) {
-            case PUBLISH_EVENT -> {
+            case PUBLISH_EVENT:
                 if (!event.getState().equals(EventStatus.PENDING)) {
                     log.info("Invalid state action: {}", stateAction);
                     throw new IllegalArgumentException(
@@ -136,20 +187,27 @@ public class AdminEventServiceImpl implements AdminEventService {
                 }
                 event.setState(EventStatus.PUBLISHED);
                 event.setPublishedOn(LocalDateTime.now());
-            }
-            case REJECT_EVENT -> {
+                break;
+            case REJECT_EVENT:
                 if (event.getState().equals(EventStatus.PUBLISHED)) {
                     log.info("Invalid state action: {}", stateAction);
                     throw new IllegalArgumentException(
                             "Invalid state action: " + stateAction);
                 }
                 event.setState(EventStatus.REJECTED);
-            }
-            default -> throw new IllegalArgumentException(
-                    "Unhandled state action: " + stateAction);
+                break;
+            default:
+                throw new IllegalArgumentException(
+                        "Unhandled state action: " + stateAction);
         }
     }
 
+    /**
+     * Saves the statistic data for the list of event entities.
+     *
+     * @param servletRequest the HTTP request containing client details
+     * @param entities       the list of event entities
+     */
     private void saveStatistic(
             final HttpServletRequest servletRequest,
             final List<EventEntity> entities) {
@@ -161,20 +219,32 @@ public class AdminEventServiceImpl implements AdminEventService {
                     .ip(servletRequest.getRemoteAddr())
                     .uri(uri)
                     .build();
-            client.sendStats(statisticRequest).block(); // Ensures the call completes
+            client.sendStats(statisticRequest).block();
         }
     }
 
-    private void setEventsViews(final Page<EventEntity> eventEntities) {
-        client.getEventViews(createEventsUri(eventEntities.toList()))
+    /**
+     * Sets the views for a list of event entities asynchronously.
+     *
+     * @param eventEntities the list of event entities
+     */
+    private Mono<Void> setEventsViews(final Page<EventEntity> eventEntities) {
+        return client.getEventViews(createEventsUri(eventEntities.toList()))
                 .doOnError(error -> log.error("Error fetching event views", error))
-                .subscribe(eventViews -> {
+                .doOnSuccess(eventViews -> {
                     eventEntities.forEach(entity -> {
                         entity.setViews(eventViews.getOrDefault(entity.getId(), 0));
                     });
-                });
+                })
+                .then();
     }
 
+    /**
+     * Builds the specification for filtering events based on the search criteria.
+     *
+     * @param criteria the search criteria
+     * @return the specification for filtering events
+     */
     private Specification<EventEntity> buildSpecification(EventSearchCriteriaForAdmin criteria) {
         Specification<EventEntity> spec = Specification.where(null);
 
@@ -202,6 +272,12 @@ public class AdminEventServiceImpl implements AdminEventService {
         return spec;
     }
 
+    /**
+     * Creates a list of event URIs from a list of event entities.
+     *
+     * @param eventEntities the list of event entities
+     * @return the list of URIs
+     */
     private List<String> createEventsUri(final List<EventEntity> eventEntities) {
         return eventEntities.stream()
                 .map(entity -> UriComponentsBuilder.fromPath("/events/{id}")
