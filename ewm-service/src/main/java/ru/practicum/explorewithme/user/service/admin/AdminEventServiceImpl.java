@@ -24,6 +24,7 @@ import ru.practicum.explorewithme.exception.AlreadyExistException;
 import ru.practicum.explorewithme.exception.NotExistException;
 import ru.practicum.explorewithme.user.model.EventSearchCriteriaForAdmin;
 import ru.practicum.explorewithme.user.repository.AdminEventRepository;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -37,29 +38,11 @@ import java.util.stream.Collectors;
 @Slf4j
 public class AdminEventServiceImpl implements AdminEventService {
 
-    /**
-     * Repository for admin event operations.
-     */
     private final AdminEventRepository repository;
-
-    /**
-     * Repository for event operations.
-     */
     private final EventRepository eventRepository;
-
-    /**
-     * Repository for category operations.
-     */
     private final CategoryRepository categoryRepository;
-
-    /**
-     * REST client for managing compilations.
-     */
     private final StatisticClient client;
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     @Transactional(readOnly = true)
     public List<EventResponse> getEvents(
@@ -69,60 +52,46 @@ public class AdminEventServiceImpl implements AdminEventService {
             final HttpServletRequest servletRequest) {
         log.info("Fetching events with criteria: {}", criteria);
         Pageable pageable = PageRequest.of(from / size, size);
-        Specification<EventEntity> spec = Specification.where(null);
-
-        if (criteria.getUsers() != null && !criteria.getUsers().isEmpty()) {
-            spec = spec.and(EventSpecification.hasUsers(
-                    criteria.getUsers().stream().map(Integer::longValue)
-                    .collect(Collectors.toList())));
-        }
-
-        if (criteria.getStates() != null && !criteria.getStates().isEmpty()) {
-            spec = spec.and(EventSpecification.hasStates(criteria.getStates()));
-        }
-
-        if (criteria.getCategories() != null && !criteria
-                .getCategories().isEmpty()) {
-            spec = spec.and(EventSpecification
-                    .hasCategories(criteria.getCategories()));
-        }
-
-        if (criteria.getRangeStart() != null) {
-            spec = spec.and(EventSpecification
-                    .dateAfter(criteria.getRangeStart()));
-        }
-
-        if (criteria.getRangeEnd() != null) {
-            spec = spec.and(EventSpecification
-                    .dateBefore(criteria.getRangeEnd()));
-        }
+        Specification<EventEntity> spec = buildSpecification(criteria);
 
         Page<EventEntity> eventEntities = repository.findAll(spec, pageable);
         setEventsViews(eventEntities);
         saveStatistic(servletRequest, eventEntities.toList());
+
         return eventEntities.stream()
                 .map(EventMapper::toResponse)
                 .collect(Collectors.toList());
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     @Transactional
     public EventResponse approveEvent(
             final EventRequest request, final Long eventId) {
-        log.info("Approving event with id: {}",
-                eventId);
+        log.info("Approving event with id: {}", eventId);
         EventEntity event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotExistException(
                         "Event with id=" + eventId + " was not found"));
+
+        validateEventState(event);
+
+        updateEventDetails(request, event);
+        eventRepository.save(event);
+
+        log.info("Approved event with id: {}, and status {}",
+                eventId, event.getState());
+        return EventMapper.toResponse(event);
+    }
+
+    private void validateEventState(EventEntity event) {
         if (event.getState().equals(EventStatus.PUBLISHED)) {
             throw new AlreadyExistException("Event already approved");
         }
         if (event.getState().equals(EventStatus.REJECTED)) {
             throw new AlreadyExistException("Event rejected");
         }
+    }
+
+    private void updateEventDetails(EventRequest request, EventEntity event) {
         if (request.getAnnotation() != null) {
             event.setAnnotation(request.getAnnotation());
         }
@@ -151,49 +120,33 @@ public class AdminEventServiceImpl implements AdminEventService {
         if (request.getTitle() != null) {
             event.setTitle(request.getTitle());
         }
-        if (request.getStateAction() != null
-                &&
-                (request.getStateAction().name().equals("PUBLISH_EVENT")
-                        ||
-                        request.getStateAction().name().equals(
-                                "REJECT_EVENT"))) {
+        if (request.getStateAction() != null) {
             handleStateAction(request.getStateAction(), event);
         }
-
-        eventRepository.save(event);
-        log.info("Approved event with id: {}, and status {} ",
-                eventId, event.getState());
-        return EventMapper.toResponse(event);
     }
 
-    /**
-     * Handles state actions for events.
-     *
-     * @param stateAction the state action to perform
-     * @param event       the event entity to update
-     */
     private void handleStateAction(
             final EventStatus stateAction, final EventEntity event) {
         switch (stateAction) {
-            case PUBLISH_EVENT:
-                if (!event.getState().name().equals("PENDING")) {
+            case PUBLISH_EVENT -> {
+                if (!event.getState().equals(EventStatus.PENDING)) {
                     log.info("Invalid state action: {}", stateAction);
                     throw new IllegalArgumentException(
                             "Invalid state action: " + stateAction);
                 }
                 event.setState(EventStatus.PUBLISHED);
                 event.setPublishedOn(LocalDateTime.now());
-                break;
-            case REJECT_EVENT:
-                if (event.getState().name().equals("PUBLISHED")) {
+            }
+            case REJECT_EVENT -> {
+                if (event.getState().equals(EventStatus.PUBLISHED)) {
                     log.info("Invalid state action: {}", stateAction);
                     throw new IllegalArgumentException(
                             "Invalid state action: " + stateAction);
                 }
                 event.setState(EventStatus.REJECTED);
-                break;
-            default:
-                break;
+            }
+            default -> throw new IllegalArgumentException(
+                    "Unhandled state action: " + stateAction);
         }
     }
 
@@ -202,34 +155,57 @@ public class AdminEventServiceImpl implements AdminEventService {
             final List<EventEntity> entities) {
         List<String> eventsUri = createEventsUri(entities);
         for (String uri : eventsUri) {
-            log.info("Saving statistic with uri: {}",
-                    servletRequest.getRequestURI());
+            log.info("Saving statistic with uri: {}", uri);
             StatisticRequest statisticRequest = StatisticRequest.builder()
                     .app("ewm-main-service")
                     .ip(servletRequest.getRemoteAddr())
                     .uri(uri)
                     .build();
-            client.sendStats(statisticRequest).block();
+            client.sendStats(statisticRequest).block(); // Ensures the call completes
         }
     }
 
-    /**
-     * Sets the views for a list of event entities asynchronously.
-     *
-     * @param eventEntities the list of event entities
-     */
     private void setEventsViews(final Page<EventEntity> eventEntities) {
         client.getEventViews(createEventsUri(eventEntities.toList()))
+                .doOnError(error -> log.error("Error fetching event views", error))
                 .subscribe(eventViews -> {
-                    eventEntities.forEach(entity ->
-                            entity.setViews(eventViews.getOrDefault(
-                                    entity.getId(), 0)));
+                    eventEntities.forEach(entity -> {
+                        entity.setViews(eventViews.getOrDefault(entity.getId(), 0));
+                    });
                 });
     }
 
-    private List<String> createEventsUri(final List<EventEntity> eventEntity) {
-        return eventEntity.stream()
-                .map(entity -> String.format("/events/" + entity.getId()))
+    private Specification<EventEntity> buildSpecification(EventSearchCriteriaForAdmin criteria) {
+        Specification<EventEntity> spec = Specification.where(null);
+
+        if (criteria.getUsers() != null && !criteria.getUsers().isEmpty()) {
+            spec = spec.and(EventSpecification.hasUsers(
+                    criteria.getUsers().stream().map(Integer::longValue)
+                            .collect(Collectors.toList())));
+        }
+        if (criteria.getStates() != null && !criteria.getStates().isEmpty()) {
+            spec = spec.and(EventSpecification.hasStates(criteria.getStates()));
+        }
+        if (criteria.getCategories() != null && !criteria
+                .getCategories().isEmpty()) {
+            spec = spec.and(EventSpecification
+                    .hasCategories(criteria.getCategories()));
+        }
+        if (criteria.getRangeStart() != null) {
+            spec = spec.and(EventSpecification
+                    .dateAfter(criteria.getRangeStart()));
+        }
+        if (criteria.getRangeEnd() != null) {
+            spec = spec.and(EventSpecification
+                    .dateBefore(criteria.getRangeEnd()));
+        }
+        return spec;
+    }
+
+    private List<String> createEventsUri(final List<EventEntity> eventEntities) {
+        return eventEntities.stream()
+                .map(entity -> UriComponentsBuilder.fromPath("/events/{id}")
+                        .buildAndExpand(entity.getId()).toUriString())
                 .collect(Collectors.toList());
     }
 }
