@@ -39,12 +39,12 @@ public class StatisticServiceImpl implements StatisticService {
     @Override
     public void saveStatistic(final StatisticRequest request) {
         log.info("Attempting to save statistic for URI: {}", request.getUri());
-        boolean exist = repository.existsByIpAndUri(request.getIp(), request.getUri());
-        if (exist) {
-            log.info("Statistic already saved for uri {} and ip {}",
-                    request.getUri(), request.getIp());
-            return;
-        }
+//        boolean exist = repository.existsByIpAndUri(request.getIp(), request.getUri());
+//        if (exist) {
+//            log.info("Statistic already saved for uri {} and ip {}",
+//                    request.getUri(), request.getIp());
+//            return;
+//        }
         StatisticEntity newEntity = StatisticMapper.toEntity(request);
         newEntity.setCreationTime(LocalDateTime.now());
         repository.save(newEntity);
@@ -66,17 +66,11 @@ public class StatisticServiceImpl implements StatisticService {
         List<StatisticResponse> statistics;
 
         if (unique) {
-            statistics = (uris != null && !uris.isEmpty())
-                    ? repository
-                    .findStatisticsWithUniqueIpAndUriIn(uris, start, end)
-                    : repository
-                    .findStatisticsWithUniqueIp(start, end);
+            statistics = repository.findStatisticsUnique(start, end, uris);
             log.info("Fetched {} unique statistics records",
                     statistics.size());
         } else {
-            statistics = (uris != null && !uris.isEmpty())
-                    ? repository.findStatisticByUriIn(uris, start, end)
-                    : repository.findAllByCreationTimeBetween(start, end);
+            statistics = repository.findStatistic(uris, start, end);
             log.info("Fetched {} statistics records", statistics.size());
         }
         return statistics;
