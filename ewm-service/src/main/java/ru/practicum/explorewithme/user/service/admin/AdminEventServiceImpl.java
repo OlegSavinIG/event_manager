@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.explorewithme.category.model.CategoryEntity;
 import ru.practicum.explorewithme.category.repository.CategoryRepository;
+import ru.practicum.explorewithme.client.StatisticClient;
 import ru.practicum.explorewithme.event.model.EventEntity;
 import ru.practicum.explorewithme.event.model.EventRequest;
 import ru.practicum.explorewithme.event.model.EventResponse;
@@ -19,7 +20,6 @@ import ru.practicum.explorewithme.event.repository.EventRepository;
 import ru.practicum.explorewithme.event.specification.EventSpecification;
 import ru.practicum.explorewithme.exception.AlreadyExistException;
 import ru.practicum.explorewithme.exception.NotExistException;
-import ru.practicum.explorewithme.exists.ExistChecker;
 import ru.practicum.explorewithme.user.model.EventSearchCriteriaForAdmin;
 import ru.practicum.explorewithme.user.repository.AdminEventRepository;
 
@@ -49,10 +49,11 @@ public class AdminEventServiceImpl implements AdminEventService {
      * Repository for category operations.
      */
     private final CategoryRepository categoryRepository;
+
     /**
-     * Exist checker for category operations.
+     * REST client for managing compilations.
      */
-    private final ExistChecker checker;
+    private final StatisticClient client;
 
     /**
      * {@inheritDoc}
@@ -94,11 +95,10 @@ public class AdminEventServiceImpl implements AdminEventService {
         }
 
         Page<EventEntity> eventEntities = repository.findAll(spec, pageable);
-        List<EventResponse> response = eventEntities.stream()
+        setEventsViews(eventEntities);
+        return eventEntities.stream()
                 .map(EventMapper::toResponse)
                 .collect(Collectors.toList());
-        log.info("Fetched {} events", response.size());
-        return response;
     }
 
     /**
@@ -191,5 +191,25 @@ public class AdminEventServiceImpl implements AdminEventService {
             default:
                 break;
         }
+    }
+
+    /**
+     * Sets the views for a list of event entities asynchronously.
+     *
+     * @param eventEntities the list of event entities
+     */
+    private void setEventsViews(final Page<EventEntity> eventEntities) {
+        client.getEventViews(createEventsUri(eventEntities.toList()))
+                .subscribe(eventViews -> {
+                    eventEntities.forEach(entity ->
+                            entity.setViews(eventViews.getOrDefault(
+                                    entity.getId(), 0)));
+                });
+    }
+
+    private List<String> createEventsUri(final List<EventEntity> eventEntity) {
+        return eventEntity.stream()
+                .map(entity -> String.format("/events/" + entity.getId()))
+                .collect(Collectors.toList());
     }
 }
