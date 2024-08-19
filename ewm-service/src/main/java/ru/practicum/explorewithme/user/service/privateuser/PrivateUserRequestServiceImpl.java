@@ -107,13 +107,14 @@ public class PrivateUserRequestServiceImpl
             if (RequestStatus.CONFIRMED.equals(
                     dto.getStatus())) {
                 confirmedRequests.add(dto);
-
+                event.setConfirmedRequests(event.getConfirmedRequests() + 1);
             } else if (RequestStatus.REJECTED.equals(
                     dto.getStatus())) {
                 rejectedRequests.add(dto);
+                event.setConfirmedRequests(event.getConfirmedRequests() - 1);
             }
         }
-
+        eventRepository.save(event);
         return EventRequestStatusUpdateResult.builder()
                 .confirmedRequests(confirmedRequests)
                 .rejectedRequests(rejectedRequests)
@@ -156,13 +157,13 @@ public class PrivateUserRequestServiceImpl
         if (!event.getRequestModeration() ||
                 event.getParticipantLimit() == 0) {
             eventRequestEntity.setStatus(RequestStatus.CONFIRMED);
-        } else  {
+        } else {
             eventRequestEntity.setStatus(RequestStatus.PENDING);
         }
 
 
-        event.setConfirmedRequests(event.getConfirmedRequests() + 1);
-        eventRepository.save(event);
+//        event.setConfirmedRequests(event.getConfirmedRequests() + 1);
+//        eventRepository.save(event);
 
         UserEventRequestEntity saved = repository.save(eventRequestEntity);
         log.info("Request created with ID: {} status : {} request moderation: {}",
@@ -214,7 +215,7 @@ public class PrivateUserRequestServiceImpl
     /**
      * Validates event and user before approving requests.
      *
-     * @param userId the user ID
+     * @param userId  the user ID
      * @param eventId the event ID
      * @return Validated event entity.
      */
