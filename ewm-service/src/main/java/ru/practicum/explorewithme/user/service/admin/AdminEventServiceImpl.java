@@ -26,6 +26,8 @@ import ru.practicum.explorewithme.exception.NotExistException;
 import ru.practicum.explorewithme.user.model.EventSearchCriteriaForAdmin;
 import ru.practicum.explorewithme.user.repository.AdminEventRepository;
 import org.springframework.web.util.UriComponentsBuilder;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -76,17 +78,18 @@ public class AdminEventServiceImpl implements AdminEventService {
             final Integer from,
             final Integer size,
             final HttpServletRequest servletRequest) {
-        log.info("Fetching events with criteria: {}", criteria);
-        Pageable pageable = PageRequest.of(from / size, size);
-        Specification<EventEntity> spec = buildSpecification(criteria);
+            log.info("Fetching events with criteria: {}", criteria);
+            Pageable pageable = PageRequest.of(from / size, size);
+            Specification<EventEntity> spec = buildSpecification(criteria);
 
-        Page<EventEntity> eventEntities = repository.findAll(spec, pageable);
-        setEventsViews(eventEntities).block();
-//        saveStatistic(servletRequest, eventEntities.toList());
-
-        return eventEntities.stream()
-                .map(EventMapper::toResponse)
-                .collect(Collectors.toList());
+            Page<EventEntity> eventEntities = repository.findAll(spec, pageable);
+            setEventsViews(eventEntities).subscribe();
+            for (EventEntity eventEntity : eventEntities) {
+                log.info("Admin confirmed requests: {}", eventEntity.getConfirmedRequests());
+            }
+            return eventEntities.stream()
+                    .map(EventMapper::toResponse)
+                    .collect(Collectors.toList());
     }
 
     /**

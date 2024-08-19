@@ -26,6 +26,8 @@ import ru.practicum.explorewithme.user.service.admin.AdminUserService;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 /**
@@ -43,6 +45,7 @@ public class PrivateUserRequestServiceImpl
     private final EventRepository eventRepository;
     private final AdminUserService adminUserService;
     private final ExistChecker checker;
+    private final Lock lock = new ReentrantLock();
 
     @Override
     public List<UserEventRequestDto> getEventRequests(
@@ -65,39 +68,39 @@ public class PrivateUserRequestServiceImpl
     }
 
     @Override
-    @Transactional
+    @Transactional()
     public EventRequestStatusUpdateResult approveRequests(
             final Long userId, final Long eventId,
             final ApproveRequestCriteria criteria) {
         log.info("Approving requests for event ID: {} by user ID: {} " +
                 "with criteria: {}", eventId, userId, criteria);
-        EventEntity event = approveRequestValidation(userId, eventId);
+            EventEntity event = approveRequestValidation(userId, eventId);
 
-        List<UserEventRequestEntity> requests = repository.findAllById(
-                criteria.getRequestIds());
+            List<UserEventRequestEntity> requests = repository.findAllById(
+                    criteria.getRequestIds());
 
-        List<UserEventRequestDto> confirmedRequests = new ArrayList<>();
-        List<UserEventRequestDto> rejectedRequests = new ArrayList<>();
+            List<UserEventRequestDto> confirmedRequests = new ArrayList<>();
+            List<UserEventRequestDto> rejectedRequests = new ArrayList<>();
 
-        for (UserEventRequestEntity request : requests) {
-            updateRequestStatus(request, criteria.getStatus(), event);
-            UserEventRequestDto dto = UserEvenRequestMapper.toDto(request);
-            if (RequestStatus.CONFIRMED.equals(
-                    dto.getStatus())) {
-                confirmedRequests.add(dto);
-            } else if (RequestStatus.REJECTED.equals(
-                    dto.getStatus())) {
-                rejectedRequests.add(dto);
+            for (UserEventRequestEntity request : requests) {
+                updateRequestStatus(request, criteria.getStatus(), event);
+                UserEventRequestDto dto = UserEvenRequestMapper.toDto(request);
+                if (RequestStatus.CONFIRMED.equals(
+                        dto.getStatus())) {
+                    confirmedRequests.add(dto);
+                } else if (RequestStatus.REJECTED.equals(
+                        dto.getStatus())) {
+                    rejectedRequests.add(dto);
+                }
             }
+            log.info("Confirmed requests: {}", event.getConfirmedRequests());
+//        eventRepository.save(event);
+
+            return EventRequestStatusUpdateResult.builder()
+                    .confirmedRequests(confirmedRequests)
+                    .rejectedRequests(rejectedRequests)
+                    .build();
         }
-
-        eventRepository.save(event);
-
-        return EventRequestStatusUpdateResult.builder()
-                .confirmedRequests(confirmedRequests)
-                .rejectedRequests(rejectedRequests)
-                .build();
-    }
 
     @Override
     public List<UserEventRequestDto> getUserRequests(final Long userId) {
@@ -109,6 +112,7 @@ public class PrivateUserRequestServiceImpl
     }
 
     @Override
+//    @Transactional
     public UserEventRequestDto createRequest(final Long userId,
                                              final Long eventId) {
         log.info("Creating request for event ID: {} by user ID: {}",
@@ -117,6 +121,7 @@ public class PrivateUserRequestServiceImpl
         checker.isThisInitiatorOfEvent(userId, eventId);
 
         EventEntity event = eventService.getEventEntity(eventId);
+        log.info("Confirmed requests: {}", event.getConfirmedRequests());
         validateEventForRequestCreation(event);
 
         UserEntity userEntity = adminUserService.findUserEntity(userId);
@@ -132,8 +137,9 @@ public class PrivateUserRequestServiceImpl
         } else {
             eventRequestEntity.setStatus(RequestStatus.PENDING);
         }
-
+        log.info("Saving request: {}", eventRequestEntity);
         UserEventRequestEntity saved = repository.save(eventRequestEntity);
+        log.info("Saved request: {}", saved);
         if (RequestStatus.CONFIRMED.equals(saved.getStatus())) {
             event.getConfirmedRequests().add(saved);
         }
@@ -180,8 +186,8 @@ public class PrivateUserRequestServiceImpl
         } else {
             event.getConfirmedRequests().remove(entity);
         }
-
         repository.save(entity);
+        eventRepository.save(event);
     }
 
     private EventEntity approveRequestValidation(
