@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
 import ru.practicum.explorewithme.StatisticRequest;
 import ru.practicum.explorewithme.category.model.CategoryEntity;
@@ -25,9 +26,6 @@ import ru.practicum.explorewithme.exception.AlreadyExistException;
 import ru.practicum.explorewithme.exception.NotExistException;
 import ru.practicum.explorewithme.user.model.EventSearchCriteriaForAdmin;
 import ru.practicum.explorewithme.user.repository.AdminEventRepository;
-import org.springframework.web.util.UriComponentsBuilder;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 import java.time.LocalDateTime;
 import java.util.List;
