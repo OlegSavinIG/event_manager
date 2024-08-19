@@ -25,7 +25,6 @@ import ru.practicum.explorewithme.user.service.admin.AdminUserService;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,30 +38,12 @@ import java.util.stream.Collectors;
 public class PrivateUserRequestServiceImpl
         implements PrivateUserRequestService {
 
-    /**
-     * Repository for user requests.
-     */
     private final RequestRepository repository;
-    /**
-     * Service for event-related operations.
-     */
     private final EventService eventService;
-    /**
-     * Repository for event entities.
-     */
     private final EventRepository eventRepository;
-    /**
-     * Service for admin user operations.
-     */
     private final AdminUserService adminUserService;
-    /**
-     * Checker for existence of various entities.
-     */
     private final ExistChecker checker;
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public List<UserEventRequestDto> getEventRequests(
             final Long userId, final Long eventId) {
@@ -80,12 +61,9 @@ public class PrivateUserRequestServiceImpl
                     .map(UserEvenRequestMapper::toDto)
                     .collect(Collectors.toList());
         }
-        return Collections.emptyList();
+        return List.of();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     @Transactional
     public EventRequestStatusUpdateResult approveRequests(
@@ -102,28 +80,25 @@ public class PrivateUserRequestServiceImpl
         List<UserEventRequestDto> rejectedRequests = new ArrayList<>();
 
         for (UserEventRequestEntity request : requests) {
-            updateRequestStatus(request, criteria.getStatus());
+            updateRequestStatus(request, criteria.getStatus(), event);
             UserEventRequestDto dto = UserEvenRequestMapper.toDto(request);
             if (RequestStatus.CONFIRMED.equals(
                     dto.getStatus())) {
                 confirmedRequests.add(dto);
-                event.setConfirmedRequests(event.getConfirmedRequests() + 1);
             } else if (RequestStatus.REJECTED.equals(
                     dto.getStatus())) {
                 rejectedRequests.add(dto);
-                event.setConfirmedRequests(event.getConfirmedRequests() - 1);
             }
         }
+
         eventRepository.save(event);
+
         return EventRequestStatusUpdateResult.builder()
                 .confirmedRequests(confirmedRequests)
                 .rejectedRequests(rejectedRequests)
                 .build();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public List<UserEventRequestDto> getUserRequests(final Long userId) {
         log.info("Fetching user requests for user ID: {}", userId);
@@ -133,9 +108,6 @@ public class PrivateUserRequestServiceImpl
                 .collect(Collectors.toList());
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public UserEventRequestDto createRequest(final Long userId,
                                              final Long eventId) {
@@ -154,26 +126,24 @@ public class PrivateUserRequestServiceImpl
                         .requester(userEntity)
                         .event(event)
                         .build();
-        if (!event.getRequestModeration() ||
-                event.getParticipantLimit() == 0) {
+        if (Boolean.FALSE.equals(event.getRequestModeration()) ||
+        event.getParticipantLimit() == 0) {
             eventRequestEntity.setStatus(RequestStatus.CONFIRMED);
-        } else {
+        }
+        else {
             eventRequestEntity.setStatus(RequestStatus.PENDING);
         }
-
-
-//        event.setConfirmedRequests(event.getConfirmedRequests() + 1);
-//        eventRepository.save(event);
-
         UserEventRequestEntity saved = repository.save(eventRequestEntity);
-        log.info("Request created with ID: {} status : {} request moderation: {}",
-                saved.getId(), saved.getStatus(), event.getRequestModeration());
+
+        event.getConfirmedRequests().add(saved);
+
+        eventRepository.save(event);
+
+        log.info("Request created with ID: {} for event ID: {} by user ID: {}",
+                saved.getId(), eventId, userId);
         return UserEvenRequestMapper.toDto(saved);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public UserEventRequestDto cancelRequest(final Long userId,
                                              final Long requestId) {
@@ -198,40 +168,36 @@ public class PrivateUserRequestServiceImpl
         return UserEvenRequestMapper.toDto(entity);
     }
 
-    /**
-     * Updates the status of a user event request.
-     *
-     * @param entity the user event request entity
-     * @param status the new status
-     */
     private void updateRequestStatus(final UserEventRequestEntity entity,
-                                     final String status) {
+                                     final String status,
+                                     final EventEntity event) {
         RequestStatus requestStatus = RequestStatus.valueOf(
                 status.toUpperCase());
         entity.setStatus(requestStatus);
+
+        if (requestStatus == RequestStatus.CONFIRMED) {
+            event.getConfirmedRequests().add(entity);
+        } else {
+            event.getConfirmedRequests().remove(entity);
+        }
+
         repository.save(entity);
     }
 
-    /**
-     * Validates event and user before approving requests.
-     *
-     * @param userId  the user ID
-     * @param eventId the event ID
-     * @return Validated event entity.
-     */
     private EventEntity approveRequestValidation(
             final Long userId, final Long eventId) {
         checker.isUserExist(userId);
         checker.isEventExists(eventId);
 
         EventEntity event = eventService.getEventEntity(eventId);
-        log.info("Approving requests with participant limit: {} confirmed " +
-                        "requests: {} request moderation: {}",
-                event.getParticipantLimit(), event.getConfirmedRequests(),
-                event.getRequestModeration());
+        log.info("Approving requests");
 
-        if (event.getParticipantLimit() != 0 && event.getParticipantLimit()
-                <= event.getConfirmedRequests()) {
+        long confirmedCount = event.getConfirmedRequests().stream()
+                .filter(request -> request.getStatus() == RequestStatus.CONFIRMED)
+                .count();
+
+        if (event.getParticipantLimit() != 0 &&
+                event.getParticipantLimit() <= confirmedCount) {
             throw new ConflictException("Participants limit reached");
         }
 
@@ -247,22 +213,20 @@ public class PrivateUserRequestServiceImpl
         return event;
     }
 
-    /**
-     * Validates event for request creation.
-     *
-     * @param event event to validate.
-     */
     private void validateEventForRequestCreation(final EventEntity event) {
-        log.info("Validating event for request creation with participant " +
-                        "limit: {} confirmed requests: {}",
-                event.getParticipantLimit(), event.getConfirmedRequests());
+        log.info("Validating event for request creation with moderation: {}",
+                event.getRequestModeration());
+
+        long confirmedCount = event.getConfirmedRequests().stream()
+                .filter(request -> request.getStatus() == RequestStatus.CONFIRMED)
+                .count();
 
         if (event.getState() == EventStatus.PENDING) {
             throw new AlreadyExistException("This event is not published");
         }
 
-        if (event.getParticipantLimit() != 0 && event.getParticipantLimit()
-                <= event.getConfirmedRequests()) {
+        if (event.getParticipantLimit() != 0 &&
+                event.getParticipantLimit() <= confirmedCount) {
             throw new AlreadyExistException("Participants limit reached");
         }
     }
