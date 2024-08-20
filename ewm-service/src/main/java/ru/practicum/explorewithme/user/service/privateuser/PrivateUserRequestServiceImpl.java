@@ -141,7 +141,14 @@ public class PrivateUserRequestServiceImpl
             event.getConfirmedRequests().add(saved);
         }
         eventRepository.save(event);
-
+        // Искусственная задержка
+        try {
+            log.info("Simulating delay...");
+            Thread.sleep(5000); // Задержка в 5000 миллисекунд (5 секунд)
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            log.error("Thread was interrupted", e);
+        }
         log.info("Request created with ID: {} for event ID: {} by user ID: {}",
                 saved.getId(), eventId, userId);
         return UserEvenRequestMapper.toDto(saved);
