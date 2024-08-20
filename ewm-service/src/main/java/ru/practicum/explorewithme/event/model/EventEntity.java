@@ -20,7 +20,13 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "events")
+@Table(name = "events", indexes = {
+        @Index(name = "idx_event_date", columnList = "eventDate"),
+        @Index(name = "idx_event_category", columnList = "category_id"),
+        @Index(name = "idx_event_created_on", columnList = "createdOn"),
+        @Index(name = "idx_event_category_date", columnList = "category_id, eventDate"),
+        @Index(name = "idx_event_initiator_date", columnList = "user_id, eventDate")
+})
 @ToString(exclude = {"category", "initiator", "confirmedRequests"})
 public class EventEntity {
 
@@ -83,7 +89,7 @@ public class EventEntity {
     /**
      * The confirmed requests for the event.
      */
-    @OneToMany(mappedBy = "event")
+    @OneToMany(mappedBy = "event", fetch = FetchType.LAZY)
     @Builder.Default
     private List<UserEventRequestEntity> confirmedRequests = new ArrayList<>();
 
@@ -106,14 +112,14 @@ public class EventEntity {
     /**
      * The category of the event.
      */
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private CategoryEntity category;
 
     /**
      * The initiator of the event.
      */
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private UserEntity initiator;
 }

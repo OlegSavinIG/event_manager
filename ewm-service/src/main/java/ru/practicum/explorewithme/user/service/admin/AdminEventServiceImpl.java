@@ -1,5 +1,6 @@
 package ru.practicum.explorewithme.user.service.admin;
 
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -7,7 +8,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.explorewithme.category.model.CategoryEntity;
 import ru.practicum.explorewithme.category.repository.CategoryRepository;
@@ -51,6 +51,18 @@ public class AdminEventServiceImpl implements AdminEventService {
      */
     private final CategoryRepository categoryRepository;
 
+    @Transactional
+    private void warmUp() {
+        log.info("Warming up by fetching all events and counting.");
+        repository.findAll();
+        repository.count();
+    }
+
+    @PostConstruct
+    public void init() {
+        log.info("AdminEventServiceImpl initialized and warming up.");
+        warmUp();
+    }
 
     /**
      * Retrieves a list of events based on the provided criteria.
@@ -71,7 +83,7 @@ public class AdminEventServiceImpl implements AdminEventService {
             Specification<EventEntity> spec = buildSpecification(criteria);
 
             Page<EventEntity> eventEntities = repository.findAll(spec, pageable);
-            return eventEntities.stream().parallel()
+        return eventEntities.stream()
                     .map(EventMapper::toResponse)
                     .collect(Collectors.toList());
     }
@@ -101,11 +113,6 @@ public class AdminEventServiceImpl implements AdminEventService {
         return EventMapper.toResponse(event);
     }
 
-    @Override
-    public void warmUp() {
-        repository.findAll();
-        repository.count();
-    }
 
     /**
      * Validates the current state of the event before proceeding with approval.

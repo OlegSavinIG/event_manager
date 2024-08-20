@@ -31,5 +31,5 @@ public interface AdminEventService {
      */
     EventResponse approveEvent(EventRequest request, Long eventId);
 
-    void warmUp();
+//    void warmUp();
 }

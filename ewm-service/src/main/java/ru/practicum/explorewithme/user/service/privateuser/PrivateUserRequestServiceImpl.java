@@ -3,7 +3,7 @@ package ru.practicum.explorewithme.user.service.privateuser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.explorewithme.event.model.EventEntity;
 import ru.practicum.explorewithme.event.model.EventResponse;
@@ -110,7 +110,7 @@ public class PrivateUserRequestServiceImpl
     }
 
     @Override
-    @Transactional()
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public UserEventRequestDto createRequest(final Long userId,
                                              final Long eventId) {
         log.info("Creating request for event ID: {} by user ID: {}",
