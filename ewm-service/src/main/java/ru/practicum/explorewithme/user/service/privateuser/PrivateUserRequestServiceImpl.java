@@ -144,7 +144,7 @@ public class PrivateUserRequestServiceImpl
         // Искусственная задержка
         try {
             log.info("Simulating delay...");
-            Thread.sleep(5000); // Задержка в 5000 миллисекунд (5 секунд)
+            Thread.sleep(500);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             log.error("Thread was interrupted", e);
