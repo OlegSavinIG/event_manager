@@ -62,4 +62,6 @@ public interface EventService {
      * @param servletRequest servletRequest
      */
     void saveStatistic(HttpServletRequest servletRequest);
+
+    void getEventEntitiesForCache();
 }

@@ -7,6 +7,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.explorewithme.category.model.CategoryEntity;
 import ru.practicum.explorewithme.category.repository.CategoryRepository;
@@ -65,7 +66,7 @@ public class AdminEventServiceImpl implements AdminEventService {
             final EventSearchCriteriaForAdmin criteria,
             final Integer from,
             final Integer size) {
-            log.info("Fetching events with criteria: {}", criteria);
+            log.info("Fetching events with criteria: {}", criteria.getCategories());
             Pageable pageable = PageRequest.of(from / size, size);
             Specification<EventEntity> spec = buildSpecification(criteria);
 
@@ -98,6 +99,12 @@ public class AdminEventServiceImpl implements AdminEventService {
         log.info("Approved event with id: {}, and status {}",
                 eventId, event.getState());
         return EventMapper.toResponse(event);
+    }
+
+    @Override
+    public void warmUp() {
+        repository.findAll();
+        repository.count();
     }
 
     /**

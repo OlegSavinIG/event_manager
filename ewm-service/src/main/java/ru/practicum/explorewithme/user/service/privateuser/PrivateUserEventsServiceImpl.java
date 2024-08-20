@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.explorewithme.category.model.CategoryEntity;
 import ru.practicum.explorewithme.category.model.CategoryResponse;
@@ -95,25 +96,19 @@ public class PrivateUserEventsServiceImpl implements PrivateUserEventsService {
      * {@inheritDoc}
      */
     @Override
-    @Transactional
+    @Transactional()
     public EventResponse createEvent(final EventRequest request,
                                      final Long userId) {
-        log.info("Creating event for user ID:"
-                        + " {} with request : {}", userId,
-                request);
+        log.info("Creating event for user ID: {}", userId);
         checker.isUserExist(userId);
         UserEntity userEntity = adminUserService.findUserEntity(userId);
-        CategoryResponse category = categoryService.getCategory(
+        CategoryEntity category = categoryService.getCategoryEntity(
                 request.getCategory());
 
-        log.info("Mapping event from request title:"
-                        + " {}  user: {} and category: {}",
-                request.getTitle(), userEntity, category);
         EventEntity entity = EventMapper.toEntity(request,
-                CategoryMapper.toEntity(category), userEntity);
+                category, userEntity);
         entity.setCreatedOn(LocalDateTime.now());
         entity.setState(EventStatus.PENDING);
-        log.info("Mapped successfully {}", entity);
         EventEntity eventEntity = repository.save(entity);
 
         log.info("Event created with ID: {} for user ID: {}",

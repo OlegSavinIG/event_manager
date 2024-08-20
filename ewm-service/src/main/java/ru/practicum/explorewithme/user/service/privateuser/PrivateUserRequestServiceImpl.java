@@ -110,13 +110,12 @@ public class PrivateUserRequestServiceImpl
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Transactional()
     public UserEventRequestDto createRequest(final Long userId,
                                              final Long eventId) {
         log.info("Creating request for event ID: {} by user ID: {}",
                 eventId, userId);
         checker.isRequestAlreadyExist(userId, eventId);
-//        checker.isThisInitiatorOfEvent(userId, eventId);
 
         EventEntity event = eventService.getEventEntity(eventId);
         if (event.getInitiator().getId().equals(userId)) {

@@ -83,7 +83,7 @@ public class EventEntity {
     /**
      * The confirmed requests for the event.
      */
-    @OneToMany(mappedBy = "event", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "event")
     @Builder.Default
     private List<UserEventRequestEntity> confirmedRequests = new ArrayList<>();
 
@@ -106,14 +106,14 @@ public class EventEntity {
     /**
      * The category of the event.
      */
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne()
     @JoinColumn(name = "category_id")
     private CategoryEntity category;
 
     /**
      * The initiator of the event.
      */
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne()
     @JoinColumn(name = "user_id")
     private UserEntity initiator;
 }

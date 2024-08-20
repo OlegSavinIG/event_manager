@@ -159,6 +159,11 @@ public class EventServiceImpl implements EventService {
         client.sendStats(statisticRequest).subscribe();
     }
 
+    @Override
+    public void getEventEntitiesForCache() {
+        repository.findAll();
+    }
+
     /**
      * Sets the views for a list of event entities asynchronously.
      *
