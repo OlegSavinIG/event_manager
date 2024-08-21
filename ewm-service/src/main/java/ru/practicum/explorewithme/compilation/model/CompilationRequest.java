@@ -1,15 +1,17 @@
 package ru.practicum.explorewithme.compilation.model;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.practicum.explorewithme.annotation.DefaultValidation;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * DTO for compilation requests.
@@ -26,28 +28,31 @@ public class CompilationRequest {
     /**
      * The title of the compilation.
      */
-    @NotNull
-    @NotBlank
+    @NotNull(groups = DefaultValidation.class)
+    @NotBlank(groups = DefaultValidation.class)
     @Size(max = MAX_TITLE_LENGTH)
+    @Size(max = MAX_TITLE_LENGTH, groups = DefaultValidation.class)
     private String title;
 
     /**
      * Indicates if the compilation is pinned.
      */
-    @NotBlank
-    private Boolean pinned;
+    @Builder.Default
+    private Boolean pinned = false;
 
     /**
      * The list of event IDs in the compilation.
      */
-    private final List<Long> events = new ArrayList<>();
+    private final List<Integer> events = new ArrayList<>();
 
     /**
      * The list of events in the compilation.
      * @return events
      */
      public List<Long> getEvents() {
-        return events;
+        return events.stream()
+                .map(Integer::longValue)
+                .collect(Collectors.toList());
     }
 
 }

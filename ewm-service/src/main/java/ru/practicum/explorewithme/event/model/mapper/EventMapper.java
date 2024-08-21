@@ -6,9 +6,10 @@ import ru.practicum.explorewithme.event.model.EventEntity;
 import ru.practicum.explorewithme.event.model.EventRequest;
 import ru.practicum.explorewithme.event.model.EventResponse;
 import ru.practicum.explorewithme.event.model.EventResponseShort;
-import ru.practicum.explorewithme.event.model.EventStatus;
 import ru.practicum.explorewithme.user.model.UserEntity;
 import ru.practicum.explorewithme.user.model.mapper.UserMapper;
+
+import java.util.Optional;
 
 /**
  * Mapper class for converting between EventEntity and DTOs.
@@ -30,17 +31,16 @@ public class EventMapper {
                 .description(entity.getDescription())
                 .category(CategoryMapper.toResponse(entity.getCategory()))
                 .eventDate(entity.getEventDate())
-                .confirmedRequests(entity.getConfirmedRequests())
+                .confirmedRequests((entity.getConfirmedRequests().size()))
                 .createdOn(entity.getCreatedOn())
                 .state(entity.getState())
                 .title(entity.getTitle())
                 .views(entity.getViews())
-                .paid(entity.isPaid())
-                .initiator(UserMapper
-                        .toResponseWithEvent(entity.getInitiator()))
-                .participantLimit(entity.getParticipantLimit())
+                .paid(Optional.ofNullable(entity.getPaid()).orElse(false))
+                .initiator(UserMapper.toResponseWithEvent(entity.getInitiator()))
+                .participantLimit(Optional.ofNullable(entity.getParticipantLimit()).orElse(0))
                 .publishedOn(entity.getPublishedOn())
-                .requestModeration(entity.getRequestModeration())
+                .requestModeration(Optional.ofNullable(entity.getRequestModeration()).orElse(true))
                 .build();
     }
 
@@ -54,14 +54,13 @@ public class EventMapper {
         return EventResponseShort.builder()
                 .id(entity.getId())
                 .annotation(entity.getAnnotation())
-                .category(entity.getCategory())
+                .category(CategoryMapper.toResponse(entity.getCategory()))
                 .eventDate(entity.getEventDate())
-                .confirmedRequests(entity.getConfirmedRequests())
+                .confirmedRequests((entity.getConfirmedRequests().size()))
                 .title(entity.getTitle())
                 .views(entity.getViews())
-                .paid(entity.isPaid())
-                .initiator(UserMapper
-                        .toResponseWithEvent(entity.getInitiator()))
+                .paid(Optional.ofNullable(entity.getPaid()).orElse(false))
+                .initiator(UserMapper.toResponseWithEvent(entity.getInitiator()))
                 .build();
     }
 
@@ -81,7 +80,7 @@ public class EventMapper {
                 .annotation(request.getAnnotation())
                 .category(category)
                 .paid(request.getPaid())
-                .state(EventStatus.valueOf(request.getStateAction()))
+                .state(request.getStateAction())
                 .title(request.getTitle())
                 .eventDate(request.getEventDate())
                 .initiator(user)

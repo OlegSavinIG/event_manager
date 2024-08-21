@@ -1,5 +1,6 @@
 package ru.practicum.explorewithme.exception;
 
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -8,7 +9,6 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 
-import javax.validation.ConstraintViolationException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -109,5 +109,41 @@ public class GlobalExceptionHandler {
         body.put("message", ex.getMessage());
         body.put("timestamp", LocalDateTime.now());
         return new ResponseEntity<>(body, HttpStatus.CONFLICT);
+    }
+
+    /**
+     * Handles already exist exceptions.
+     *
+     * @param ex      the ConflictException
+     * @param request the WebRequest
+     * @return a response entity with error details
+     */
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<Object> handleConflictException(
+            final ConflictException ex,
+            final WebRequest request) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("status", HttpStatus.CONFLICT);
+        body.put("reason", "Conflict in arguments.");
+        body.put("message", ex.getMessage());
+        body.put("timestamp", LocalDateTime.now());
+        return new ResponseEntity<>(body, HttpStatus.CONFLICT);
+    }
+
+    /**
+     * Handles already exist exceptions.
+     *
+     * @param ex      the ConflictException
+     * @return a response entity with error details
+     */
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<Map<String, String>> handleBadRequestException(
+            final BadRequestException ex) {
+        Map<String, String> errorResponse = new HashMap<>();
+        errorResponse.put("status", "BAD_REQUEST");
+        errorResponse.put("reason", "Bad request.");
+        errorResponse.put("message", ex.getMessage());
+        errorResponse.put("timestamp", LocalDateTime.now().toString());
+        return ResponseEntity.badRequest().body(errorResponse);
     }
 }

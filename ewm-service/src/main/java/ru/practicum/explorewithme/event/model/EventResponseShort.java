@@ -1,10 +1,11 @@
 package ru.practicum.explorewithme.event.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.practicum.explorewithme.category.model.CategoryEntity;
+import ru.practicum.explorewithme.category.model.CategoryResponse;
 import ru.practicum.explorewithme.user.model.UserResponseWithEvent;
 
 import java.time.LocalDateTime;
@@ -26,12 +27,13 @@ public class EventResponseShort {
     /**
      * The date and time when the event will take place.
      */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime eventDate;
 
     /**
      * The category of the event.
      */
-    private CategoryEntity category;
+    private CategoryResponse category;
 
     /**
      * The number of confirmed requests for the event.
@@ -51,7 +53,7 @@ public class EventResponseShort {
     /**
      * The number of views of the event.
      */
-    private Integer views;
+    private long views;
 
     /**
      * The title of the event.

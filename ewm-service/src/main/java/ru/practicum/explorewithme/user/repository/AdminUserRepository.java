@@ -26,6 +26,7 @@ public interface AdminUserRepository extends JpaRepository<UserEntity, Long> {
     @Query("SELECT u FROM UserEntity u WHERE u.id IN :ids")
     Page<UserEntity> findByIdIn(
             @Param("ids") List<Long> ids, Pageable pageable);
+
     /**
      * For ExistChecker.
      * @param email user email

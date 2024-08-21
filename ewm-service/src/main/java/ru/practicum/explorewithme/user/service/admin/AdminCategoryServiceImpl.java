@@ -9,6 +9,7 @@ import ru.practicum.explorewithme.category.model.CategoryRequest;
 import ru.practicum.explorewithme.category.model.CategoryResponse;
 import ru.practicum.explorewithme.category.model.mapper.CategoryMapper;
 import ru.practicum.explorewithme.category.repository.CategoryRepository;
+import ru.practicum.explorewithme.exception.ConflictException;
 import ru.practicum.explorewithme.exists.ExistChecker;
 
 /**
@@ -37,6 +38,7 @@ public class AdminCategoryServiceImpl implements AdminCategoryService {
     public void deleteCategory(final Integer catId) {
         log.info("Deleting category with id: {}", catId);
         checker.isCategoryExists(catId);
+        checker.isEventsContainsCategory(catId);
         repository.deleteById(catId);
         log.info("Deleted category with id: {}", catId);
 
@@ -72,14 +74,15 @@ public class AdminCategoryServiceImpl implements AdminCategoryService {
     public CategoryResponse updateCategory(final CategoryRequest category,
                                            final Integer catId) {
         log.info("Updating category with id: {}", catId);
-        checker.isCategoryExists(catId);
-        checker.isCategoryExistsByName(category.getName());
+
         CategoryEntity categoryEntity = repository.findById(catId)
                 .orElseThrow(() ->
                         new IllegalArgumentException("Category not found"));
-        if (category.getName() != null) {
-            categoryEntity.setName(category.getName());
+        if (repository.existsByName(category.getName()) &&
+                !categoryEntity.getName().equals(category.getName())) {
+            throw new ConflictException("Name already exist");
         }
+        categoryEntity.setName(category.getName());
         CategoryEntity saved = repository.save(categoryEntity);
         CategoryResponse response = CategoryMapper.toResponse(saved);
         log.info("Updated category with id: {}", response.getId());

@@ -1,11 +1,11 @@
 package ru.practicum.explorewithme.event.specification;
 
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
 import ru.practicum.explorewithme.event.model.EventEntity;
 import ru.practicum.explorewithme.event.model.EventStatus;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.Predicate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -35,7 +35,7 @@ public class EventSpecification {
      * @return the specification
      */
     public static Specification<EventEntity> hasStates(
-            final List<String> states) {
+            final List<EventStatus> states) {
         return (root, query, criteriaBuilder) ->
                 root.get("state").in(states);
     }
@@ -145,5 +145,6 @@ public class EventSpecification {
             }
             return criteriaBuilder.not(inClause);
         };
+
     }
 }

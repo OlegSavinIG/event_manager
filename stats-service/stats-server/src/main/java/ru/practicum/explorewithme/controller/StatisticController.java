@@ -1,5 +1,7 @@
 package ru.practicum.explorewithme.controller;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -15,10 +17,9 @@ import ru.practicum.explorewithme.StatisticResponse;
 import ru.practicum.explorewithme.exception.WrongTimeException;
 import ru.practicum.explorewithme.service.StatisticService;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 /**
  * REST controller for managing statistics.
@@ -39,7 +40,7 @@ public class StatisticController {
      * @return HttpStatus
      */
     @PostMapping("/hit")
-    public ResponseEntity saveStatistic(@Valid @RequestBody
+    public ResponseEntity<Void> saveStatistic(@Valid @RequestBody
                                   final StatisticRequest request) {
         service.saveStatistic(request);
         return new ResponseEntity<>(HttpStatus.CREATED);
@@ -71,5 +72,18 @@ public class StatisticController {
                     "Start time must be before end time");
         }
         return service.getStatistic(start, end, uris, unique);
+    }
+
+/**
+ * Retrieves statistics based on query parameters.
+ *
+ * @param uris   the list of URIs to filter the statistics
+ * @return map event views
+ */
+    @GetMapping("/views")
+    public Map<Long, Long> getEventViews(
+            @NotNull @RequestParam("uris")final List<String> uris
+    ) {
+       return service.getEventViews(uris);
     }
 }

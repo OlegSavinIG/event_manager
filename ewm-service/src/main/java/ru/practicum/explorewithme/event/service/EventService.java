@@ -1,5 +1,6 @@
 package ru.practicum.explorewithme.event.service;
 
+import jakarta.servlet.http.HttpServletRequest;
 import ru.practicum.explorewithme.event.model.EventEntity;
 import ru.practicum.explorewithme.event.model.EventResponse;
 import ru.practicum.explorewithme.event.model.EventResponseShort;
@@ -54,4 +55,13 @@ public interface EventService {
      * @return the list of event entities
      */
     List<EventEntity> getEventEntities(List<Long> ids);
+
+    /**
+     * Retrieves event entities by their IDs.
+     *
+     * @param servletRequest servletRequest
+     */
+    void saveStatistic(HttpServletRequest servletRequest);
+
+    void getEventEntitiesForCache();
 }

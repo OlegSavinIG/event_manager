@@ -8,8 +8,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.explorewithme.category.model.CategoryEntity;
-import ru.practicum.explorewithme.category.model.CategoryResponse;
-import ru.practicum.explorewithme.category.model.mapper.CategoryMapper;
 import ru.practicum.explorewithme.category.service.CategoryService;
 import ru.practicum.explorewithme.event.model.EventEntity;
 import ru.practicum.explorewithme.event.model.EventRequest;
@@ -17,6 +15,7 @@ import ru.practicum.explorewithme.event.model.EventResponse;
 import ru.practicum.explorewithme.event.model.EventStatus;
 import ru.practicum.explorewithme.event.model.mapper.EventMapper;
 import ru.practicum.explorewithme.event.repository.EventRepository;
+import ru.practicum.explorewithme.exception.AlreadyExistException;
 import ru.practicum.explorewithme.exception.NotExistException;
 import ru.practicum.explorewithme.exists.ExistChecker;
 import ru.practicum.explorewithme.user.model.UserEntity;
@@ -94,22 +93,27 @@ public class PrivateUserEventsServiceImpl implements PrivateUserEventsService {
      * {@inheritDoc}
      */
     @Override
-    @Transactional
+    @Transactional()
     public EventResponse createEvent(final EventRequest request,
                                      final Long userId) {
-        log.info("Creating event for user ID: {} with request: {}", userId,
-                request);
+        log.info("Creating event for user ID: {}", userId);
         checker.isUserExist(userId);
         UserEntity userEntity = adminUserService.findUserEntity(userId);
-        CategoryResponse category = categoryService.getCategory(
+        CategoryEntity category = categoryService.getCategoryEntity(
                 request.getCategory());
-        EventEntity eventEntity = repository.save(EventMapper.toEntity(request,
-                CategoryMapper.toEntity(category), userEntity));
-        eventEntity.setCreatedOn(LocalDateTime.now());
+
+        EventEntity entity = EventMapper.toEntity(request,
+                category, userEntity);
+        entity.setCreatedOn(LocalDateTime.now());
+        entity.setState(EventStatus.PENDING);
+        EventEntity eventEntity = repository.save(entity);
+
         log.info("Event created with ID: {} for user ID: {}",
                 eventEntity.getId(),
                 userId);
-        return EventMapper.toResponse(eventEntity);
+        EventResponse response = EventMapper.toResponse(eventEntity);
+        response.setLocation(request.getLocation());
+        return response;
     }
 
     /**
@@ -127,7 +131,9 @@ public class PrivateUserEventsServiceImpl implements PrivateUserEventsService {
                 .findByIdAndInitiatorId(eventId, userId)
                 .orElseThrow(() -> new NotExistException(
                         "This event does not exist"));
-
+        if (entity.getState().equals(EventStatus.PUBLISHED)) {
+             throw new AlreadyExistException("Event already published");
+        }
         if (request.getTitle() != null) {
             entity.setTitle(request.getTitle());
         }
@@ -150,16 +156,24 @@ public class PrivateUserEventsServiceImpl implements PrivateUserEventsService {
             entity.setRequestModeration(request.getRequestModeration());
         }
         if (request.getStateAction() != null) {
-            entity.setState(EventStatus.valueOf(request.getStateAction()));
+            entity.setState((request.getStateAction()));
         }
         if (request.getCategory() != null) {
             CategoryEntity category = categoryService.getCategoryEntity(
                     request.getCategory());
             entity.setCategory(category);
         }
-
+        if (request.getStateAction() != null) {
+            if (request.getStateAction().equals(EventStatus.SEND_TO_REVIEW)) {
+                entity.setState(EventStatus.PENDING);
+            }
+            if (request.getStateAction().equals(EventStatus.CANCEL_REVIEW)) {
+                entity.setState(EventStatus.CANCELED);
+            }
+        }
         EventEntity saved = repository.save(entity);
         log.info("Event ID: {} for user ID: {} updated", eventId, userId);
         return EventMapper.toResponse(saved);
     }
+
 }

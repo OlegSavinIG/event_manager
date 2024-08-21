@@ -47,4 +47,5 @@ public interface RequestRepository
      * @return true if the request exists, false otherwise
      */
     boolean existsByRequesterIdAndEventId(Long userId, Long eventId);
+
 }

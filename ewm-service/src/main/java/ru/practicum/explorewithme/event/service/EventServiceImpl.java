@@ -1,5 +1,6 @@
 package ru.practicum.explorewithme.event.service;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -9,7 +10,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.explorewithme.event.client.EventClient;
+import reactor.core.publisher.Mono;
+import ru.practicum.explorewithme.StatisticRequest;
+import ru.practicum.explorewithme.client.StatisticClient;
 import ru.practicum.explorewithme.event.model.EventEntity;
 import ru.practicum.explorewithme.event.model.EventResponse;
 import ru.practicum.explorewithme.event.model.EventResponseShort;
@@ -18,13 +21,12 @@ import ru.practicum.explorewithme.event.model.EventStatus;
 import ru.practicum.explorewithme.event.model.mapper.EventMapper;
 import ru.practicum.explorewithme.event.repository.EventRepository;
 import ru.practicum.explorewithme.event.specification.EventSpecification;
+import ru.practicum.explorewithme.exception.BadRequestException;
 import ru.practicum.explorewithme.exception.NotExistException;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -41,11 +43,7 @@ public class EventServiceImpl implements EventService {
     /**
      * REST client for managing compilations.
      */
-    private final EventClient eventClient;
-    /**
-     * Service for managing event views.
-     */
-    private final ExecutorService executorService;
+    private final StatisticClient client;
 
     /**
      * {@inheritDoc}
@@ -63,23 +61,17 @@ public class EventServiceImpl implements EventService {
         Page<EventEntity> eventEntities = repository.findAll(spec, pageable);
 
         if (eventEntities.isEmpty()) {
-            log.info("No events found with criteria:"
-                    + " {}, from: {}, size: {}", criteria, from, size);
-            return Collections.emptyList();
+            throw new BadRequestException("Events not found");
         }
 
-        List<CompletableFuture<EventEntity>> futures = setEventsViews(
-                eventEntities);
+        setEventsViews(eventEntities);
 
-        List<EventResponseShort> responses = futures.stream()
-                .map(CompletableFuture::join)
+        log.info("Found {} events",
+                eventEntities.getTotalElements());
+
+        return eventEntities.stream()
                 .map(EventMapper::toResponseShort)
                 .collect(Collectors.toList());
-
-        log.info("Found {} events with criteria: {}, from: {}, size: {}",
-                responses.size(), criteria, from, size);
-
-        return responses;
     }
 
     /**
@@ -89,19 +81,22 @@ public class EventServiceImpl implements EventService {
     @Transactional(readOnly = true)
     public EventResponse getEvent(final Long id) {
         log.info("Fetching event with ID: {}", id);
-        EventEntity eventEntity = repository.findById(id)
+        EventEntity eventEntity = repository.findByIdAndState(
+                id, EventStatus.PUBLISHED)
                 .orElseThrow(() -> new NotExistException(
                         "This event does not exist"));
         log.info("Found event with ID: {}", id);
-        CompletableFuture<Integer> eventViews = eventClient.getEventViews(id);
-        try {
-            Integer views = eventViews.get();
-            eventEntity.setViews(views);
-        } catch (InterruptedException | ExecutionException e) {
-            log.info("Error fetching event views", e);
-            throw new RuntimeException(e);
-        }
-        return EventMapper.toResponse(eventEntity);
+        Mono<Map<Long, Integer>> eventViewsResponse =
+                client.getEventViews(createEventsUri(List.of(eventEntity)));
+        Map<Long, Integer> eventViews = eventViewsResponse.block();
+        log.info("Found event views: {}", eventViews);
+        int views = eventViews != null ? eventViews.getOrDefault(id, 0) : 0;
+
+        EventResponse response = EventMapper.toResponse(eventEntity);
+        response.setViews(views);
+        log.info("Found event response: {} with views: {}",
+                response, response.getViews());
+        return response;
     }
 
     /**
@@ -150,28 +145,39 @@ public class EventServiceImpl implements EventService {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void saveStatistic(final HttpServletRequest servletRequest) {
+        log.info("Saving statistic with uri: {}",
+                servletRequest.getRequestURI());
+        StatisticRequest statisticRequest = StatisticRequest.builder()
+                .app("ewm-main-service")
+                .ip(servletRequest.getRemoteAddr())
+                .uri(servletRequest.getRequestURI())
+                .build();
+        client.sendStats(statisticRequest).subscribe();
+    }
+
+    @Override
+    public void getEventEntitiesForCache() {
+        repository.findAll();
+    }
+
+    /**
      * Sets the views for a list of event entities asynchronously.
      *
      * @param eventEntities the list of event entities
-     * @return a list of CompletableFutures for the event entities
      */
-    private List<CompletableFuture<EventEntity>> setEventsViews(
-            final Page<EventEntity> eventEntities) {
-        return eventEntities.stream()
-                .map(event -> CompletableFuture.supplyAsync(() -> {
-                    try {
-                        Integer views = eventClient.getEventViews(
-                                event.getId()).get();
-                        event.setViews(views);
-                    } catch (InterruptedException | ExecutionException e) {
-                        log.info("Error fetching event views for event id: {}",
-                                event.getId(), e);
-                        throw new RuntimeException(e);
-                    }
-                    return event;
-                }, executorService))
-                .collect(Collectors.toList());
+    private void setEventsViews(final Page<EventEntity> eventEntities) {
+        client.getEventViews(createEventsUri(eventEntities.toList()))
+                .subscribe(eventViews -> {
+                    eventEntities.forEach(entity ->
+                            entity.setViews(eventViews.getOrDefault(
+                                    entity.getId(), 0)));
+                });
     }
+
     /**
      * Creates a specification for filtering events based on the given criteria.
      *
@@ -179,7 +185,7 @@ public class EventServiceImpl implements EventService {
      * @return The specification for filtering events.
      */
     private Specification<EventEntity> createSpecification(
-           final EventSearchCriteria criteria) {
+            final EventSearchCriteria criteria) {
         Specification<EventEntity> spec = Specification.where(null);
 
         if (criteria.getCategories() != null
@@ -205,8 +211,8 @@ public class EventServiceImpl implements EventService {
         if (criteria.getPaid() != null) {
             spec = spec.and(EventSpecification.isPaid(criteria.getPaid()));
         }
-        spec = spec.and(EventSpecification.excludeStatuses(
-                EventStatus.WAITING, EventStatus.REJECTED));
+        spec = spec.and(EventSpecification.hasStates(
+                List.of(EventStatus.PUBLISHED)));
         return spec;
     }
 
@@ -219,13 +225,19 @@ public class EventServiceImpl implements EventService {
      * @return The pageable object.
      */
     private Pageable createPageRequest(final EventSearchCriteria criteria,
-                                      final Integer from, final Integer size) {
+                                       final Integer from, final Integer size) {
         Sort sort = Sort.unsorted();
         if ("EVENT_DATE".equalsIgnoreCase(criteria.getSort())) {
             sort = Sort.by(Sort.Direction.ASC, "eventDate");
         } else if ("VIEWS".equalsIgnoreCase(criteria.getSort())) {
             sort = Sort.by(Sort.Direction.DESC, "views");
         }
-        return PageRequest.of(from / size, size, sort);
+        return PageRequest.of(Math.floorDiv(from, size), size, sort);
+    }
+
+    private List<String> createEventsUri(final List<EventEntity> eventEntity) {
+        return eventEntity.stream()
+                .map(entity -> String.format("/events/" + entity.getId()))
+                .collect(Collectors.toList());
     }
 }

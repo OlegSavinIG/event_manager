@@ -17,15 +17,28 @@ public enum EventStatus {
     /**
      * The event is approved and awaiting further action.
      */
-    APPROVED,
+    PUBLISH_EVENT,
 
     /**
-     * The event is waiting for approval or further action.
+     * The event is approved and awaiting further action.
      */
-    WAITING,
+    REJECT_EVENT,
+
+    /**
+     * The event is waiting for cancel moderation.
+     */
+    CANCEL_REVIEW,
+    /**
+     * The event is waiting for cancel moderation.
+     */
+    SEND_TO_REVIEW,
 
     /**
      * The event is pending approval or further action.
      */
-    PENDING
+    PENDING,
+    /**
+     * The event is canceled.
+     */
+    CANCELED
 }

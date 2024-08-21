@@ -15,4 +15,6 @@ import ru.practicum.explorewithme.event.model.EventEntity;
 public interface AdminEventRepository
         extends JpaRepository<EventEntity, Long>,
         JpaSpecificationExecutor<EventEntity> {
+
 }
+

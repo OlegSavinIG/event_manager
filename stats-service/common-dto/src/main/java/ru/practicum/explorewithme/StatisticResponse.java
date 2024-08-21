@@ -28,6 +28,6 @@ public class StatisticResponse {
     /**
      * The hits of the uri.
      */
-    private Long hits;
+    private long hits;
 
 }

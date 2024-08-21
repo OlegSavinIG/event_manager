@@ -1,5 +1,8 @@
 package ru.practicum.explorewithme.user.controller.admin;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,9 +18,6 @@ import ru.practicum.explorewithme.user.model.UserRequest;
 import ru.practicum.explorewithme.user.model.UserResponse;
 import ru.practicum.explorewithme.user.service.admin.AdminUserService;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Positive;
-import javax.validation.constraints.PositiveOrZero;
 import java.util.Collection;
 import java.util.List;
 

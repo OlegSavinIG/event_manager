@@ -1,6 +1,8 @@
 package ru.practicum.explorewithme.user.controller.privateuser;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -23,8 +25,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
+@Slf4j
 public class PrivateUserRequestController {
-
     /**
      * Service for handling private user request operations.
      */
@@ -55,11 +57,11 @@ public class PrivateUserRequestController {
      */
     @PatchMapping("/{userId}/events/{eventId}/requests")
     public ResponseEntity<EventRequestStatusUpdateResult> approveRequests(
+            @RequestBody  final ApproveRequestCriteria criteria,
             @PathVariable final Long userId,
-            @PathVariable final Long eventId,
-            @RequestBody final ApproveRequestCriteria criteria) {
-        return ResponseEntity.ok(service
-                .approveRequests(userId, eventId, criteria));
+            @PathVariable final Long eventId) {
+            log.info("Received request with criteria: {}", criteria);
+            return ResponseEntity.ok(service.approveRequests(userId, eventId, criteria));
     }
 
     /**
@@ -85,7 +87,8 @@ public class PrivateUserRequestController {
     public ResponseEntity<UserEventRequestDto> createRequest(
             @PathVariable final Long userId,
             @RequestParam final Long eventId) {
-        return ResponseEntity.ok(service.createRequest(userId, eventId));
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(service.createRequest(userId, eventId));
     }
 
     /**

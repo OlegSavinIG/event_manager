@@ -5,6 +5,7 @@ import ru.practicum.explorewithme.StatisticResponse;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Service interface for handling statistics.
@@ -30,4 +31,12 @@ public interface StatisticService {
     List<StatisticResponse> getStatistic(
             LocalDateTime start,
             LocalDateTime end, List<String> uris, boolean unique);
+
+/**
+ * Retrieves statistics.
+ *
+ * @param uris  uris
+ * @return  Map<Long, Long> event views
+ */
+    Map<Long, Long> getEventViews(List<String> uris);
 }

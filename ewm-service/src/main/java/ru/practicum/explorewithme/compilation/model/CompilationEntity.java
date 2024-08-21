@@ -1,20 +1,21 @@
 package ru.practicum.explorewithme.compilation.model;
 
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.practicum.explorewithme.event.model.EventEntity;
-
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,7 +45,9 @@ public class CompilationEntity {
     /**
      * Indicates if the compilation is pinned.
      */
-    private Boolean pinned;
+    @Column(columnDefinition = "boolean default false")
+    @Builder.Default
+    private Boolean pinned = false;
 
     /**
      * The list of events in the compilation.

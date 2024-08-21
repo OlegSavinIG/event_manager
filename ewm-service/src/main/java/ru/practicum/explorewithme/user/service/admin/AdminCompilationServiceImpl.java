@@ -51,7 +51,8 @@ public class AdminCompilationServiceImpl implements AdminCompilationService {
         CompilationEntity entity = repository.save(
                 CompilationMapper.toEntity(request, eventEntities));
         CompilationResponse response = CompilationMapper.toResponse(entity);
-        log.info("Created compilation with id: {}", response.getId());
+        log.info("Sending response compilation title: {}",
+                response.getTitle());
         return response;
     }
 

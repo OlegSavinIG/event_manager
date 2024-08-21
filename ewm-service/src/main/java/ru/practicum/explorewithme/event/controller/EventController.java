@@ -1,5 +1,8 @@
 package ru.practicum.explorewithme.event.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -8,15 +11,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ru.practicum.explorewithme.event.client.EventClient;
 import ru.practicum.explorewithme.event.model.EventResponse;
 import ru.practicum.explorewithme.event.model.EventResponseShort;
 import ru.practicum.explorewithme.event.model.EventSearchCriteria;
 import ru.practicum.explorewithme.event.service.EventService;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.constraints.Positive;
-import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 /**
@@ -30,10 +29,6 @@ public class EventController {
      * REST client for managing compilations.
      */
     private final EventService service;
-    /**
-     * REST service for managing compilations.
-     */
-    private final EventClient client;
 
     /**
      * Retrieves a list of events based on search criteria.
@@ -53,10 +48,10 @@ public class EventController {
             final Integer size,
             final HttpServletRequest servletRequest
     ) {
-        final String remoteAddr = servletRequest.getRemoteAddr();
-        final String requestURI = servletRequest.getRequestURI();
-        client.sendRequestData(remoteAddr, requestURI);
-        return ResponseEntity.ok(service.getEvents(criteria, from, size));
+        List<EventResponseShort> responseShorts =
+                service.getEvents(criteria, from, size);
+        service.saveStatistic(servletRequest);
+        return ResponseEntity.ok(responseShorts);
     }
 
     /**
@@ -71,9 +66,8 @@ public class EventController {
             @PathVariable final Long id,
             final HttpServletRequest servletRequest
     ) {
-        final String remoteAddr = servletRequest.getRemoteAddr();
-        final String requestURI = servletRequest.getRequestURI();
-        client.sendRequestData(remoteAddr, requestURI);
-        return ResponseEntity.ok(service.getEvent(id));
+        EventResponse response = service.getEvent(id);
+        service.saveStatistic(servletRequest);
+        return ResponseEntity.ok(response);
     }
 }

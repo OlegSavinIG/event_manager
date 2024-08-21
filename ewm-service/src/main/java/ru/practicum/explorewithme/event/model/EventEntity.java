@@ -2,25 +2,15 @@ package ru.practicum.explorewithme.event.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import jakarta.persistence.*;
+import lombok.*;
 import ru.practicum.explorewithme.category.model.CategoryEntity;
 import ru.practicum.explorewithme.user.model.UserEntity;
+import ru.practicum.explorewithme.user.request.model.UserEventRequestEntity;
 
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Entity representing an event.
@@ -30,8 +20,14 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "events")
-@ToString(exclude = {"category", "initiator"})
+@Table(name = "events", indexes = {
+        @Index(name = "idx_event_date", columnList = "eventDate"),
+        @Index(name = "idx_event_category", columnList = "category_id"),
+        @Index(name = "idx_event_created_on", columnList = "createdOn"),
+        @Index(name = "idx_event_category_date", columnList = "category_id, eventDate"),
+        @Index(name = "idx_event_initiator_date", columnList = "user_id, eventDate")
+})
+@ToString(exclude = {"category", "initiator", "confirmedRequests"})
 public class EventEntity {
 
     /**
@@ -49,11 +45,13 @@ public class EventEntity {
     /**
      * The annotation of the event.
      */
+    @Column(columnDefinition = "TEXT")
     private String annotation;
 
     /**
      * The description of the event.
      */
+    @Column(columnDefinition = "TEXT")
     private String description;
 
     /**
@@ -80,22 +78,25 @@ public class EventEntity {
     /**
      * Indicates if the event is paid.
      */
-    private boolean paid;
+    @Column(columnDefinition = "boolean default false")
+    private Boolean paid;
 
     /**
      * The number of views of the event.
      */
-    private int views;
+    private long views;
 
     /**
-     * The number of confirmed requests for the event.
+     * The confirmed requests for the event.
      */
-    private int confirmedRequests;
+    @OneToMany(mappedBy = "event", fetch = FetchType.LAZY)
+    @Builder.Default
+    private List<UserEventRequestEntity> confirmedRequests = new ArrayList<>();
 
     /**
      * The participant limit for the event.
      */
-    private int participantLimit;
+    private Integer participantLimit;
 
     /**
      * Indicates if the event requires request moderation.

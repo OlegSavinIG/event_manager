@@ -1,6 +1,9 @@
 package ru.practicum.explorewithme.event.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -49,13 +52,15 @@ public class EventResponse {
     /**
      * The publication date and time of the event.
      */
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime publishedOn;
 
     /**
      * Indicates if the event is paid.
      */
-    private Boolean paid;
+    @Builder.Default
+    private Boolean paid = false;
 
     /**
      * The number of confirmed requests for the event.
@@ -65,26 +70,33 @@ public class EventResponse {
     /**
      * The participant limit for the event.
      */
-    private Integer participantLimit;
+    @Builder.Default
+    private Integer participantLimit = 0;
 
     /**
      * Indicates if the event requires request moderation.
      */
-    private Boolean requestModeration;
+    @Builder.Default
+    private Boolean requestModeration = true;
 
     /**
      * The title of the event.
      */
     private String title;
+    /**
+     * The location of the event.
+     */
+    private EventLocation location;
 
     /**
      * The number of views of the event.
      */
-    private Integer views;
+    private long views;
 
     /**
      * The status of the event.
      */
+    @Enumerated(EnumType.STRING)
     private EventStatus state;
 
     /**

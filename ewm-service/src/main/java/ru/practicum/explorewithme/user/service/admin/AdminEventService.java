@@ -30,4 +30,6 @@ public interface AdminEventService {
      * @return the approved event response
      */
     EventResponse approveEvent(EventRequest request, Long eventId);
+
+//    void warmUp();
 }
