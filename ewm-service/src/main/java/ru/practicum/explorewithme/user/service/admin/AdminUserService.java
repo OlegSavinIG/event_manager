@@ -61,4 +61,6 @@ public interface AdminUserService {
      * @return the found user entity
      */
     UserEntity findUserEntity(Long userId);
+
+    void saveUser(UserEntity entity);
 }
