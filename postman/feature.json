@@ -29,6 +29,16 @@
 						"type": "text/javascript",
 						"packages": {}
 					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
 				}
 			],
 			"request": {
@@ -526,7 +536,7 @@
 				"exec": [
 					"\r",
 					"pm.sendRequest({\r",
-					"    url: pm.environment.get(\"baseUrl\") + '/admin/users',\r",
+					"    url: pm.collectionVariables.get(\"baseUrl\") + '/admin/users',\r",
 					"    method: 'POST',\r",
 					"    header: {\r",
 					"        'Content-Type': 'application/json'\r",
