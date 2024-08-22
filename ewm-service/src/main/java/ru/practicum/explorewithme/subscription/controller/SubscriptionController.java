@@ -1,6 +1,7 @@
 package ru.practicum.explorewithme.subscription.controller;
 
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,8 +27,8 @@ public class SubscriptionController {
 
     @PostMapping("/{subId}")
     public ResponseEntity<SubscriptionResponse> createSubscription(
-            @NotNull @PathVariable Long subId,
-            @NotNull @RequestParam Long userId) {
+            @Positive @NotNull @PathVariable Long subId,
+            @Positive @NotNull @RequestParam Long userId) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(service.createSubscription(subId, userId));
     }

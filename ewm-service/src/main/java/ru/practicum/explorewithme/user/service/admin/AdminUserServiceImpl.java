@@ -129,6 +129,7 @@ public class AdminUserServiceImpl implements AdminUserService {
                     return new NotExistException("User does not exist");
                 });
     }
+
     @Override
     public void saveUser(UserEntity entity) {
         repository.save(entity);

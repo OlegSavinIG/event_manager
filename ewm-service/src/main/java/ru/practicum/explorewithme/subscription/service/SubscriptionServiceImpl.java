@@ -6,6 +6,8 @@ import ru.practicum.explorewithme.event.model.EventEntity;
 import ru.practicum.explorewithme.event.model.EventResponse;
 import ru.practicum.explorewithme.event.model.mapper.EventMapper;
 import ru.practicum.explorewithme.event.service.EventService;
+import ru.practicum.explorewithme.exception.AlreadyExistException;
+import ru.practicum.explorewithme.exception.ConflictException;
 import ru.practicum.explorewithme.exists.ExistChecker;
 import ru.practicum.explorewithme.subscription.model.SubscriptionEntity;
 import ru.practicum.explorewithme.subscription.model.SubscriptionResponse;
@@ -32,6 +34,9 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         checker.isUserExist(userId);
         UserEntity userEntity = userService.findUserEntity(userId);
         UserEntity subscriber = userService.findUserEntity(subId);
+        if (subscriber.getFriends().contains(userEntity)) {
+            throw new AlreadyExistException("Already friends");
+        }
         SubscriptionEntity entity = SubscriptionEntity.builder()
                 .user(userEntity)
                 .subscriber(subscriber)
@@ -45,6 +50,10 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     public SubscriptionResponse approveSubscription(String approve, Long subscriptionId) {
         checker.isSubscriptionExists(subscriptionId);
         SubscriptionEntity entity = repository.findById(subscriptionId).get();
+        if (!SubscriptionStatus.PENDING.equals(entity.getStatus())) {
+            throw new ConflictException(
+                    "Subscription already approved or rejected");
+        }
         if (approve.equalsIgnoreCase(SubscriptionStatus.APPROVED.name())) {
             entity.setStatus(SubscriptionStatus.APPROVED);
 
@@ -65,6 +74,10 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     public void deleteSubscription(Long subscriptionId) {
         checker.isSubscriptionExists(subscriptionId);
         SubscriptionEntity entity = repository.findById(subscriptionId).get();
+        if (SubscriptionStatus.PENDING.equals(entity.getStatus())) {
+            repository.deleteById(subscriptionId);
+            return;
+        }
         deleteFromFriendList(entity.getUser().getId(), entity.getSubscriber().getId());
         repository.deleteById(subscriptionId);
     }
@@ -75,8 +88,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         checker.isUserExist(userId);
         UserEntity subscriber = userService.findUserEntity(subId);
         UserEntity user = userService.findUserEntity(userId);
-        boolean contains = subscriber.getFriends().contains(user);
-        if (!contains) {
+        if (!subscriber.getFriends().contains(user)) {
             throw new IllegalArgumentException("You not subscribed to this user");
         }
         List<EventEntity> eventEntities = eventService.getEventEntities(List.of(userId));

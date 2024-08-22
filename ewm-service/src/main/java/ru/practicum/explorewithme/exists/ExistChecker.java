@@ -161,6 +161,7 @@ public class ExistChecker {
                     "Category is associated with an event");
         }
     }
+
     public void isSubscriptionExists(Long subscriptionId) {
         boolean existsById = subscriptionRepository.existsById(subscriptionId);
         if (!existsById) {
