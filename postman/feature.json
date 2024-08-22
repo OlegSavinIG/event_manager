@@ -602,17 +602,17 @@
 		},
 		{
 			"key": "userId",
-			"value": "",
+			"value": "1",
 			"type": "string"
 		},
 		{
 			"key": "subId",
-			"value": "",
+			"value": "1",
 			"type": "string"
 		},
 		{
 			"key": "subscriptionId",
-			"value": "",
+			"value": "1",
 			"type": "string"
 		}
 	]
