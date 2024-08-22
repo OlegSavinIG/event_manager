@@ -321,9 +321,11 @@
 							"\r",
 							"pm.test(\"Response has correct userId and subscriberId\", function () {\r",
 							"    var jsonData = pm.response.json();\r",
-							"    pm.expect(jsonData.user.id).to.eql(pm.collectionVariables.get(\"userId\"));\r",
-							"    pm.expect(jsonData.subscriber.id).to.eql(pm.collectionVariables.get(\"subId\"));\r",
+							"\r",
+							"    pm.expect(jsonData.user.id).to.eql(Number(pm.collectionVariables.get(\"userId\")));\r",
+							"    pm.expect(jsonData.subscriber.id).to.eql(Number(pm.collectionVariables.get(\"subId\")));\r",
 							"});\r",
+							"\r",
 							""
 						],
 						"type": "text/javascript",
