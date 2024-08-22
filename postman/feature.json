@@ -231,7 +231,6 @@
 					"listen": "prerequest",
 					"script": {
 						"exec": [
-							"\r",
 							""
 						],
 						"type": "text/javascript",
