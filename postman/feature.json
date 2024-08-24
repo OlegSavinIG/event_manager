@@ -1,0 +1,535 @@
+{
+	"info": {
+		"_postman_id": "a39784cc-f69e-42ca-9d77-1dd415b40f9d",
+		"name": "Subscriptions",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "31978864"
+	},
+	"item": [
+		{
+			"name": "Get Events from Non-Subscribed User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							"pm.test(\"Status code is 400\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Response contains error message\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.have.property('message');\r",
+							"    pm.expect(jsonData.message).to.include('You not subscribed to this user');\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/subscription/{{subId}}?userId={{userId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"subscription",
+						"{{subId}}"
+					],
+					"query": [
+						{
+							"key": "userId",
+							"value": "{{userId}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Non-Existing Subscription",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							"pm.test(\"Status code is 404\", function () {\r",
+							"    pm.response.to.have.status(404);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Response contains error message\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.have.property('message');\r",
+							"    pm.expect(jsonData.message).to.include('Subscription not exists');\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/subscription?subscriptionId=99999999",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"subscription"
+					],
+					"query": [
+						{
+							"key": "subscriptionId",
+							"value": "99999999"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Approve Non-Existing Subscription",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							"pm.test(\"Status code is 409\", function () {\r",
+							"    pm.response.to.have.status(404);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Response contains error message\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.have.property('message');\r",
+							"    pm.expect(jsonData.message).to.include('Subscription not exists');\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"packages": {},
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/subscription/update/{{subscriptionId}}?approve=APPROVED&subscriptionId=9999999999",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"subscription",
+						"update",
+						"{{subscriptionId}}"
+					],
+					"query": [
+						{
+							"key": "approve",
+							"value": "APPROVED"
+						},
+						{
+							"key": "subscriptionId",
+							"value": "9999999999"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Subscription with Invalid Data",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							"pm.test(\"Status code is 400\", function () {\r",
+							"    pm.response.to.have.status(400) || pm.response.to.have.status(400);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Response contains error message\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.have.property('message');\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/subscription/{{subId}}?userId=-1",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"subscription",
+						"{{subId}}"
+					],
+					"query": [
+						{
+							"key": "userId",
+							"value": "-1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CreateSubscription",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							"pm.test(\"Status code is 201\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Response has a valid subscription ID\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.have.property('id');\r",
+							"    pm.expect(jsonData.id).to.be.a('number');\r",
+							"    pm.collectionVariables.set(\"subscriptionId\", jsonData.id);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Response contains valid subscriber object\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.have.property('subscriber');\r",
+							"    pm.expect(jsonData.subscriber).to.have.property('id');\r",
+							"    pm.expect(jsonData.subscriber).to.have.property('name'); \r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Response contains valid user object\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.have.property('user');\r",
+							"    pm.expect(jsonData.user).to.have.property('id');\r",
+							"    pm.expect(jsonData.user).to.have.property('name'); \r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Response contains valid subscription status\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.have.property('status');\r",
+							"    pm.expect(jsonData.status).to.be.oneOf([\"PENDING\", \"APPROVED\", \"CANCELLED\", \"REJECTED\"]);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Response has correct userId and subscriberId\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"\r",
+							"    pm.expect(jsonData.user.id).to.eql(Number(pm.collectionVariables.get(\"userId\")));\r",
+							"    pm.expect(jsonData.subscriber.id).to.eql(Number(pm.collectionVariables.get(\"subId\")));\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/subscription/{{subId}}?userId={{userId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"subscription",
+						"{{subId}}"
+					],
+					"query": [
+						{
+							"key": "userId",
+							"value": "{{userId}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Approve Request",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Subscription status is approved\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.status).to.eql(\"APPROVED\");\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Response contains valid user and subscriber objects\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.user).to.have.property('id');\r",
+							"    pm.expect(jsonData.subscriber).to.have.property('id');\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/subscription/update/{{subscriptionId}}?approve=APPROVED",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"subscription",
+						"update",
+						"{{subscriptionId}}"
+					],
+					"query": [
+						{
+							"key": "approve",
+							"value": "APPROVED"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Friends Events",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Response contains a list of events\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.be.an('array');\r",
+							"    if (jsonData.length > 0) {\r",
+							"        pm.expect(jsonData[0]).to.have.property('id');\r",
+							"        pm.expect(jsonData[0]).to.have.property('description'); \r",
+							"    }\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/subscription/{{subId}}?userId={{userId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"subscription",
+						"{{subId}}"
+					],
+					"query": [
+						{
+							"key": "userId",
+							"value": "{{userId}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							"pm.test(\"Status code is 204\", function () {\r",
+							"    pm.response.to.have.status(204);\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/subscription?subscriptionId={{subscriptionId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"subscription"
+					],
+					"query": [
+						{
+							"key": "subscriptionId",
+							"value": "{{subscriptionId}}"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "userId",
+			"value": "1",
+			"type": "string"
+		},
+		{
+			"key": "subId",
+			"value": "1",
+			"type": "string"
+		},
+		{
+			"key": "subscriptionId",
+			"value": "1",
+			"type": "string"
+		}
+	]
+}

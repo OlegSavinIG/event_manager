@@ -7,6 +7,7 @@ import ru.practicum.explorewithme.compilation.repository.CompilationRepository;
 import ru.practicum.explorewithme.event.repository.EventRepository;
 import ru.practicum.explorewithme.exception.AlreadyExistException;
 import ru.practicum.explorewithme.exception.NotExistException;
+import ru.practicum.explorewithme.subscription.repository.SubscriptionRepository;
 import ru.practicum.explorewithme.user.repository.AdminUserRepository;
 import ru.practicum.explorewithme.user.repository.RequestRepository;
 
@@ -36,6 +37,8 @@ public class ExistChecker {
      * Component for checking the existence of various entities.
      */
     private final RequestRepository requestRepository;
+
+    private final SubscriptionRepository subscriptionRepository;
 
     /**
      * Checks if a user exists.
@@ -148,21 +151,6 @@ public class ExistChecker {
     /**
      * Checks if a request exists for the initiator of an event.
      *
-     * @param userId  the ID of the user (initiator)
-     * @param eventId the ID of the event
-     * @throws AlreadyExistException if such a request exists
-     */
-    public void isThisInitiatorOfEvent(final Long userId, final Long eventId) {
-        boolean exists = eventRepository.existsByIdAndInitiatorId(
-                eventId, userId);
-        if (exists) {
-            throw new AlreadyExistException("This is your event");
-        }
-    }
-
-    /**
-     * Checks if a request exists for the initiator of an event.
-     *
      * @param catId  cat id
      * @throws AlreadyExistException if such a request exists
      */
@@ -171,6 +159,13 @@ public class ExistChecker {
         if (exist) {
             throw new AlreadyExistException(
                     "Category is associated with an event");
+        }
+    }
+
+    public void isSubscriptionExists(Long subscriptionId) {
+        boolean existsById = subscriptionRepository.existsById(subscriptionId);
+        if (!existsById) {
+            throw new NotExistException("Subscription not exists");
         }
     }
 }

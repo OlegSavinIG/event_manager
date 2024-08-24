@@ -147,7 +147,7 @@ public class PrivateUserRequestServiceImpl
             Thread.sleep(500);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            log.error("Thread was interrupted", e);
+            log.info("Thread was interrupted", e);
         }
         log.info("Request created with ID: {} for event ID: {} by user ID: {}",
                 saved.getId(), eventId, userId);
